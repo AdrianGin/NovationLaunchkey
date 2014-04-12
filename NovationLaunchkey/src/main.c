@@ -24,13 +24,13 @@ int main(void)
 
 //   while(1)
 //   {
-//	   MUX_ActivateLineColumn(0);
+//	   MUX_ActivateLineColumn(4);
 //
 //
-//	   DrvGPIO_SetPortBits(LED_DATA_PORT, ~(1<<LED_DATA_LINE0) );
+//	   //DrvGPIO_SetPortBits(LED_DATA_PORT, ~(1<<LED_DATA_LINE0) );
 //
-//	   //DrvGPIO_ClrBit(LED_DATA_PORT, LED_DATA_LINE0);
-//      //DrvGPIO_ClrBit(LED_DATA_PORT, LED_DATA_LINE1);
+//	   DrvGPIO_ClrBit(LED_DATA_PORT, LED_DATA_LINE0);
+//      DrvGPIO_ClrBit(LED_DATA_PORT, LED_DATA_LINE1);
 //
 //
 //	   DrvSYS_Delay(1000 * 1000);
@@ -39,6 +39,25 @@ int main(void)
 
    while(1)
    {
+
+      for( i = 0; i < PAD_COUNT * 2 ; i ++ )
+      {
+         //MUX_ActivateLineColumn(j);
+         uint8_t column;
+         uint8_t row;
+
+         column = LED_PAD_SEQUENCE[i] / LEDS_PER_COLUMN;
+         row =    LED_PAD_SEQUENCE[i] & (LEDS_PER_COLUMN - 1);
+         
+         MUX_ActivateLineColumn(column);
+         LED_SetData( ~(1<<row) );
+         DrvSYS_Delay(10*1000);
+
+      }
+     }
+      
+   {
+
       for( j = 0; j < MAX_LINE_COLUMNS; j++ )
       {
          MUX_ActivateLineColumn(j);
@@ -46,13 +65,29 @@ int main(void)
          for(i = 0; i < 8; i++ )
          {
             LED_SetData( ~(1<<i) );
-            DrvSYS_Delay(1000 * 1000);
+            DrvSYS_Delay(10*1000);
          }
       }
    }
 
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

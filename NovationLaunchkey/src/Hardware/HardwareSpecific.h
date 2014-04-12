@@ -9,7 +9,9 @@ extern "C" {
 #include "NUC1xx.h"
 #include "DrvSys.h"
 
-
+#define PAD_COUNT    (16)
+#define SLIDER_COUNT (9)
+#define POT_COUNT    (8)
 
 
 void SystemClockInit(void);
