@@ -21,40 +21,50 @@ int main(void)
    uint8_t i;
    uint8_t j = 0;
 
-
-//   while(1)
-//   {
-//	   MUX_ActivateLineColumn(j++);
+//   LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS/10);
+//   LED_SetLEDBrightness(0, LED_PAD1_G, MAX_LED_BRIGHTNESS/4);
+//   LED_SetLEDBrightness(0, LED_PAD2_G, MAX_LED_BRIGHTNESS/2);
+//   LED_SetLEDBrightness(0, LED_PAD3_G, MAX_LED_BRIGHTNESS);
 //
+//   LED_SetLEDBrightness(0, LED_PAD4_R, MAX_LED_BRIGHTNESS/10);
+//   LED_SetLEDBrightness(0, LED_PAD5_R, MAX_LED_BRIGHTNESS/4);
+//   LED_SetLEDBrightness(0, LED_PAD6_R, MAX_LED_BRIGHTNESS/2);
+//   LED_SetLEDBrightness(0, LED_PAD7_R, MAX_LED_BRIGHTNESS);
 //
-//	   //DrvGPIO_SetPortBits(LED_DATA_PORT, ~(1<<LED_DATA_LINE0) );
-//	   for( i = 0 ; i < 8*3; i++ )
-//	   {
-//		   DrvGPIO_ClrBit(LED_DATA_PORT, LED_LINE_MAP[i]);
-//		   DrvSYS_Delay(1000 * 1000);
-//	   }
-//   }
+//   LED_SetLEDBrightness(0, LED_PAD8_R, MAX_LED_BRIGHTNESS/10);
+//   LED_SetLEDBrightness(0, LED_PAD9_R, MAX_LED_BRIGHTNESS/4);
+//   LED_SetLEDBrightness(0, LED_PAD10_R, MAX_LED_BRIGHTNESS/2);
+//   LED_SetLEDBrightness(0, LED_PAD11_R, MAX_LED_BRIGHTNESS);
+//
+//   LED_SetLEDBrightness(0, LED_PAD8_G, MAX_LED_BRIGHTNESS/10);
+//   LED_SetLEDBrightness(0, LED_PAD9_G, MAX_LED_BRIGHTNESS/4);
+//   LED_SetLEDBrightness(0, LED_PAD10_G, MAX_LED_BRIGHTNESS/2);
+//   LED_SetLEDBrightness(0, LED_PAD11_G, MAX_LED_BRIGHTNESS);
+//
+//   LED_SetLEDBrightness(0, LED_PAD12_G, MAX_LED_BRIGHTNESS/20);
+//   LED_SetLEDBrightness(0, LED_PAD13_G, MAX_LED_BRIGHTNESS/10);
+//   LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/5);
+//   LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);
 
+   LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS/200);
+   LED_SetLEDBrightness(0, LED_PAD1_G, MAX_LED_BRIGHTNESS/150);
+   LED_SetLEDBrightness(0, LED_PAD2_G, MAX_LED_BRIGHTNESS/110);
+   LED_SetLEDBrightness(0, LED_PAD3_G, MAX_LED_BRIGHTNESS/100);
 
-   LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS/10);
-   LED_SetLEDBrightness(0, LED_PAD1_G, MAX_LED_BRIGHTNESS/4);
-   LED_SetLEDBrightness(0, LED_PAD2_G, MAX_LED_BRIGHTNESS/2);
-   LED_SetLEDBrightness(0, LED_PAD3_G, MAX_LED_BRIGHTNESS);
+   LED_SetLEDBrightness(0, LED_PAD4_G, MAX_LED_BRIGHTNESS/90);
+   LED_SetLEDBrightness(0, LED_PAD5_G, MAX_LED_BRIGHTNESS/80);
+   LED_SetLEDBrightness(0, LED_PAD6_G, MAX_LED_BRIGHTNESS/70);
+   LED_SetLEDBrightness(0, LED_PAD7_G, MAX_LED_BRIGHTNESS/60);
 
-//   LED_SetLEDBrightness(0, LED_7SEG0_A, MAX_LED_BRIGHTNESS/10);
-//   LED_SetLEDBrightness(0, LED_7SEG0_B, MAX_LED_BRIGHTNESS/4);
-//   LED_SetLEDBrightness(0, LED_7SEG0_C, MAX_LED_BRIGHTNESS/2);
-//   LED_SetLEDBrightness(0, LED_7SEG0_D, MAX_LED_BRIGHTNESS);
+   LED_SetLEDBrightness(0, LED_PAD8_G, MAX_LED_BRIGHTNESS/50);
+   LED_SetLEDBrightness(0, LED_PAD9_G, MAX_LED_BRIGHTNESS/40);
+   LED_SetLEDBrightness(0, LED_PAD10_G, MAX_LED_BRIGHTNESS/30);
+   LED_SetLEDBrightness(0, LED_PAD11_G, MAX_LED_BRIGHTNESS/20);
 
-//   LED_SetLEDBrightness(0, LED_7SEG1_G, MAX_LED_BRIGHTNESS/10);
-//   LED_SetLEDBrightness(0, LED_7SEG1_E, MAX_LED_BRIGHTNESS/4);
-//   LED_SetLEDBrightness(0, LED_7SEG1_F, MAX_LED_BRIGHTNESS/2);
-//   LED_SetLEDBrightness(0, LED_7SEG1_B, MAX_LED_BRIGHTNESS);
-
-   LED_SetLEDBrightness(0, LED_PAD8_G, MAX_LED_BRIGHTNESS/10);
-   LED_SetLEDBrightness(0, LED_PAD9_G, MAX_LED_BRIGHTNESS/4);
-   LED_SetLEDBrightness(0, LED_PAD10_G, MAX_LED_BRIGHTNESS/2);
-   LED_SetLEDBrightness(0, LED_PAD11_G, MAX_LED_BRIGHTNESS);
+   LED_SetLEDBrightness(0, LED_PAD12_G, MAX_LED_BRIGHTNESS/10);
+   LED_SetLEDBrightness(0, LED_PAD13_G, MAX_LED_BRIGHTNESS/5);
+   LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/2);
+   LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);
 
 
    LED_7Segment_Write(0, 0x07 );
@@ -72,13 +82,13 @@ int main(void)
          LED_TimerRoutine(column);
       }
       column++;
-      if( column > MAX_LINE_COLUMNS )
+      if( column >= 8 )
       {
          column = 0;
       }
-      DrvSYS_Delay(20);
+      DrvSYS_Delay(16);
       LED_Blank();
-      DrvSYS_Delay(10);
+      DrvSYS_Delay(2);
    }
 
 	return 0;

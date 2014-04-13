@@ -15,6 +15,127 @@ const uint8_t LED_LINE_MAP[] = {
 		LED_DATA_LINE7,
 };
 
+
+
+const uint16_t LED_7SEG_DIGIT_0[] = {
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+0
+};
+
+const uint16_t LED_7SEG_DIGIT_1[] = {
+0,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+0,
+0,
+0,
+0
+};
+
+const uint16_t LED_7SEG_DIGIT_2[] = {
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+0,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+0,
+MAX_LED_BRIGHTNESS
+};
+
+const uint16_t LED_7SEG_DIGIT_3[] = {
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+0,
+0,
+MAX_LED_BRIGHTNESS
+};
+
+const uint16_t LED_7SEG_DIGIT_4[] = {
+0,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+0,
+0,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS
+};
+
+
+const uint16_t LED_7SEG_DIGIT_5[] = {
+MAX_LED_BRIGHTNESS,
+0,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+0,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS
+};
+
+
+const uint16_t LED_7SEG_DIGIT_6[] = {
+MAX_LED_BRIGHTNESS,
+0,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS
+};
+
+
+const uint16_t LED_7SEG_DIGIT_7[] = {
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+0,
+0,
+0,
+0
+};
+
+
+const uint16_t LED_7SEG_DIGIT_8[] = {
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS
+};
+
+const uint16_t LED_7SEG_DIGIT_9[] = {
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS,
+0,
+MAX_LED_BRIGHTNESS,
+MAX_LED_BRIGHTNESS
+};
+
+
+const uint16_t* LED_7SEG_DIGITS[] = {
+LED_7SEG_DIGIT_0,
+LED_7SEG_DIGIT_1,
+LED_7SEG_DIGIT_2,
+LED_7SEG_DIGIT_3,
+LED_7SEG_DIGIT_4,
+LED_7SEG_DIGIT_5,
+LED_7SEG_DIGIT_6,
+LED_7SEG_DIGIT_7,
+LED_7SEG_DIGIT_8,
+LED_7SEG_DIGIT_9,
+};
+
+
 uint8_t LED_DisplayBuffer[LED_COUNT];
 
 LEDElement_t LED_DisplayInformation[LED_COUNT];
@@ -24,15 +145,13 @@ void LED_Init(void)
    memset((void*)&LED_DisplayInformation, 0 , sizeof(LEDElement_t)*LED_COUNT );
 }
 
-void LED_SetLEDBrightness(uint8_t bufferIndex, uint8_t index, uint16_t brightness)
+void LED_SetLEDBrightness(uint8_t bufferIndex, uint8_t index, uint32_t brightness)
 {
-//	uint32_t newInterval;
-
+	uint32_t newInterval;
 	LED_DisplayInformation[index].brightness = brightness;
-
-//	newInterval = (LED_DisplayInformation[index].brightness * BRIGHTNESS_MULT_FACTOR) / MAX_LED_BRIGHTNESS;
-//	newInterval = BRIGHTNESS_MULT_FACTOR - newInterval;
-//	LED_DisplayInformation[index].interval = newInterval;
+	newInterval = (LED_DisplayInformation[index].brightness * BRIGHTNESS_MULT_FACTOR) / MAX_LED_BRIGHTNESS;
+	newInterval = BRIGHTNESS_MULT_FACTOR - newInterval;
+	LED_DisplayInformation[index].interval = newInterval;
 
 }
 
@@ -55,126 +174,8 @@ void LED_Blank(void)
 //	   128 = 1111100000 etc..
 //
 
- uint8_t LED_7SEG_DIGIT_0[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0
-};
-
- uint8_t LED_7SEG_DIGIT_1[] = {
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-0,
-0,
-0
-};
-
- uint8_t LED_7SEG_DIGIT_2[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS
-};
-
- uint8_t LED_7SEG_DIGIT_3[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-0,
-MAX_LED_BRIGHTNESS
-};
-
- uint8_t LED_7SEG_DIGIT_4[] = {
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
-
- uint8_t LED_7SEG_DIGIT_5[] = {
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
-
- uint8_t LED_7SEG_DIGIT_6[] = {
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
-
- uint8_t LED_7SEG_DIGIT_7[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-0,
-0,
-0
-};
-
-
- uint8_t LED_7SEG_DIGIT_8[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
- uint8_t LED_7SEG_DIGIT_9[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
-
-uint8_t* LED_7SEG_DIGITS[] = {
-LED_7SEG_DIGIT_0,
-LED_7SEG_DIGIT_1,
-LED_7SEG_DIGIT_2,
-LED_7SEG_DIGIT_3,
-LED_7SEG_DIGIT_4,
-LED_7SEG_DIGIT_5,
-LED_7SEG_DIGIT_6,
-LED_7SEG_DIGIT_7,
-LED_7SEG_DIGIT_8,
-LED_7SEG_DIGIT_9,
-};
-
-
-
+//Number is between 0 and 9 and | LED_7SEG_DP to obtain DP.
+//To clear the segment, write a 10
 void LED_7Segment_Write(uint8_t index, uint8_t number)
 {
 
@@ -188,7 +189,7 @@ void LED_7Segment_Write(uint8_t index, uint8_t number)
 	if( number < LED_7SEG_MAX )
 	{
 		uint8_t i;
-		uint8_t* segmentMap = LED_7SEG_DIGITS[number];
+		uint16_t* segmentMap = (uint16_t*)LED_7SEG_DIGITS[number];
 
 		for( i = 0; i < LED_7SEG_SEGMENT_COUNT; i++)
 		{
@@ -198,28 +199,54 @@ void LED_7Segment_Write(uint8_t index, uint8_t number)
 			}
 		}
 	}
+	else
+	{
+		uint8_t i;
+		for( i = 0; i < LED_7SEG_SEGMENT_COUNT; i++)
+		{
+			LED_SetLEDBrightness(0, (index*LED_7SEG_LED_COUNT)+i , 0);
+		}
+
+	}
+}
+
+
+
+//From 0 up to 999.
+void LED_7Segment_WriteNumber(uint16_t number)
+{
+
+   uint8_t hundreds = number / 100;
+   uint8_t tens = number - (hundreds * 100);
+   uint8_t ones;
+
+   ones = tens;
+
+   tens = tens / 10;
+
+   ones = ones - (tens * 10);
+
+   LED_7Segment_Write(0, hundreds);
+   LED_7Segment_Write(1, tens);
+   LED_7Segment_Write(2, ones);
 }
 
 
 void LED_TimerRoutine(uint8_t column)
 {
+
+	if(column >= MAX_LINE_COLUMNS )
+	{
+		return;
+	}
+
 	LEDElement_t* displayInfo = (LEDElement_t*)&LED_DisplayInformation[column * LEDS_PER_COLUMN];
 	uint8_t i;
 	uint16_t ledData = 0;
 
 	for( i = 0 ; i < LEDS_PER_COLUMN; i++ )
 	{
-
-   uint8_t index = (column * LEDS_PER_COLUMN) + i;
-
-   uint32_t newInterval;
-
-	newInterval = (displayInfo[i].brightness * BRIGHTNESS_MULT_FACTOR) / MAX_LED_BRIGHTNESS;
-	newInterval = BRIGHTNESS_MULT_FACTOR - newInterval;
-	
-      //LED_DisplayInformation[index].brightnessError +=   newInterval;
-
-		displayInfo[i].brightnessError += newInterval;
+		displayInfo[i].brightnessError += displayInfo[i].interval;
 
 		if( displayInfo[i].brightnessError >= BRIGHTNESS_MULT_FACTOR)
 		{
@@ -228,10 +255,10 @@ void LED_TimerRoutine(uint8_t column)
 		}
 		else
 		{
-         if(  displayInfo[i].brightness )
-         {
-            ledData |= (1<<i);
-         }
+			if(  displayInfo[i].brightness )
+			{
+				ledData |= (1<<i);
+			}
 		}
 	}
 
@@ -280,7 +307,7 @@ void LED_GPIO_Init(void)
 void LED_SetData(uint16_t data)
 {
 
-	uint32_t newData = 0;
+	int32_t newData = 0;
 
 	DrvGPIO_SetPortMask(LED_DATA_PORT,~((1<<LED_DATA_LINE0) | (1<<LED_DATA_LINE1) | (1<<LED_DATA_LINE2) | (1<<LED_DATA_LINE3) |
 									    (1<<LED_DATA_LINE4) | (1<<LED_DATA_LINE5) | (1<<LED_DATA_LINE6) | (1<<LED_DATA_LINE7)) );
