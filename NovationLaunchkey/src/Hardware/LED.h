@@ -9,23 +9,17 @@ extern "C" {
 #include "NUC1xx.h"
 #include "DrvSys.h"
 #include "DrvGPIO.h"
+#include "HardwareSpecific.h"
 
-#define LED_DATA_PORT	(E_GPA)
+#define LEDS_PER_COLUMN (8)
+#define LED_BRIGHTNESS_RES (8)
+#define MAX_LED_BRIGHTNESS ((1<<LED_BRIGHTNESS_RES)-1)
+#define BRIGHTNESS_MULT_FACTOR (1000)
 
-
-typedef enum
-{
-	LED_DATA_LINE0 = 6,
-	LED_DATA_LINE1 = 7,
-	LED_DATA_LINE2 = 10,
-	LED_DATA_LINE3 = 11,
-	LED_DATA_LINE4 = 12,
-	LED_DATA_LINE5 = 13,
-	LED_DATA_LINE6 = 14,
-	LED_DATA_LINE7 = 15,
-
-} E_LED_DATA_LINES;
-
+#define LED_7SEG_MAX (10)
+#define LED_7SEG_SEGMENT_COUNT (7)
+#define LED_7SEG_DP (0x80)
+#define LED_7SEG_LED_COUNT (8)
 
 /*
 
@@ -40,7 +34,7 @@ E		C
 
  */
 
-#define LEDS_PER_COLUMN (8)
+
 
 
 typedef enum
@@ -79,7 +73,6 @@ typedef enum
 
 	LED_CIRCLE_PAD0_G,
 	LED_CIRCLE_PAD0_R,
-
 	LED_CIRCLE_PAD1_G,
 	LED_CIRCLE_PAD1_R,
 
@@ -91,6 +84,7 @@ typedef enum
 	LED_PAD13_R,
 	LED_PAD8_G,
 	LED_PAD8_R,
+
 	LED_PAD2_G,
 	LED_PAD2_R,
 	LED_PAD7_G,
@@ -99,6 +93,7 @@ typedef enum
 	LED_PAD14_R,
 	LED_PAD10_G,
 	LED_PAD10_R,
+
 	LED_PAD1_G,
 	LED_PAD1_R,
 	LED_PAD6_G,
@@ -107,6 +102,7 @@ typedef enum
 	LED_PAD15_R,
 	LED_PAD11_G,
 	LED_PAD11_R,
+
 	LED_PAD0_G,
 	LED_PAD0_R,
 	LED_PAD5_G,
@@ -121,10 +117,32 @@ typedef enum
 } E_LED_INDEX;
 
 
-extern uint8_t LED_PAD_SEQUENCE[];
+typedef struct
+{
+   uint8_t index;
+   uint16_t brightness;
+   uint32_t brightnessError;
+   uint32_t interval;
+} LEDElement_t;
 
+typedef struct
+{
+   uint16_t brightnessHi;
+   uint16_t brightnessLo;
+} LEDBrightnessElement_t;
+
+extern uint8_t LED_PAD_SEQUENCE[];
+extern const uint8_t LED_LINE_MAP[];
+
+void LED_Init(void);
 void LED_GPIO_Init(void);
 void LED_SetData(uint16_t data);
+void LED_TimerRoutine(uint8_t column);
+void LED_SetLEDBrightness(uint8_t bufferIndex, uint8_t index, uint16_t brightness);
+void LED_Blank(void);
+
+
+void LED_7Segment_Write(uint8_t index, uint8_t number);
 
 
 //Setup GPIO

@@ -16,58 +16,69 @@ int main(void)
 
    MUX_GPIO_Init();
    LED_GPIO_Init();
-
+   LED_Init();
    
    uint8_t i;
-   uint8_t j;
+   uint8_t j = 0;
 
 
 //   while(1)
 //   {
-//	   MUX_ActivateLineColumn(4);
+//	   MUX_ActivateLineColumn(j++);
 //
 //
 //	   //DrvGPIO_SetPortBits(LED_DATA_PORT, ~(1<<LED_DATA_LINE0) );
-//
-//	   DrvGPIO_ClrBit(LED_DATA_PORT, LED_DATA_LINE0);
-//      DrvGPIO_ClrBit(LED_DATA_PORT, LED_DATA_LINE1);
-//
-//
-//	   DrvSYS_Delay(1000 * 1000);
+//	   for( i = 0 ; i < 8*3; i++ )
+//	   {
+//		   DrvGPIO_ClrBit(LED_DATA_PORT, LED_LINE_MAP[i]);
+//		   DrvSYS_Delay(1000 * 1000);
+//	   }
 //   }
 
 
+   LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS/10);
+   LED_SetLEDBrightness(0, LED_PAD1_G, MAX_LED_BRIGHTNESS/4);
+   LED_SetLEDBrightness(0, LED_PAD2_G, MAX_LED_BRIGHTNESS/2);
+   LED_SetLEDBrightness(0, LED_PAD3_G, MAX_LED_BRIGHTNESS);
+
+//   LED_SetLEDBrightness(0, LED_7SEG0_A, MAX_LED_BRIGHTNESS/10);
+//   LED_SetLEDBrightness(0, LED_7SEG0_B, MAX_LED_BRIGHTNESS/4);
+//   LED_SetLEDBrightness(0, LED_7SEG0_C, MAX_LED_BRIGHTNESS/2);
+//   LED_SetLEDBrightness(0, LED_7SEG0_D, MAX_LED_BRIGHTNESS);
+
+//   LED_SetLEDBrightness(0, LED_7SEG1_G, MAX_LED_BRIGHTNESS/10);
+//   LED_SetLEDBrightness(0, LED_7SEG1_E, MAX_LED_BRIGHTNESS/4);
+//   LED_SetLEDBrightness(0, LED_7SEG1_F, MAX_LED_BRIGHTNESS/2);
+//   LED_SetLEDBrightness(0, LED_7SEG1_B, MAX_LED_BRIGHTNESS);
+
+   LED_SetLEDBrightness(0, LED_PAD8_G, MAX_LED_BRIGHTNESS/10);
+   LED_SetLEDBrightness(0, LED_PAD9_G, MAX_LED_BRIGHTNESS/4);
+   LED_SetLEDBrightness(0, LED_PAD10_G, MAX_LED_BRIGHTNESS/2);
+   LED_SetLEDBrightness(0, LED_PAD11_G, MAX_LED_BRIGHTNESS);
+
+
+   LED_7Segment_Write(0, 0x07 );
+   LED_7Segment_Write(1, 0x08);
+   LED_7Segment_Write(2, 0x09 | LED_7SEG_DP);
+
+   uint8_t column = 0;
    while(1)
    {
+      MUX_ActivateLineColumn(column);
+      uint16_t i;
 
-      for( i = 0; i < PAD_COUNT * 2 ; i ++ )
+      //for( i = 0; i < MAX_LED_BRIGHTNESS; i ++ )
       {
-         //MUX_ActivateLineColumn(j);
-         uint8_t column;
-         uint8_t row;
-
-         column = LED_PAD_SEQUENCE[i] / LEDS_PER_COLUMN;
-         row =    LED_PAD_SEQUENCE[i] & (LEDS_PER_COLUMN - 1);
-         
-         MUX_ActivateLineColumn(column);
-         LED_SetData( ~(1<<row) );
-         DrvSYS_Delay(10*1000);
-
+         LED_TimerRoutine(column);
       }
-     }
-      
-   {
-
-      for( j = 0; j < MAX_LINE_COLUMNS; j++ )
+      column++;
+      if( column > MAX_LINE_COLUMNS )
       {
-         MUX_ActivateLineColumn(j);
-
-         for(i = 0; i < 8; i++ )
-         {
-            LED_SetData( ~(1<<i) );
-            DrvSYS_Delay(10*1000);
-         }
+         column = 0;
       }
+      DrvSYS_Delay(20);
+      LED_Blank();
+      DrvSYS_Delay(10);
    }
 
 	return 0;
