@@ -110,9 +110,6 @@ void ADC_IntCallback(uint32_t u32UserData)
 		ADC_ApplyFilter(adcLookup, adcSample);
 	}
 
-	ADC_SetNextColumn();
-	ADC_StartConversion();
-
 	ADCStatus = 1;
 }
 
@@ -179,6 +176,15 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 
 		//tempValue is a 12bit value;
 		uint16_t tempValue = ele->runningAverage >> (ADC_EFFECTIVE_RES-ADC_OUTPUT_RES);
+
+
+		if( index == ADC_KNOB_7 )
+		{
+			//printNumber(tempValue);
+			//printNumber(ele->runningAverage);
+
+		}
+
 
 		//Clamp the Max and Min
 		if(ele->runningAverage >= ADC_MAX_VAL )

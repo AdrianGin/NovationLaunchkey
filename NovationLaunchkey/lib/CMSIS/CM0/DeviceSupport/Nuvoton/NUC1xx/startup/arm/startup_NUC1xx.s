@@ -163,7 +163,7 @@ GPB_MFP          EQU  0x0034
 
 
 
-Stack_Size      EQU     0x00000400
+Stack_Size      EQU     0x00000500
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size

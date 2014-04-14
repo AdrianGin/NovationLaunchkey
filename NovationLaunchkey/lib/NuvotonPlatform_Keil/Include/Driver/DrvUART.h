@@ -235,7 +235,7 @@ void DrvUART_EnableInt(E_UART_PORT u32Port,uint32_t u32InterruptFlag,PFN_DRVUART
 void DrvUART_DisableInt(E_UART_PORT u32Port,uint32_t u32InterruptFlag);
 void DrvUART_GetClcok(uint8_t *pu8ClcokSrc, uint8_t *pu8ClcokDiv);
 void DrvUART_GetCTSInfo(E_UART_PORT u32Port,uint8_t *pu8CTSValue,uint8_t *pu8CTSChangeState);
-void DrvUART_SetClcok(uint8_t u8ClcokSrc, uint8_t u8ClcokDiv);
+void DrvUART_SetClock(uint8_t u8ClcokSrc, uint8_t u8ClcokDiv);
 void DrvUART_SetRTSTrigLevel(E_UART_PORT u32Port,uint16_t u16TriggerLevel);
 void DrvUART_SetRTS(E_UART_PORT u32Port,uint8_t u8Value,uint16_t u16TriggerLevel);
 
