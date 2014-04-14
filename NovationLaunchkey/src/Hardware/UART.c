@@ -73,7 +73,7 @@ void UART_TxBuffer(uint8_t* buffer, uint8_t size)
 void UART_TxByte(uint8_t byte)
 {
 
-	//while( UART_TxQueuedBytes() == UART_TX_BUFFER_MASK );
+	while( UART_TxQueuedBytes() == UART_TX_BUFFER_MASK );
 
 	UART_TxBuf[UART_TxWritePtr] = byte;
 	UART_TxWritePtr = (UART_TxWritePtr + 1) & UART_TX_BUFFER_MASK;

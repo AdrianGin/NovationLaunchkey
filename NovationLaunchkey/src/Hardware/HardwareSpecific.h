@@ -75,6 +75,7 @@ typedef enum
 
 void SystemClockInit(void);
 void printMsg(uint8_t* buffer);
+void printNumber(uint16_t number);
 
 //Setup GPIO
 

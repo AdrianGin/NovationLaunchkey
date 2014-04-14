@@ -87,7 +87,6 @@ int main(void)
 	if( DrvUART_Open(UART_PORT1,&sParam) == E_SUCCESS)
 	{
 		DrvUART_EnableInt(UART_PORT1, DRVUART_THREINT, UART_INT_HANDLE);
-		LED_SetLEDBrightness(0, LED_PAD6_R, MAX_LED_BRIGHTNESS);
 	}
 
 
@@ -117,7 +116,8 @@ int main(void)
       if( adcCounter++ >= 200 )
       {
 
-    	   printMsg("hello");
+    	   //printMsg("hello");
+			printNumber(8551);
 			//UART_TxByte(0xF8);
 
 			adcSample = ADC_GetSample(ADC_KNOB_7);

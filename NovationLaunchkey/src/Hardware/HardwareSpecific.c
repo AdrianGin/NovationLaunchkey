@@ -38,6 +38,28 @@ void printMsg(uint8_t* buffer)
 	UART_TxByte(0xF7);
 }
 
+void printNumber(uint16_t number)
+{
+	uint16_t temp;
+	uint16_t divisor = 10000;
+
+	UART_TxByte(0xF0);
+
+	while(divisor)
+	{
+		UART_TxByte(number / divisor );
+		if( number >= divisor )
+		{
+			temp = (number / divisor);
+			number = number - (temp * divisor);
+		}
+		divisor = divisor / 10;
+
+	}
+	
+	UART_TxByte(0xF7);	
+}
+
 //Setup GPIO
 
 
