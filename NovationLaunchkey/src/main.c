@@ -117,7 +117,8 @@ int main(void)
       if( adcCounter++ >= 200 )
       {
 
-    	    printMsg("hello");
+    	   printMsg("hello");
+			//UART_TxByte(0xF8);
 
 			adcSample = ADC_GetSample(ADC_KNOB_7);
 			adcSample = adcSample >> (ADC_OUTPUT_RES-8);

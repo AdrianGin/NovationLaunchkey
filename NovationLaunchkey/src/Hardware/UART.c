@@ -77,10 +77,6 @@ void UART_TxByte(uint8_t byte)
 
 	UART_TxBuf[UART_TxWritePtr] = byte;
 	UART_TxWritePtr = (UART_TxWritePtr + 1) & UART_TX_BUFFER_MASK;
-
-	if( (UARTPORT_DEF->IER.THRE_IEN == 0) )
-	{
-		DrvUART_EnableInt(UARTPORT, (DRVUART_THREINT), UART_INT_HANDLE);
-	}
+	DrvUART_EnableInt(UARTPORT, (DRVUART_THREINT), UART_INT_HANDLE);
 	
 }
