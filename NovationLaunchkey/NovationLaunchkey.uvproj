@@ -44,7 +44,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\</OutputDirectory>
+          <OutputDirectory>.\obj\</OutputDirectory>
           <OutputName>NovationLaunchkey</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
@@ -343,7 +343,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -429,6 +429,21 @@
               <FileType>1</FileType>
               <FilePath>.\src\Hardware\MultiplexControl.c</FilePath>
             </File>
+            <File>
+              <FileName>Timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\Timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\ADC.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -463,6 +478,21 @@
               <FileName>DrvSYS.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\lib\NuvotonPlatform_Keil\Src\Driver\DrvSYS.c</FilePath>
+            </File>
+            <File>
+              <FileName>DrvADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\NuvotonPlatform_Keil\Src\Driver\DrvADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>DrvTIMER.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\NuvotonPlatform_Keil\Src\Driver\DrvTIMER.c</FilePath>
+            </File>
+            <File>
+              <FileName>DrvUART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\NuvotonPlatform_Keil\Src\Driver\DrvUART.c</FilePath>
             </File>
           </Files>
         </Group>
