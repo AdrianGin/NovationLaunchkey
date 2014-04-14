@@ -193,10 +193,7 @@ void LED_7Segment_Write(uint8_t index, uint8_t number)
 
 		for( i = 0; i < LED_7SEG_SEGMENT_COUNT; i++)
 		{
-			if( segmentMap[i])
-			{
-				LED_SetLEDBrightness(0, (index*LED_7SEG_LED_COUNT)+i , segmentMap[i] );
-			}
+			LED_SetLEDBrightness(0, (index*LED_7SEG_LED_COUNT)+i , segmentMap[i] );
 		}
 	}
 	else
@@ -309,8 +306,11 @@ void LED_SetData(uint16_t data)
 
 	int32_t newData = 0;
 
-	DrvGPIO_SetPortMask(LED_DATA_PORT,~((1<<LED_DATA_LINE0) | (1<<LED_DATA_LINE1) | (1<<LED_DATA_LINE2) | (1<<LED_DATA_LINE3) |
-									    (1<<LED_DATA_LINE4) | (1<<LED_DATA_LINE5) | (1<<LED_DATA_LINE6) | (1<<LED_DATA_LINE7)) );
+	//DrvGPIO_SetPortMask(LED_DATA_PORT,~((1<<LED_DATA_LINE0) | (1<<LED_DATA_LINE1) | (1<<LED_DATA_LINE2) | (1<<LED_DATA_LINE3) |
+	//								    (1<<LED_DATA_LINE4) | (1<<LED_DATA_LINE5) | (1<<LED_DATA_LINE6) | (1<<LED_DATA_LINE7)) );
+
+	newData = DrvGPIO_GetPortDoutBits(LED_DATA_PORT) & (~LED_DATA_LINE_MASK);
+
 
 	newData |= ( ((data & 0x01)  ? 1 : 0)  << LED_DATA_LINE0);
 	newData |= ( ((data & 0x02)  ? 1 : 0)  << LED_DATA_LINE1);
@@ -320,6 +320,7 @@ void LED_SetData(uint16_t data)
 	newData |= ( ((data & 0x20)  ? 1 : 0)  << LED_DATA_LINE5);
 	newData |= ( ((data & 0x40)  ? 1 : 0)  << LED_DATA_LINE6);
 	newData |= ( ((data & 0x80)  ? 1 : 0)  << LED_DATA_LINE7);
+
 	DrvGPIO_SetPortBits(LED_DATA_PORT, newData);
 
 }

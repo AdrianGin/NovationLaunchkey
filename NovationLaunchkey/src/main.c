@@ -2,9 +2,10 @@
 
 #include "HardwareSpecific.h"
 
+#include "ADC.h"
 #include "LED.h"
 #include "MultiplexControl.h"
-
+#include "UART.h"
 
 int main(void)
 {
@@ -16,7 +17,15 @@ int main(void)
 
    MUX_GPIO_Init();
    LED_GPIO_Init();
-   LED_Init();
+   UART_Init();
+	LED_Init();
+   
+
+	ADC_Init();
+
+   ADC_StartConversion();
+
+	
    
    uint8_t i;
    uint8_t j = 0;
@@ -54,7 +63,7 @@ int main(void)
    LED_SetLEDBrightness(0, LED_PAD4_G, MAX_LED_BRIGHTNESS/90);
    LED_SetLEDBrightness(0, LED_PAD5_G, MAX_LED_BRIGHTNESS/80);
    LED_SetLEDBrightness(0, LED_PAD6_G, MAX_LED_BRIGHTNESS/70);
-   LED_SetLEDBrightness(0, LED_PAD7_G, MAX_LED_BRIGHTNESS/60);
+
 
    LED_SetLEDBrightness(0, LED_PAD8_G, MAX_LED_BRIGHTNESS/50);
    LED_SetLEDBrightness(0, LED_PAD9_G, MAX_LED_BRIGHTNESS/40);
@@ -66,12 +75,27 @@ int main(void)
    LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/2);
    LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);
 
+	STR_UART_T sParam;
+	/* UART Setting */
+   sParam.u32BaudRate 		= 31250;
+   sParam.u8cDataBits 		= DRVUART_DATABITS_8;
+   sParam.u8cStopBits 		= DRVUART_STOPBITS_1;
+   sParam.u8cParity 		= DRVUART_PARITY_NONE;
+   sParam.u8cRxTriggerLevel= DRVUART_FIFO_1BYTES;
 
-   LED_7Segment_Write(0, 0x07 );
-   LED_7Segment_Write(1, 0x08);
-   LED_7Segment_Write(2, 0x09 | LED_7SEG_DP);
+	/* Set UART Configuration */
+	if( DrvUART_Open(UART_PORT1,&sParam) == E_SUCCESS)
+	{
+		DrvUART_EnableInt(UART_PORT1, DRVUART_THREINT, UART_INT_HANDLE);
+		LED_SetLEDBrightness(0, LED_PAD6_R, MAX_LED_BRIGHTNESS);
+	}
+
 
    uint8_t column = 0;
+   uint16_t adcSample;
+
+   uint16_t adcCounter = 0;
+
    while(1)
    {
       MUX_ActivateLineColumn(column);
@@ -82,13 +106,29 @@ int main(void)
          LED_TimerRoutine(column);
       }
       column++;
-      if( column >= 8 )
+      if( column >= MAX_LINE_COLUMNS )
       {
          column = 0;
       }
       DrvSYS_Delay(16);
       LED_Blank();
       DrvSYS_Delay(2);
+
+      if( adcCounter++ >= 200 )
+      {
+
+    	    printMsg("hello");
+
+			adcSample = ADC_GetSample(ADC_KNOB_7);
+			adcSample = adcSample >> (ADC_OUTPUT_RES-8);
+			LED_7Segment_WriteNumber(adcSample);
+
+			DrvSYS_Delay(200);
+			//DrvADC_StartConvert();
+
+			adcCounter = 0;
+      }
+
    }
 
 	return 0;

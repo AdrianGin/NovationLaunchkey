@@ -4,6 +4,8 @@
 #include "NUC1xx.h"
 #include "DrvSys.h"
 
+#include "UART.h"
+#include <string.h>
 
 //Setup Clocks
 
@@ -15,6 +17,8 @@ void SystemClockInit(void)
    DrvSYS_Delay(5000);
    DrvSYS_Open(50000000);
 
+
+
    /* Enable PLL */
    //DrvSYS_SetPLLMode(0);
 
@@ -23,10 +27,15 @@ void SystemClockInit(void)
 
    /* Update system core clock */
    //SystemCoreClockUpdate();
+}
 
 
 
-
+void printMsg(uint8_t* buffer)
+{
+	UART_TxByte(0xF0);
+	UART_TxBuffer(buffer, strlen(buffer) );
+	UART_TxByte(0xF7);
 }
 
 //Setup GPIO
