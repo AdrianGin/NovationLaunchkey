@@ -120,6 +120,8 @@ int main(void)
 			adcSample = adcSample >> (ADC_OUTPUT_RES-8);
 			LED_7Segment_WriteNumber(adcSample);
 
+			//printNumber(adcSample);
+
 			DrvSYS_Delay(200);
 			//DrvADC_StartConvert();
 

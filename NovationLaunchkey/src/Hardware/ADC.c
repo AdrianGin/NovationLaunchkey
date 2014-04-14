@@ -2,7 +2,7 @@
 
 #include "ADC.h"
 #include "MultiplexControl.h"
-
+#include "Timer.h"
 #include "LED.h"
 
 const uint8_t ADC_SCANMAP[] = {ADC_INPUT0_PIN, ADC_INPUT1_PIN, ADC_INPUT2_PIN, ADC_INPUT3_PIN, ADC_INPUT4_PIN};
@@ -64,6 +64,7 @@ typedef struct
 	uint8_t 	writePtr;
 	uint8_t		ready;
 	uint16_t 	averages[ADC_OVERSAMPLING_COUNT];
+	uint16_t    lastValue;
 	uint16_t	value;
 	uint16_t    runningAverage;
 
@@ -72,7 +73,7 @@ typedef struct
 ADC_FilteredElement_t ADC_Filtered[ADC_INPUT_COUNT];
 
 uint8_t ADCColumn;
-uint8_t ADCStatus;
+uint8_t ADCStatus = 1;
 
 uint8_t ADC_GetCurrentColumn(void)
 {
@@ -109,6 +110,10 @@ void ADC_IntCallback(uint32_t u32UserData)
 
 		ADC_ApplyFilter(adcLookup, adcSample);
 	}
+
+	ADC_SetNextColumn();
+	ADC_SetNewColumnTimer(TMR_ADC_SAMPLE_TIME);
+
 
 	ADCStatus = 1;
 }
@@ -155,19 +160,23 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 {
 	ADC_FilteredElement_t* ele = &ADC_Filtered[index];
 
-	//Do a running average, remove the oldest sample
-	//recalculate the average
-	uint8_t oldestWritePtr = (ele->writePtr + 1)  & ADC_OVERSAMPLING_MASK;
+	//Do a running sum, remove the oldest sample
+	//add the new sum.
+	uint8_t oldestWritePtr = (ele->writePtr)  & ADC_OVERSAMPLING_MASK;
 
-	ele->averages[ele->writePtr & ADC_OVERSAMPLING_MASK] = sample;
+	ele->runningAverage = ele->runningAverage - ele->averages[oldestWritePtr];
+	ele->averages[oldestWritePtr] = sample;
 
-	ele->writePtr = oldestWritePtr;
+	ele->runningAverage += sample;
 
-	ele->runningAverage = ele->runningAverage - ele->averages[oldestWritePtr] + sample;
+	ele->writePtr++;
+
 
 	if( (!ele->ready) && (oldestWritePtr == 0) )
 	{
 		ele->ready = ADC_READY;
+
+		ele->value = ele->runningAverage >> (ADC_EFFECTIVE_RES-ADC_OUTPUT_RES);
 
 	}
 
@@ -175,16 +184,7 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 	{
 
 		//tempValue is a 12bit value;
-		uint16_t tempValue = ele->runningAverage >> (ADC_EFFECTIVE_RES-ADC_OUTPUT_RES);
-
-
-		if( index == ADC_KNOB_7 )
-		{
-			//printNumber(tempValue);
-			//printNumber(ele->runningAverage);
-
-		}
-
+		uint16_t tempValue = ele->value;
 
 		//Clamp the Max and Min
 		if(ele->runningAverage >= ADC_MAX_VAL )
@@ -200,8 +200,8 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 		uint16_t hiThreshold;
 		uint16_t loThreshold;
 
-		hiThreshold = ((tempValue+1) * ADC_STEP_SIZE);
-		loThreshold = ((tempValue-1) * ADC_STEP_SIZE);
+		hiThreshold = ((tempValue+1) * ADC_STEP_SIZE) + ADC_THRESHOLD;
+		loThreshold = ((tempValue-1) * ADC_STEP_SIZE) - ADC_THRESHOLD;
 
 		//Use this to maximise the endpoints
 		if(tempValue == (ADC_OUTPUT_RANGE - 2))
@@ -226,12 +226,22 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 
 		if( (ele->runningAverage > hiThreshold) )
 		{
-			ele->value = tempValue + 1;
+			ele->value = ele->runningAverage / ADC_STEP_SIZE;
 		}
 
 		if( (ele->runningAverage < loThreshold))
 		{
-			ele->value = tempValue - 1;
+			ele->value = ele->runningAverage / ADC_STEP_SIZE;
+		}
+
+		if( index == ADC_KNOB_7 )
+		{
+//			printNumber(tempValue);
+//			printNumber(ele->runningAverage);
+//			printNumber(hiThreshold);
+//			printNumber(loThreshold);
+//			printNumber(ele->value);
+
 		}
 
 

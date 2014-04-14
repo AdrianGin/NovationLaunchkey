@@ -7,56 +7,50 @@
 #include "LED.h"
 #include "ADC.h"
 
-#define TMR_ADC_SAMPLE_TIME (1)
 
 typedef enum
 {
-	TMR_ADC_NEWCOLUMN = 0,
-	TMR_ADC_SAMPLING,
+	ADC_HOLD_TIMER = 0,
+	TEST_TIMER,
+	TIMER0_COUNT
 
-} TMR_ADC_STATES;
+} TIMER0_t;
+
+volatile uint16_t ADC_NewColumnTimer = 0;
+void ADC_SetNewColumnTimer(uint16_t time)
+{
+	ADC_NewColumnTimer = time;
+}
+
+uint32_t TIM_GetDeltaTime(uint32_t currentTime, uint32_t lastTime)
+{
+	uint32_t deltaTime;
+	if( lastTime > currentTime )
+	{
+		deltaTime = (ULONG_MAX - (lastTime-currentTime)) + 1;
+	}
+	else
+	{
+		deltaTime = currentTime - lastTime;
+	}	
+	return deltaTime;
+}
 
 //1ms Timer;
 void TMR0_Callback(uint32_t u32Param)
 {
-	static uint32_t lastTickTime = 0;
-
-	static uint8_t adcState;
-
-	uint32_t deltaTime;
+	static uint32_t timestamps[TIMER0_COUNT];
 	uint32_t currentTime = DrvTIMER_GetIntTicks(E_TMR0);
 
-	if( lastTickTime > currentTime )
+	if( TIM_GetDeltaTime(currentTime, timestamps[ADC_HOLD_TIMER]) > ADC_NewColumnTimer)
 	{
-		deltaTime = (ULONG_MAX - (lastTickTime-currentTime)) + 1;
-	}
-	else
-	{
-		deltaTime = lastTickTime - currentTime;
-	}
-
-
-	if( (deltaTime) > TMR_ADC_SAMPLE_TIME)
-	{
-		if(adcState == TMR_ADC_SAMPLING)
+		if( ADC_IsFinishedSample() )
 		{
-			ADC_SetNextColumn();
-			adcState = TMR_ADC_NEWCOLUMN;
+			ADC_NewColumnTimer = 0xFFFF;
+			ADC_StartConversion();
 		}
-		else if(adcState == TMR_ADC_NEWCOLUMN)
-		{
-			if( ADC_IsFinishedSample() )
-			{
-				ADC_StartConversion();
-				adcState = TMR_ADC_SAMPLING;
-			}
-		}
-
-
-
+		timestamps[ADC_HOLD_TIMER] = currentTime;
 	}
-
-	lastTickTime = currentTime;
 
 }
 
