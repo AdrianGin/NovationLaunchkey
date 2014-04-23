@@ -160,92 +160,48 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 {
 	ADC_FilteredElement_t* ele = &ADC_Filtered[index];
 
-	//Do a running sum, remove the oldest sample
-	//add the new sum.
-	uint8_t oldestWritePtr = (ele->writePtr)  & ADC_OVERSAMPLING_MASK;
+	//ele->value = sample >> (ADC_EFFECTIVE_RES - ADC_OUTPUT_RES);
 
-	ele->runningAverage = ele->runningAverage - ele->averages[oldestWritePtr];
-	ele->averages[oldestWritePtr] = sample;
+	//tempValue is a (ADC_OUTPUT_RES) bit value;
+	uint16_t tempValue = sample >> (ADC_EFFECTIVE_RES - ADC_OUTPUT_RES);
 
-	ele->runningAverage += sample;
+	uint16_t hiThreshold;
+	uint16_t loThreshold;
 
-	ele->writePtr++;
+	hiThreshold = ((ele->value+1) * ADC_STEP_SIZE) + ADC_THRESHOLD;
+	loThreshold = ((ele->value-1) * ADC_STEP_SIZE) - ADC_THRESHOLD;
 
-
-	if( (!ele->ready) && (oldestWritePtr == 0) )
+	//Protect the endpoints from overflowing
+	if( tempValue == 0 )
 	{
-		ele->ready = ADC_READY;
+		loThreshold = 0;
+	}
+	if( tempValue == (ADC_OUTPUT_RANGE - 1))
+	{
+		hiThreshold = ((1<<ADC_EFFECTIVE_RES));
+	}
 
-		ele->value = ele->runningAverage >> (ADC_EFFECTIVE_RES-ADC_OUTPUT_RES);
+	if( (sample > hiThreshold) )
+	{
+		ele->value = sample / ADC_STEP_SIZE;
+	}
+
+	if( (sample < loThreshold))
+	{
+		ele->value = sample / ADC_STEP_SIZE;
+	}
+
+	if( index == ADC_KNOB_7 )
+	{
+		printNumber(tempValue);
+		printNumber(sample);
+		printNumber(hiThreshold);
+		printNumber(loThreshold);
+		printNumber(ele->value);
 
 	}
 
-	if( ele->ready )
-	{
 
-		//tempValue is a 12bit value;
-		uint16_t tempValue = ele->value;
-
-		//Clamp the Max and Min
-		if(ele->runningAverage >= ADC_MAX_VAL )
-		{
-			ele->value = ADC_OUTPUT_RANGE - 1;
-		}
-
-		if(ele->runningAverage <= ADC_MIN_VAL)
-		{
-			ele->value = 0;
-		}
-
-		uint16_t hiThreshold;
-		uint16_t loThreshold;
-
-		hiThreshold = ((tempValue+1) * ADC_STEP_SIZE) + ADC_THRESHOLD;
-		loThreshold = ((tempValue-1) * ADC_STEP_SIZE) - ADC_THRESHOLD;
-
-		//Use this to maximise the endpoints
-		if(tempValue == (ADC_OUTPUT_RANGE - 2))
-		{
-			hiThreshold = ADC_MAX_VAL;
-		}
-
-		if(tempValue == (1))
-		{
-			loThreshold = ADC_MIN_VAL;
-		}
-
-		//Protect the endpoints from overflowing
-		if( tempValue == 0 )
-		{
-			loThreshold = 0;
-		}
-		if( tempValue == (ADC_OUTPUT_RANGE - 1))
-		{
-			hiThreshold = ((1<<ADC_EFFECTIVE_RES)-1);
-		}
-
-		if( (ele->runningAverage > hiThreshold) )
-		{
-			ele->value = ele->runningAverage / ADC_STEP_SIZE;
-		}
-
-		if( (ele->runningAverage < loThreshold))
-		{
-			ele->value = ele->runningAverage / ADC_STEP_SIZE;
-		}
-
-		if( index == ADC_KNOB_7 )
-		{
-//			printNumber(tempValue);
-//			printNumber(ele->runningAverage);
-//			printNumber(hiThreshold);
-//			printNumber(loThreshold);
-//			printNumber(ele->value);
-
-		}
-
-
-	}
 
 
 }
