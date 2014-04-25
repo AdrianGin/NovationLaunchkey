@@ -71,15 +71,19 @@ typedef enum
 #define ADC_OVERSAMPLING_RES (0)
 #define ADC_EFFECTIVE_RES (ADC_RESOLUTION+ADC_OVERSAMPLING_RES)
 
+#define ADC_MULT_FACTOR	(100)
 
 #define ADC_OUTPUT_RES	(8)
 #define ADC_OUTPUT_RANGE (1<<ADC_OUTPUT_RES)
 
-#define ADC_MAX_VAL		(4095)
+#define ADC_MAX_VAL		(4096)
 #define ADC_MIN_VAL		(0)
 #define ADC_RANGE		(ADC_MAX_VAL-ADC_MIN_VAL)
 
-#define ADC_STEP_SIZE	(ADC_RANGE / (ADC_OUTPUT_RANGE-1) )
+#define ADC_NOM_STEP_SIZE	(ADC_RANGE / (ADC_OUTPUT_RANGE) )
+
+#define ADC_STEP_SIZE	(((ADC_RANGE-ADC_NOM_STEP_SIZE)*ADC_MULT_FACTOR) / (ADC_OUTPUT_RANGE-2))
+
 #define ADC_THRESHOLD	(ADC_STEP_SIZE/2)
 
 
@@ -93,6 +97,8 @@ typedef enum
 void ADC_Init(void);
 void ADC_IntCallback(uint32_t u32UserData);
 uint16_t ADC_GetSample(uint8_t u8ChannelNum);
+uint16_t ADC_GetRawSample(uint8_t u8ChannelNum);
+
 void ADC_StartConversion(void);
 uint8_t ADC_GetCurrentColumn(void);
 void ADC_SetNextColumn(void);

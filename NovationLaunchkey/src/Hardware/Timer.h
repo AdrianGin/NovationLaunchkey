@@ -13,7 +13,21 @@ extern "C" {
 #include <stdint.h>
 
 
-#define TMR_ADC_SAMPLE_TIME (1)
+
+typedef enum
+{
+	ADC_HOLD_TIMER = 0,
+	LED_STROBE,
+	TEST_TIMER,
+	TIMER0_COUNT
+
+} TIMER0_t;
+
+
+
+
+
+
 
 void ADC_SetNewColumnTimer(uint16_t time);
 

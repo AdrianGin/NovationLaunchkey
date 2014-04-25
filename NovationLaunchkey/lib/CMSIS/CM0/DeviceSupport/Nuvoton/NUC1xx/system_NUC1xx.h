@@ -25,7 +25,8 @@
 #define __RTC_XTAL  (32768UL)
 #define __IRC22M    (22118400UL)
 #define __IRC10K    (10000UL)
-#define __HSI       (__IRC22M)      /* Factory Default is internal 22MHz */
+
+#define __HSI       (50000000UL)      /* Factory Default is internal 22MHz */
 
 extern uint32_t SystemCoreClock;                   /*!< System Clock Frequency (Core Clock) */
 extern uint32_t CyclesPerUs;                       /* Cycles per micro second */

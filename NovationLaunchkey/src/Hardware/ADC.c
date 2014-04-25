@@ -5,6 +5,10 @@
 #include "Timer.h"
 #include "LED.h"
 
+#include "TimerCallbacks.h"
+
+#include <stdlib.h>
+
 const uint8_t ADC_SCANMAP[] = {ADC_INPUT0_PIN, ADC_INPUT1_PIN, ADC_INPUT2_PIN, ADC_INPUT3_PIN, ADC_INPUT4_PIN};
 
 const uint8_t ADC_LOOKUP[] = 
@@ -57,17 +61,11 @@ const uint8_t ADC_LOOKUP[] =
 
 };
 
-volatile uint16_t RawADC[ADC_INPUT_COUNT];
 
 typedef struct
 {
-	uint8_t 	writePtr;
-	uint8_t		ready;
-	uint16_t 	averages[ADC_OVERSAMPLING_COUNT];
-	uint16_t    lastValue;
-	uint16_t	value;
-	uint16_t    runningAverage;
-
+	uint16_t lastValue;
+	uint16_t filteredVal;
 } ADC_FilteredElement_t;
 
 ADC_FilteredElement_t ADC_Filtered[ADC_INPUT_COUNT];
@@ -106,16 +104,12 @@ void ADC_IntCallback(uint32_t u32UserData)
 	{
 		int32_t adcSample = DrvADC_GetConversionData(ADC_SCANMAP[i]);
 		uint8_t adcLookup = ADC_LOOKUP[(i * MAX_ADC_COLUMNS) + adcColumn];
-		//RawADC[adcLookup] = (uint16_t)adcSample;
-
 		ADC_ApplyFilter(adcLookup, adcSample);
 	}
 
 	ADC_SetNextColumn();
-	ADC_SetNewColumnTimer(TMR_ADC_SAMPLE_TIME);
+	SoftTimerStart(SoftTimer1[SC_ADC]);
 
-
-	ADCStatus = 1;
 }
 
 
@@ -138,7 +132,6 @@ void ADC_Init(void)
 
 void ADC_StartConversion(void)
 {
-	ADCStatus = 0;
 	DrvADC_StartConvert();
 }
 
@@ -150,7 +143,17 @@ uint16_t ADC_GetSample(uint8_t u8ChannelNum)
 
 	if(u8ChannelNum < ADC_INPUT_COUNT)
 	{
-		return ADC_Filtered[u8ChannelNum].value;
+		return (ADC_Filtered[u8ChannelNum].filteredVal);
+	}
+	return 0;
+}
+
+uint16_t ADC_GetRawSample(uint8_t u8ChannelNum)
+{
+
+	if(u8ChannelNum < ADC_INPUT_COUNT)
+	{
+		return (ADC_Filtered[u8ChannelNum].lastValue);
 	}
 	return 0;
 }
@@ -160,48 +163,31 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 {
 	ADC_FilteredElement_t* ele = &ADC_Filtered[index];
 
-	//ele->value = sample >> (ADC_EFFECTIVE_RES - ADC_OUTPUT_RES);
+	int32_t signedValue;
+	
+	signedValue = sample;// + ele->lastValue;
+	//signedValue = signedValue / 2;
 
-	//tempValue is a (ADC_OUTPUT_RES) bit value;
-	uint16_t tempValue = sample >> (ADC_EFFECTIVE_RES - ADC_OUTPUT_RES);
-
-	uint16_t hiThreshold;
-	uint16_t loThreshold;
-
-	hiThreshold = ((ele->value+1) * ADC_STEP_SIZE) + ADC_THRESHOLD;
-	loThreshold = ((ele->value-1) * ADC_STEP_SIZE) - ADC_THRESHOLD;
-
-	//Protect the endpoints from overflowing
-	if( tempValue == 0 )
+	if(  (signedValue < (ADC_MAX_VAL-(ADC_NOM_STEP_SIZE/2))) &&
+		 (signedValue > (ADC_MIN_VAL+(ADC_NOM_STEP_SIZE/2))) )
 	{
-		loThreshold = 0;
+
+		if( abs(signedValue - ele->lastValue) >= (ADC_NOM_STEP_SIZE/2) )
+		{
+			ele->filteredVal = (((int32_t)(signedValue-(ADC_NOM_STEP_SIZE/2)) * ADC_MULT_FACTOR) ) / ADC_STEP_SIZE;
+			ele->filteredVal = ele->filteredVal + 1;
+			ele->lastValue = sample;
+		}
 	}
-	if( tempValue == (ADC_OUTPUT_RANGE - 1))
+	else
 	{
-		hiThreshold = ((1<<ADC_EFFECTIVE_RES));
+
+		if( abs(signedValue - ele->lastValue) >= (ADC_NOM_STEP_SIZE/4) )
+		{
+			ele->filteredVal = (signedValue) / ADC_NOM_STEP_SIZE;
+			ele->lastValue = sample;
+		}
 	}
-
-	if( (sample > hiThreshold) )
-	{
-		ele->value = sample / ADC_STEP_SIZE;
-	}
-
-	if( (sample < loThreshold))
-	{
-		ele->value = sample / ADC_STEP_SIZE;
-	}
-
-	if( index == ADC_KNOB_7 )
-	{
-		printNumber(tempValue);
-		printNumber(sample);
-		printNumber(hiThreshold);
-		printNumber(loThreshold);
-		printNumber(ele->value);
-
-	}
-
-
 
 
 }

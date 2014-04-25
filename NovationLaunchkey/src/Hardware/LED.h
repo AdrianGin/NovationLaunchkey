@@ -12,7 +12,7 @@ extern "C" {
 #include "HardwareSpecific.h"
 
 #define LEDS_PER_COLUMN (8)
-#define LED_BRIGHTNESS_RES (16)
+#define LED_BRIGHTNESS_RES (4)
 #define MAX_LED_BRIGHTNESS ((1<<LED_BRIGHTNESS_RES)-1)
 #define BRIGHTNESS_MULT_FACTOR (1000)
 
@@ -20,6 +20,14 @@ extern "C" {
 #define LED_7SEG_SEGMENT_COUNT (7)
 #define LED_7SEG_DP (0x80)
 #define LED_7SEG_LED_COUNT (8)
+
+typedef enum
+{
+	LED_STATE_ON,
+	LED_STATE_BLANK,
+	LED_STATE_COUNT
+
+} LED_STATES_t;
 
 /*
 

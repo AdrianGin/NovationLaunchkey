@@ -8,6 +8,8 @@
 #include "UART.h"
 #include "Timer.h"
 
+#include "TimerCallbacks.h"
+
 int main(void)
 {
 
@@ -39,9 +41,7 @@ int main(void)
    
 	Timer_Init();
 	ADC_Init();
-   
-   uint8_t i;
-   uint8_t j = 0;
+
 
 //   LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS/10);
 //   LED_SetLEDBrightness(0, LED_PAD1_G, MAX_LED_BRIGHTNESS/4);
@@ -89,44 +89,14 @@ int main(void)
    LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);
 
 
-
-   uint8_t column = 0;
-   uint16_t adcSample;
-
-   uint16_t adcCounter = 0;
+   SoftTimerStart(SoftTimer1[SC_ADC]);
+	SoftTimerStart(SoftTimer1[SC_UPDATE_DISPLAY]);
+	SoftTimerStart(SoftTimer1[SC_LED_ON]);
 
    while(1)
    {
-      MUX_ActivateLineColumn(column);
-      uint16_t i;
-
-      //for( i = 0; i < MAX_LED_BRIGHTNESS; i ++ )
-      {
-         LED_TimerRoutine(column);
-      }
-      column++;
-      if( column >= MAX_LINE_COLUMNS )
-      {
-         column = 0;
-      }
-      DrvSYS_Delay(16);
-      LED_Blank();
-      DrvSYS_Delay(2);
-
-      if( adcCounter++ >= 200 )
-      {
-
-			adcSample = ADC_GetSample(ADC_KNOB_7);
-			adcSample = adcSample >> (ADC_OUTPUT_RES-8);
-			LED_7Segment_WriteNumber(adcSample);
-
-			//printNumber(adcSample);
-
-			DrvSYS_Delay(200);
-			//DrvADC_StartConvert();
-
-			adcCounter = 0;
-      }
+		//uint32_t prescale = TIMER0->TCMPR;
+		//printNumber( (prescale ) & 0xFFFF );
 
    }
 
