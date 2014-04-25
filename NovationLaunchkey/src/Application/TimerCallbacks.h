@@ -32,8 +32,8 @@ THE SOFTWARE.
 
 /* CCR1B associated timers */
 typedef enum {  
-   SC_LED_ON = 0,
-   TIMER1_COUNT 
+	SC_COLUMN_MUX = 0,
+	TIMER1_COUNT
    
 } timer1Ids;
 
@@ -45,13 +45,23 @@ typedef enum {
 } timer2Ids;
 
 
+typedef enum {
+	SC_LED = 0,
+	//SC_KEYBOARD,
+	SC_SWITCH,
+   TIMER3_COUNT
+
+} timer3Ids;
+
 #define TMR_ADC_SAMPLE_TIME (20)
 
 extern volatile SoftTimer_16  SoftTimer1[];
 extern volatile SoftTimer_16  SoftTimer2[];
 
+void Callback_ColumnMux(void);
 void Callback_UpdateDisplay(void);
 void Callback_ADC_Handle(void);
 void Callback_LED_Strobe(void);
+void Callback_Switch_Read(void);
 
 #endif

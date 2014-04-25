@@ -31,12 +31,14 @@ THE SOFTWARE.
 #include "MultiplexControl.h"
 
 /* These are the critical timers, 500kHz resolution */
-volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {16, 0, 0, Callback_LED_Strobe},};   
+volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_ColumnMux},};
 
 volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {100,0, 0, Callback_ADC_Handle},
-																	 {600,0, 0, Callback_UpdateDisplay}, };
+													{600,0, 0, Callback_UpdateDisplay}, };
 
 
+volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{1, 0, 1, Callback_LED_Strobe},
+																  {10, 0, 1, Callback_Switch_Read}};
 
 
 void Callback_UpdateDisplay(void)
@@ -69,40 +71,54 @@ void Callback_ADC_Handle(void)
 	}
 }
 
-
 #define LED_TIME_ON	(10)
 #define LED_TIME_OFF	(1)
 
+void Callback_ColumnMux(void)
+{
+	static uint8_t column = 0;
+
+	//Run our nexted Timers;
+	MUX_ActivateLineColumn(column);
+	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
+	
+
+	column++;
+	if( column >= MAX_LINE_COLUMNS )
+	{
+		column = 0;
+	}
+}
+
 void Callback_LED_Strobe(void)
 {
-	static uint8_t column;
+	
 	static uint8_t ledState = LED_STATE_BLANK;
 
 	if( ledState == LED_STATE_BLANK )
 	{
-		MUX_ActivateLineColumn(column);
-		LED_TimerRoutine(column);
-		column++;
-		if( column >= MAX_LINE_COLUMNS )
-		{
-			column = 0;
-		}
+		LED_TimerRoutine( MUX_GetCurrentColumn() );
 
 		ledState = LED_STATE_ON;
-		SoftTimer1[SC_LED_ON].timerCounter = LED_TIME_ON;
-		SoftTimer1[SC_LED_ON].timeCompare  = LED_TIME_ON;
+		SoftTimer3[SC_LED].timerCounter = LED_TIME_ON;
+		SoftTimer3[SC_LED].timeCompare  = LED_TIME_ON;
 	}
 	else
 	{
 		ledState = LED_STATE_BLANK;
-		SoftTimer1[SC_LED_ON].timerCounter = LED_TIME_OFF;
-		SoftTimer1[SC_LED_ON].timeCompare  = LED_TIME_OFF;
+		SoftTimer3[SC_LED].timerCounter = LED_TIME_OFF;
+		SoftTimer3[SC_LED].timeCompare  = LED_TIME_OFF;
 		LED_Blank();
 	}
 
 }
 
 
+void Callback_Switch_Read(void)
+{
+
+
+}
 
 
 

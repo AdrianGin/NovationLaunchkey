@@ -64,8 +64,6 @@ typedef struct _softTimer32 {
 #define SoftTimerStop(x)         x.timerEnable = SOFTTIMER_DISABLED
 #define SoftTimerIsEnabled(x)    (x.timerEnable)
 
-
-void RunCriticalTimer(void);
-void RunAuxTimers(void);
+void RunAndExecuteTimers(SoftTimer_16* softTimer, uint8_t count);
 
 #endif

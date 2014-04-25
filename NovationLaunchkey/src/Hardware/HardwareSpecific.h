@@ -73,6 +73,16 @@ typedef enum
 
 #define ADC_INPUT_PIN_MASK ((1<<ADC_INPUT0_PIN) | (1<<ADC_INPUT1_PIN) | (1<<ADC_INPUT2_PIN) | (1<<ADC_INPUT3_PIN) | (1<<ADC_INPUT4_PIN))
 
+
+#define SWITCH_INPUT_PORT	(E_GPC)
+#define SWITCH_INPUT0_PIN (0)
+#define SWITCH_INPUT1_PIN (1)
+#define SWITCH_INPUT2_PIN (2)
+#define SWITCH_INPUT3_PIN (3)
+
+#define SWITCH_INPUT_PIN_MASK ( (1<<SWITCH_INPUT0_PIN) | (1<<SWITCH_INPUT1_PIN) | (1<<SWITCH_INPUT2_PIN) | (1<<SWITCH_INPUT3_PIN))
+
+
 void SystemClockInit(void);
 void printMsg(uint8_t* buffer);
 void printNumber(uint16_t number);

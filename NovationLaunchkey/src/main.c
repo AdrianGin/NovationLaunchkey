@@ -8,7 +8,9 @@
 #include "UART.h"
 #include "Timer.h"
 
+#include "Switch.h"
 #include "TimerCallbacks.h"
+
 
 int main(void)
 {
@@ -20,6 +22,8 @@ int main(void)
 
 	MUX_GPIO_Init();
 	LED_GPIO_Init();
+	Switch_GPIO_Init();
+
 	UART_Init();
 
 	STR_UART_T sParam;
@@ -93,13 +97,14 @@ int main(void)
 
    SoftTimerStart(SoftTimer2[SC_ADC]);
    SoftTimerStart(SoftTimer2[SC_UPDATE_DISPLAY]);
-   SoftTimerStart(SoftTimer1[SC_LED_ON]);
+   SoftTimerStart(SoftTimer1[SC_COLUMN_MUX]);
 
    while(1)
    {
 	   if( TIM_IsMasterTickTriggered() )
 	   {
-		   RunAuxTimers();
+			RunAndExecuteTimers( (SoftTimer_16*)SoftTimer2, TIMER2_COUNT);
+		   //RunAuxTimers();
 		   TIM_ResetMasterTick();
 	   }
    }

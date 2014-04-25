@@ -6,31 +6,19 @@
 
 /* Holds functions for the timers and is an example of implementation*/
 
-
-void RunCriticalTimer(void)
+void RunAndExecuteTimers(SoftTimer_16* softTimer, uint8_t count)
 {
     uint8_t i;
-    for (i = 0; i < TIMER1_COUNT; i++)
+    for (i = 0; i < count; i++)
     {
-        if (SoftTimerInterrupt(SoftTimer1[i]))
+        if (SoftTimerInterrupt(softTimer[i]))
         {
-            SoftTimerReset(SoftTimer1[i]);
-            SoftTimerCallback(SoftTimer1[i]);
+            SoftTimerReset(softTimer[i]);
+            SoftTimerCallback(softTimer[i]);
         }
     }
 }
 
 
-void RunAuxTimers(void)
-{
-    uint8_t i;
-    for (i = 0; i < TIMER2_COUNT; i++)
-    {
-        if (SoftTimerInterrupt(SoftTimer2[i]))
-        {
-            SoftTimerReset(SoftTimer2[i]);
-            SoftTimerCallback(SoftTimer2[i]);
-        }
-    }
-}
+
 

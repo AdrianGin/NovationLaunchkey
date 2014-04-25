@@ -220,10 +220,7 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 {
 	ADC_FilteredElement_t* ele = &ADC_Filtered[index];
 
-	int32_t signedValue;
 	uint8_t changedFlag = 0;
-
-	signedValue = sample;
 
 	if( (index >= ADC_KNOB_0) && (index <= ADC_MODULATION) )
 	{

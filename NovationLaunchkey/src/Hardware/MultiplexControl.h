@@ -16,6 +16,7 @@ extern "C" {
 
 
 
+uint8_t MUX_GetCurrentColumn(void);
 void MUX_GPIO_Init(void);
 
 void MUX_ActivateLineColumn(uint8_t column);

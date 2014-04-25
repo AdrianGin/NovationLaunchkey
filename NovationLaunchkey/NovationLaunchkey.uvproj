@@ -343,8 +343,8 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
-            <oTime>0</oTime>
+            <Optim>3</Optim>
+            <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
             <Strict>0</Strict>
@@ -361,7 +361,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\lib\CMSIS\CM0\DeviceSupport\Nuvoton\NUC1xx;.\lib\CMSIS\CM0\CoreSupport;.\src\Hardware;.\lib\NuvotonPlatform_Keil\Include;.\lib\NuvotonPlatform_Keil\Include\Driver</IncludePath>
+              <IncludePath>.\lib\CMSIS\CM0\DeviceSupport\Nuvoton\NUC1xx;.\lib\CMSIS\CM0\CoreSupport;.\src\Hardware;.\lib\NuvotonPlatform_Keil\Include;.\lib\NuvotonPlatform_Keil\Include\Driver;.\src\Application</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -444,6 +444,21 @@
               <FileType>1</FileType>
               <FilePath>.\src\Hardware\ADC.c</FilePath>
             </File>
+            <File>
+              <FileName>LED_7Seg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\LED_7Seg.c</FilePath>
+            </File>
+            <File>
+              <FileName>FSR.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\FSR.c</FilePath>
+            </File>
+            <File>
+              <FileName>Switch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\Switch.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -493,6 +508,21 @@
               <FileName>DrvUART.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\lib\NuvotonPlatform_Keil\Src\Driver\DrvUART.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Application</GroupName>
+          <Files>
+            <File>
+              <FileName>softtimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\softtimer.c</FilePath>
+            </File>
+            <File>
+              <FileName>TimerCallbacks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\TimerCallbacks.c</FilePath>
             </File>
           </Files>
         </Group>

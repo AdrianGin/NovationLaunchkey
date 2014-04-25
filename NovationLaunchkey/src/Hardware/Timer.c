@@ -27,7 +27,7 @@ void TIM_ResetMasterTick(void)
 void TMR0_Callback(uint32_t u32Param)
 {
 	TIM_MasterTick = 1;
-	RunCriticalTimer();
+	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer1, TIMER1_COUNT);
 }
 
 void Timer_Init(void)

@@ -2,6 +2,13 @@
 
 #include "MultiplexControl.h"
 
+uint8_t PrimaryMuxColumn = 0;
+
+uint8_t MUX_GetCurrentColumn(void)
+{
+	return PrimaryMuxColumn;
+}
+
 
 void MUX_GPIO_Init(void)
 {
@@ -54,6 +61,7 @@ void MUX_ActivateLineColumn(uint8_t column)
 		DrvGPIO_SetBit(MUX_LINE_PORT, MUX_LINE2_PIN);
 	}
 
+	PrimaryMuxColumn = column;
 
 	//DrvGPIO_SetPortBits(MUX_LINE_PORT, newData);
 
@@ -63,8 +71,6 @@ void MUX_ActivateLineColumn(uint8_t column)
 
 void MUX_ActivateADCColumn(uint8_t column)
 {
-
-	int32_t newData = 0;
 	if(column >= MAX_ADC_COLUMNS )
 	{
 		return;
