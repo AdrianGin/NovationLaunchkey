@@ -31,9 +31,11 @@ THE SOFTWARE.
 #include "MultiplexControl.h"
 
 /* These are the critical timers, 500kHz resolution */
-volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {16, 0, 0, Callback_LED_Strobe},
-																	 {200,0, 0, Callback_ADC_Handle},
-																	 {1000,0, 0, Callback_UpdateDisplay}, };   
+volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {16, 0, 0, Callback_LED_Strobe},};   
+
+volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {100,0, 0, Callback_ADC_Handle},
+																	 {600,0, 0, Callback_UpdateDisplay}, };
+
 
 
 
@@ -41,18 +43,30 @@ void Callback_UpdateDisplay(void)
 {
 	uint16_t adcSample;
 
-	adcSample = ADC_GetSample(ADC_KNOB_7);
-	LED_7Segment_WriteNumber(adcSample);
-	adcSample = ADC_GetRawSample(ADC_KNOB_7);
-	
+	uint8_t i;
 
-	printNumber( adcSample & 0xFFFF );
+	for(i = 0; i <= ADC_MODULATION; i++)
+	{
+		if( ADC_GetChangeFlag(i) )
+		{
+			adcSample = ADC_GetSample(i);
+			LED_7Segment_WriteNumber(adcSample);
+			ADC_ClearChangeFlag(i);
+
+
+			printNumber(adcSample);
+		}
+	}
+
+
 }
 
 void Callback_ADC_Handle(void)
 {
-	SoftTimerStop(SoftTimer1[SC_ADC]);
-	ADC_StartConversion();
+	if( ADC_IsFinishedSampling() )
+	{
+		ADC_StartConversion();
+	}
 }
 
 

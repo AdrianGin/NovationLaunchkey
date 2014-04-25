@@ -67,6 +67,8 @@ typedef enum
 } E_ADC_INDEX;
 
 
+
+
 #define ADC_RESOLUTION (12)
 #define ADC_OVERSAMPLING_RES (0)
 #define ADC_EFFECTIVE_RES (ADC_RESOLUTION+ADC_OVERSAMPLING_RES)
@@ -92,7 +94,14 @@ typedef enum
 #define ADC_READY (1)
 
 
+typedef struct
+{
+	uint16_t lastValue;
+	uint16_t filteredVal;
+} ADC_FilteredElement_t;
 
+
+extern ADC_FilteredElement_t ADC_Filtered[];
 
 void ADC_Init(void);
 void ADC_IntCallback(uint32_t u32UserData);
@@ -102,8 +111,13 @@ uint16_t ADC_GetRawSample(uint8_t u8ChannelNum);
 void ADC_StartConversion(void);
 uint8_t ADC_GetCurrentColumn(void);
 void ADC_SetNextColumn(void);
-uint8_t ADC_IsFinishedSample(void);
+uint8_t ADC_IsFinishedSampling(void);
 void ADC_ApplyFilter(uint8_t index, uint16_t sample);
+
+uint8_t ADC_GenericProcessing(uint8_t index, uint16_t sample);
+
+void ADC_ClearChangeFlag(uint8_t index);
+uint8_t ADC_GetChangeFlag(uint8_t index);
 
 
 #ifdef __cplusplus

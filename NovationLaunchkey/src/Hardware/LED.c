@@ -1,139 +1,8 @@
 
 
 #include "LED.h"
+#include "LED_7Seg.h"
 #include <string.h>
-
-
-const uint8_t LED_LINE_MAP[] = {
-		LED_DATA_LINE0,
-		LED_DATA_LINE1,
-		LED_DATA_LINE2,
-		LED_DATA_LINE3,
-		LED_DATA_LINE4,
-		LED_DATA_LINE5,
-		LED_DATA_LINE6,
-		LED_DATA_LINE7,
-};
-
-
-
-const uint16_t LED_7SEG_DIGIT_0[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0
-};
-
-const uint16_t LED_7SEG_DIGIT_1[] = {
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-0,
-0,
-0
-};
-
-const uint16_t LED_7SEG_DIGIT_2[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS
-};
-
-const uint16_t LED_7SEG_DIGIT_3[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-0,
-MAX_LED_BRIGHTNESS
-};
-
-const uint16_t LED_7SEG_DIGIT_4[] = {
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
-
-const uint16_t LED_7SEG_DIGIT_5[] = {
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
-
-const uint16_t LED_7SEG_DIGIT_6[] = {
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
-
-const uint16_t LED_7SEG_DIGIT_7[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-0,
-0,
-0
-};
-
-
-const uint16_t LED_7SEG_DIGIT_8[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
-const uint16_t LED_7SEG_DIGIT_9[] = {
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS,
-0,
-MAX_LED_BRIGHTNESS,
-MAX_LED_BRIGHTNESS
-};
-
-
-const uint16_t* LED_7SEG_DIGITS[] = {
-LED_7SEG_DIGIT_0,
-LED_7SEG_DIGIT_1,
-LED_7SEG_DIGIT_2,
-LED_7SEG_DIGIT_3,
-LED_7SEG_DIGIT_4,
-LED_7SEG_DIGIT_5,
-LED_7SEG_DIGIT_6,
-LED_7SEG_DIGIT_7,
-LED_7SEG_DIGIT_8,
-LED_7SEG_DIGIT_9,
-};
 
 
 uint8_t LED_DisplayBuffer[LED_COUNT];
@@ -174,6 +43,15 @@ void LED_Blank(void)
 //	   128 = 1111100000 etc..
 //
 
+void LED_7SegmentWriteCode(uint8_t index, uint16_t* code)
+{
+	uint8_t i;
+	for( i = 0; i < LED_7SEG_SEGMENT_COUNT; i++)
+	{
+		LED_SetLEDBrightness(0, (index*LED_7SEG_LED_COUNT)+i , code[i] );
+	}
+}
+
 //Number is between 0 and 9 and | LED_7SEG_DP to obtain DP.
 //To clear the segment, write a 10
 void LED_7Segment_Write(uint8_t index, uint8_t number)
@@ -191,19 +69,12 @@ void LED_7Segment_Write(uint8_t index, uint8_t number)
 		uint8_t i;
 		uint16_t* segmentMap = (uint16_t*)LED_7SEG_DIGITS[number];
 
-		for( i = 0; i < LED_7SEG_SEGMENT_COUNT; i++)
-		{
-			LED_SetLEDBrightness(0, (index*LED_7SEG_LED_COUNT)+i , segmentMap[i] );
-		}
+		LED_7SegmentWriteCode(index, segmentMap);
+
 	}
 	else
 	{
-		uint8_t i;
-		for( i = 0; i < LED_7SEG_SEGMENT_COUNT; i++)
-		{
-			LED_SetLEDBrightness(0, (index*LED_7SEG_LED_COUNT)+i , 0);
-		}
-
+		LED_7SegmentWriteCode(index, (uint16_t*)LED_7SEG_NULL);
 	}
 }
 

@@ -88,16 +88,20 @@ int main(void)
    LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/2);
    LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);
 
+	
 
-   SoftTimerStart(SoftTimer1[SC_ADC]);
-	SoftTimerStart(SoftTimer1[SC_UPDATE_DISPLAY]);
-	SoftTimerStart(SoftTimer1[SC_LED_ON]);
+
+   SoftTimerStart(SoftTimer2[SC_ADC]);
+   SoftTimerStart(SoftTimer2[SC_UPDATE_DISPLAY]);
+   SoftTimerStart(SoftTimer1[SC_LED_ON]);
 
    while(1)
    {
-		//uint32_t prescale = TIMER0->TCMPR;
-		//printNumber( (prescale ) & 0xFFFF );
-
+	   if( TIM_IsMasterTickTriggered() )
+	   {
+		   RunAuxTimers();
+		   TIM_ResetMasterTick();
+	   }
    }
 
 	return 0;

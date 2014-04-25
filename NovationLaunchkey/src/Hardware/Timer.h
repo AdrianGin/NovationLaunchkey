@@ -29,7 +29,8 @@ typedef enum
 
 
 
-void ADC_SetNewColumnTimer(uint16_t time);
+uint8_t TIM_IsMasterTickTriggered(void);
+void TIM_ResetMasterTick(void);
 
 void Timer_Init(void);
 void TMR0_Callback(uint32_t u32Param);

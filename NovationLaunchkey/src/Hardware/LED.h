@@ -149,7 +149,7 @@ void LED_TimerRoutine(uint8_t column);
 void LED_SetLEDBrightness(uint8_t bufferIndex, uint8_t index, uint32_t brightness);
 void LED_Blank(void);
 
-
+void LED_7SegmentWriteCode(uint8_t index, uint16_t* code);
 void LED_7Segment_Write(uint8_t index, uint8_t number);
 void LED_7Segment_WriteNumber(uint16_t number);
 

@@ -66,6 +66,6 @@ typedef struct _softTimer32 {
 
 
 void RunCriticalTimer(void);
-
+void RunAuxTimers(void);
 
 #endif

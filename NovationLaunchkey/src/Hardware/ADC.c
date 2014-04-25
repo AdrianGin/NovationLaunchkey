@@ -4,6 +4,7 @@
 #include "MultiplexControl.h"
 #include "Timer.h"
 #include "LED.h"
+#include "FSR.h"
 
 #include "TimerCallbacks.h"
 
@@ -62,16 +63,72 @@ const uint8_t ADC_LOOKUP[] =
 };
 
 
+
+
 typedef struct
 {
-	uint16_t lastValue;
-	uint16_t filteredVal;
-} ADC_FilteredElement_t;
+	 union {
+        uint32_t ADC_STATUS;
+        struct {
+        	uint32_t	ADC0	:1;
+        	uint32_t	ADC1	:1;
+        	uint32_t	ADC2	:1;
+        	uint32_t	ADC3	:1;
+        	uint32_t	ADC4	:1;
+        	uint32_t	ADC5	:1;
+        	uint32_t	ADC6	:1;
+        	uint32_t	ADC7	:1;
+
+        	uint32_t	ADC8	:1;
+        	uint32_t	ADC9	:1;
+        	uint32_t	ADC10	:1;
+        	uint32_t	ADC11	:1;
+        	uint32_t	ADC12	:1;
+        	uint32_t	ADC13	:1;
+        	uint32_t	ADC14	:1;
+        	uint32_t	ADC15	:1;
+
+        	uint32_t	ADC16	:1;
+        	uint32_t	ADC17	:1;
+        	uint32_t	ADC18	:1;
+        	uint32_t	ADC19	:1;
+        	uint32_t	ADC20	:1;
+        	uint32_t	ADC21	:1;
+        	uint32_t	ADC22	:1;
+        	uint32_t	ADC23	:1;
+
+        	uint32_t	ADC24	:1;
+        	uint32_t	ADC25	:1;
+        	uint32_t	ADC26	:1;
+        	uint32_t	ADC27	:1;
+        	uint32_t	ADC28	:1;
+        	uint32_t	ADC29	:1;
+        	uint32_t	ADC30	:1;
+        	uint32_t	ADC31	:1;
+        } ADC_GROUP1;
+    };
+
+	union {
+		uint32_t ADC_STATUS2;
+		struct {
+			uint32_t	ADC32	:1;
+			uint32_t	ADC33	:1;
+			uint32_t	ADC34	:1;
+			uint32_t	ADC35	:1;
+			uint32_t	ADC36	:1;
+			uint32_t	ADC37	:1;
+			uint32_t	ADC38	:1;
+			uint32_t	ADC39	:1;
+		} ADC_GROUP2;
+	};
+
+} ADC_ChangeStatus_t;
 
 ADC_FilteredElement_t ADC_Filtered[ADC_INPUT_COUNT];
+ADC_ChangeStatus_t ADC_Statuses;
 
 uint8_t ADCColumn;
-uint8_t ADCStatus = 1;
+uint8_t ADCStatus = ADC_READY;
 
 uint8_t ADC_GetCurrentColumn(void)
 {
@@ -89,7 +146,7 @@ void ADC_SetNextColumn(void)
 	MUX_ActivateADCColumn(ADCColumn);
 }
 
-uint8_t ADC_IsFinishedSample(void)
+uint8_t ADC_IsFinishedSampling(void)
 {
 	return ADCStatus;
 }
@@ -108,8 +165,7 @@ void ADC_IntCallback(uint32_t u32UserData)
 	}
 
 	ADC_SetNextColumn();
-	SoftTimerStart(SoftTimer1[SC_ADC]);
-
+	ADCStatus = ADC_READY;
 }
 
 
@@ -132,6 +188,7 @@ void ADC_Init(void)
 
 void ADC_StartConversion(void)
 {
+	ADCStatus = 0;
 	DrvADC_StartConvert();
 }
 
@@ -164,9 +221,43 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 	ADC_FilteredElement_t* ele = &ADC_Filtered[index];
 
 	int32_t signedValue;
-	
-	signedValue = sample;// + ele->lastValue;
-	//signedValue = signedValue / 2;
+	uint8_t changedFlag = 0;
+
+	signedValue = sample;
+
+	if( (index >= ADC_KNOB_0) && (index <= ADC_MODULATION) )
+	{
+		changedFlag = ADC_GenericProcessing(index, sample);
+	}
+	else
+	{
+		changedFlag = FSR_Processing(index, sample);
+	}
+
+
+	if( changedFlag )
+	{
+		ele->lastValue = sample;
+		if( index < 32 )
+		{
+			ADC_Statuses.ADC_STATUS |= (1<<index);
+		}
+		else
+		{
+			ADC_Statuses.ADC_STATUS2 |= (1<< (index-32));
+		}
+	}
+}
+
+
+uint8_t ADC_GenericProcessing(uint8_t index, uint16_t sample)
+{
+	ADC_FilteredElement_t* ele = &ADC_Filtered[index];
+
+	int32_t signedValue;
+	uint8_t changedFlag = 0;
+
+	signedValue = sample;
 
 	if(  (signedValue < (ADC_MAX_VAL-(ADC_NOM_STEP_SIZE/2))) &&
 		 (signedValue > (ADC_MIN_VAL+(ADC_NOM_STEP_SIZE/2))) )
@@ -176,7 +267,7 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 		{
 			ele->filteredVal = (((int32_t)(signedValue-(ADC_NOM_STEP_SIZE/2)) * ADC_MULT_FACTOR) ) / ADC_STEP_SIZE;
 			ele->filteredVal = ele->filteredVal + 1;
-			ele->lastValue = sample;
+			changedFlag = 1;
 		}
 	}
 	else
@@ -185,12 +276,38 @@ void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 		if( abs(signedValue - ele->lastValue) >= (ADC_NOM_STEP_SIZE/4) )
 		{
 			ele->filteredVal = (signedValue) / ADC_NOM_STEP_SIZE;
-			ele->lastValue = sample;
+			changedFlag = 1;
 		}
 	}
 
-
+	return changedFlag;
 }
+
+
+void ADC_ClearChangeFlag(uint8_t index)
+{
+	if( index < 32 )
+	{
+		ADC_Statuses.ADC_STATUS &= ~(1<<index);
+	}
+	else
+	{
+		ADC_Statuses.ADC_STATUS2 &= ~(1<< (index-32));
+	}
+}
+
+uint8_t ADC_GetChangeFlag(uint8_t index)
+{
+	if( index < 32 )
+	{
+		return ((ADC_Statuses.ADC_STATUS & (1<<index)) != 0);
+	}
+	else
+	{
+		return ((ADC_Statuses.ADC_STATUS2 & (1<<(index-32))) != 0);
+	}
+}
+
 
 
 

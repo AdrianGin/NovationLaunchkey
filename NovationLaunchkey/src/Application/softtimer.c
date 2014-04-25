@@ -21,5 +21,16 @@ void RunCriticalTimer(void)
 }
 
 
-
+void RunAuxTimers(void)
+{
+    uint8_t i;
+    for (i = 0; i < TIMER2_COUNT; i++)
+    {
+        if (SoftTimerInterrupt(SoftTimer2[i]))
+        {
+            SoftTimerReset(SoftTimer2[i]);
+            SoftTimerCallback(SoftTimer2[i]);
+        }
+    }
+}
 

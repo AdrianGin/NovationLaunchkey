@@ -10,12 +10,23 @@
 #include "Softtimer.h"
 #include "TimerCallbacks.h"
 
+volatile uint8_t TIM_MasterTick = 0;
 
 
+uint8_t TIM_IsMasterTickTriggered(void)
+{
+	return TIM_MasterTick;
+}
+
+void TIM_ResetMasterTick(void)
+{
+	TIM_MasterTick = 0;
+}
 
 //500kHz Timer;
 void TMR0_Callback(uint32_t u32Param)
 {
+	TIM_MasterTick = 1;
 	RunCriticalTimer();
 }
 
