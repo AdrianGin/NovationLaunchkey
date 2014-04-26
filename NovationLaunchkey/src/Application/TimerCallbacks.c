@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "LED.h"
 #include "ADC.h"
 #include "MultiplexControl.h"
+#include "Switch.h"
 
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_ColumnMux},};
@@ -117,8 +118,24 @@ void Callback_LED_Strobe(void)
 
 void Callback_Switch_Read(void)
 {
+	uint32_t switchChanges;
 
+	switchChanges = Switch_CheckForChange();
 
+	if( switchChanges )
+	{
+		uint8_t i;
+		for( i = 0 ; i < SW_COUNT; i++ )
+		{
+			if( switchChanges & (1<<i) )
+			{
+				uint8_t switchState;
+				//switchState = Switch_GetState(i);
+				//LED_7Segment_WriteNumber(switchState);
+				//printNumber(i);
+			}
+		}
+	}
 }
 
 
