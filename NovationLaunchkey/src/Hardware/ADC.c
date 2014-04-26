@@ -165,8 +165,10 @@ void ADC_IntCallback(uint32_t u32UserData)
 	}
 
 	ADC_SetNextColumn();
+	SoftTimerReset(SoftTimer2[SC_ADC]);
 	ADCStatus = ADC_READY;
 }
+
 
 
 void ADC_Init(void)
@@ -178,9 +180,15 @@ void ADC_Init(void)
 	DrvGPIO_InitFunction(E_FUNC_ADC3);
 	DrvGPIO_InitFunction(E_FUNC_ADC4);
 
+	DrvGPIO_DisableDigitalInputBit(ADC_INPUT_PORT, ADC_INPUT0_PIN);
+	DrvGPIO_DisableDigitalInputBit(ADC_INPUT_PORT, ADC_INPUT1_PIN);
+	DrvGPIO_DisableDigitalInputBit(ADC_INPUT_PORT, ADC_INPUT2_PIN);
+	DrvGPIO_DisableDigitalInputBit(ADC_INPUT_PORT, ADC_INPUT3_PIN);
+	DrvGPIO_DisableDigitalInputBit(ADC_INPUT_PORT, ADC_INPUT4_PIN);
+
 
 	/* The maximum ADC clock rate is 16MHz */
-	DrvADC_Open(ADC_SINGLE_END, ADC_SINGLE_CYCLE_OP, ADC_INPUT_PIN_MASK , EXTERNAL_12MHZ, 0);
+	DrvADC_Open(ADC_SINGLE_END, ADC_SINGLE_CYCLE_OP, ADC_INPUT_PIN_MASK , EXTERNAL_12MHZ, 4);
 	DrvADC_EnableADCInt(ADC_IntCallback, 0);
 	MUX_ActivateADCColumn(0);
 

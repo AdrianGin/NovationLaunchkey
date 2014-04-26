@@ -12,7 +12,7 @@ extern "C" {
 #include "HardwareSpecific.h"
 
 #define LEDS_PER_COLUMN (8)
-#define LED_BRIGHTNESS_RES (4)
+#define LED_BRIGHTNESS_RES (3)
 #define MAX_LED_BRIGHTNESS ((1<<LED_BRIGHTNESS_RES)-1)
 #define BRIGHTNESS_MULT_FACTOR (1000)
 
@@ -148,6 +148,8 @@ void LED_SetData(uint16_t data);
 void LED_TimerRoutine(uint8_t column);
 void LED_SetLEDBrightness(uint8_t bufferIndex, uint8_t index, uint32_t brightness);
 void LED_Blank(void);
+
+void LED_CountUpRoutine(uint8_t column, uint16_t count);
 
 void LED_7SegmentWriteCode(uint8_t index, uint16_t* code);
 void LED_7Segment_Write(uint8_t index, uint8_t number);

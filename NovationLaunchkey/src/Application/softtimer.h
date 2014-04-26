@@ -27,6 +27,10 @@ THE SOFTWARE.
 #ifndef _SOFTTIMERS_H
 #define _SOFTTIMERS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 #define SOFTTIMER_ENABLED (1)
@@ -65,5 +69,10 @@ typedef struct _softTimer32 {
 #define SoftTimerIsEnabled(x)    (x.timerEnable)
 
 void RunAndExecuteTimers(SoftTimer_16* softTimer, uint8_t count);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

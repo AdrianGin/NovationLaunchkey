@@ -2,6 +2,9 @@
 #ifndef _SWITCH_H
 #define _SWITCH_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdint.h>
 #include "HardwareSpecific.h"
@@ -23,11 +26,6 @@ typedef enum
 	SW_INCONTROL_MID,
 	SW_INCONTROL_BOT,
 
-	SW_OCTAVE_DOWN,
-	SW_OCTAVE_UP,
-	SW_TRACK_LEFT,
-	SW_TRACK_RIGHT,
-
 	SW_SCENE_0,
 	SW_SCENE_1,
 
@@ -37,6 +35,11 @@ typedef enum
 	SW_PLAY,
 	SW_LOOP,
 	SW_REC,
+
+	SW_TRACK_LEFT,
+	SW_TRACK_RIGHT,
+	SW_OCTAVE_DOWN,
+	SW_OCTAVE_UP,
 
 	SW_COUNT
 
@@ -54,6 +57,13 @@ uint8_t Switch_GetState(uint8_t index);
 void Switch_ProcessState(uint8_t switchStates);
 uint32_t Switch_CheckForChange(void);
 uint8_t Switch_ReadState(void);
+uint32_t Switch_GetSwitchStates(void);
+
+
+#ifdef __cplusplus
+}
+#endif
+
 
 
 #endif

@@ -27,6 +27,9 @@ THE SOFTWARE.
 #ifndef _TIMER_CALLBACKS_H
 #define _TIMER_CALLBACKS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "Softtimer.h"
 
@@ -63,5 +66,9 @@ void Callback_UpdateDisplay(void);
 void Callback_ADC_Handle(void);
 void Callback_LED_Strobe(void);
 void Callback_Switch_Read(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

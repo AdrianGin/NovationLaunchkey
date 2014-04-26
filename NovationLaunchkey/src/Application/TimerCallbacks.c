@@ -29,16 +29,17 @@ THE SOFTWARE.
 #include "LED.h"
 #include "ADC.h"
 #include "MultiplexControl.h"
+#include "Switch.h"
 
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_ColumnMux},};
 
-volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {100,0, 0, Callback_ADC_Handle},
-													{600,0, 0, Callback_UpdateDisplay}, };
+volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {4,0, 0, Callback_ADC_Handle},
+																	 {100,0, 0, Callback_UpdateDisplay}, };
 
 
 volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{1, 0, 1, Callback_LED_Strobe},
-												  {10, 0, 1, Callback_Switch_Read}};
+																  {1, 0, 0, Callback_Switch_Read}};
 
 
 void Callback_UpdateDisplay(void)
@@ -54,11 +55,36 @@ void Callback_UpdateDisplay(void)
 			adcSample = ADC_GetSample(i);
 			LED_7Segment_WriteNumber(adcSample);
 			ADC_ClearChangeFlag(i);
-
-
+			adcSample = ADC_GetRawSample(i);
 			printNumber(adcSample);
 		}
 	}
+
+
+	static uint32_t switchChanges;
+
+	if( switchChanges != Switch_GetSwitchStates() )
+	{
+		uint8_t i;
+		uint32_t switchChangeMap;
+		switchChangeMap = switchChanges ^ Switch_GetSwitchStates();
+
+		switchChanges = Switch_GetSwitchStates();
+
+		for( i = 0 ; i < SW_COUNT; i++ )
+		{
+			if( switchChangeMap & (1<<i) )
+			{
+				uint8_t switchState;
+				switchState = Switch_GetState(i);
+				LED_7Segment_WriteNumber(i);
+				printNumber(switchState);
+			}
+		}
+		
+	}
+
+	
 
 
 }
@@ -71,46 +97,59 @@ void Callback_ADC_Handle(void)
 	}
 }
 
-#define LED_TIME_ON	(10)
+#define LED_TIME_ON	(5)
 #define LED_TIME_OFF	(1)
 
 void Callback_ColumnMux(void)
 {
-	
-
-	//Run our nexted Timers;
-	
+	//Run our nested Timers;
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
-	
-
-
 }
+
+volatile uint8_t LEDState = LED_STATE_BLANK;
+
 
 void Callback_LED_Strobe(void)
 {
 	static uint8_t column = 0;
-	static uint8_t ledState = LED_STATE_BLANK;
+	
+	static uint16_t count;
 
-	if( ledState == LED_STATE_BLANK )
+
+	if( LEDState == LED_STATE_BLANK )
 	{
-		MUX_ActivateLineColumn(column);
-		LED_TimerRoutine( MUX_GetCurrentColumn() );
-		column++;
-		if( column >= MAX_LINE_COLUMNS )
+		if( column != MUX_GetCurrentColumn() )
 		{
-			column = 0;
+			MUX_ActivateLineColumn(column);
+		}
+		//LED_TimerRoutine( MUX_GetCurrentColumn() );
+
+		LED_CountUpRoutine(column, count++);
+
+		if( count > MAX_LED_BRIGHTNESS )
+		{
+			count = 0;
+
+			column++;
+			if( column >= MAX_LINE_COLUMNS )
+			{
+				column = 0;
+			}
 		}
 
-		ledState = LED_STATE_ON;
+		LEDState = LED_STATE_ON;
 		SoftTimer3[SC_LED].timerCounter = LED_TIME_ON;
 		SoftTimer3[SC_LED].timeCompare  = LED_TIME_ON;
 	}
 	else
 	{
-		ledState = LED_STATE_BLANK;
+		LEDState = LED_STATE_BLANK;
 		SoftTimer3[SC_LED].timerCounter = LED_TIME_OFF;
 		SoftTimer3[SC_LED].timeCompare  = LED_TIME_OFF;
 		LED_Blank();
+
+		Callback_Switch_Read();
+
 	}
 
 }
@@ -118,13 +157,12 @@ void Callback_LED_Strobe(void)
 
 void Callback_Switch_Read(void)
 {
-
-
+	//We can only sample when the LEDs are off.
+	if( LEDState == LED_STATE_BLANK )
+	{
+		Switch_ProcessState( Switch_ReadState() );
+	}
 }
-
-
-
-
 
 
 

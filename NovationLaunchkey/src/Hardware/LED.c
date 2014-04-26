@@ -99,6 +99,39 @@ void LED_7Segment_WriteNumber(uint16_t number)
    LED_7Segment_Write(2, ones);
 }
 
+//Counts up
+void LED_CountUpRoutine(uint8_t column, uint16_t count)
+{
+	if(column >= MAX_LINE_COLUMNS )
+	{
+		return;
+	}
+
+	LEDElement_t* displayInfo = (LEDElement_t*)&LED_DisplayInformation[column * LEDS_PER_COLUMN];
+	uint8_t i;
+	uint16_t ledData = 0;
+
+	for( i = 0 ; i < LEDS_PER_COLUMN; i++ )
+	{
+
+		if(displayInfo[i].brightness >= count)
+		{
+			if(  displayInfo[i].brightness )
+			{
+				ledData |= (1<<i);
+			}
+		}
+		else
+		{
+			ledData &= ~(1<<i);
+		}
+	}
+
+	//Need to invert the LED data because a 0 represents ON, and vice versa.
+	ledData = ~ledData;
+	LED_SetData(ledData);
+}
+
 
 void LED_TimerRoutine(uint8_t column)
 {
