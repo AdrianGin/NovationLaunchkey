@@ -1,6 +1,7 @@
 
 
 #include "LED.h"
+#include "LED_7Seg.h"
 #include <string.h>
 
 
