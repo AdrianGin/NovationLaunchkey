@@ -165,6 +165,9 @@ void ADC_IntCallback(uint32_t u32UserData)
 	}
 
 	ADC_SetNextColumn();
+
+	SoftTimerStart(SoftTimer2[SC_ADC]);
+
 	ADCStatus = ADC_READY;
 }
 

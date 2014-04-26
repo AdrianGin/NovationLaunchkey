@@ -63,5 +63,8 @@ void Callback_UpdateDisplay(void);
 void Callback_ADC_Handle(void);
 void Callback_LED_Strobe(void);
 void Callback_Switch_Read(void);
+uint8_t TIM_IsColumnChangeReady(uint8_t count);
+
+
 
 #endif
