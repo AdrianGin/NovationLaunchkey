@@ -165,9 +165,6 @@ void ADC_IntCallback(uint32_t u32UserData)
 	}
 
 	ADC_SetNextColumn();
-
-	SoftTimerStart(SoftTimer2[SC_ADC]);
-
 	ADCStatus = ADC_READY;
 }
 
@@ -183,7 +180,7 @@ void ADC_Init(void)
 
 
 	/* The maximum ADC clock rate is 16MHz */
-	DrvADC_Open(ADC_SINGLE_END, ADC_SINGLE_CYCLE_OP, ADC_INPUT_PIN_MASK , EXTERNAL_12MHZ, 10);
+	DrvADC_Open(ADC_SINGLE_END, ADC_SINGLE_CYCLE_OP, ADC_INPUT_PIN_MASK , EXTERNAL_12MHZ, 0);
 	DrvADC_EnableADCInt(ADC_IntCallback, 0);
 	MUX_ActivateADCColumn(0);
 

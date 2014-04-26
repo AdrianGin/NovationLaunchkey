@@ -7,8 +7,6 @@
 #include "MultiplexControl.h"
 #include "UART.h"
 #include "Timer.h"
-#include "LED_7Seg.h"
-
 
 #include "Switch.h"
 #include "TimerCallbacks.h"
@@ -24,7 +22,7 @@ int main(void)
 
 	MUX_GPIO_Init();
 	LED_GPIO_Init();
-	//Switch_GPIO_Init();
+	Switch_GPIO_Init();
 
 	UART_Init();
 
@@ -94,9 +92,7 @@ int main(void)
    LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/2);
    LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);
 
-	LED_7SegmentWriteCode(0, (uint16_t*)LED_7SEG_CHARS[0]);
-	LED_7SegmentWriteCode(1, (uint16_t*)LED_7SEG_CHARS[0]);
-	LED_7SegmentWriteCode(2, (uint16_t*)LED_7SEG_CHARS[0]);
+	
 
 
    SoftTimerStart(SoftTimer2[SC_ADC]);
@@ -108,6 +104,7 @@ int main(void)
 	   if( TIM_IsMasterTickTriggered() )
 	   {
 			RunAndExecuteTimers( (SoftTimer_16*)SoftTimer2, TIMER2_COUNT);
+		   //RunAuxTimers();
 		   TIM_ResetMasterTick();
 	   }
    }

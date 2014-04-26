@@ -37,7 +37,7 @@ void Timer_Init(void)
 	DrvSYS_SelectIPClockSource(E_SYS_TMR0_CLKSRC, 0x02);
 	
 	/* Using TIMER0 in PERIODIC_MODE, 100kHz resolution */
-	DrvTIMER_Open(E_TMR0, 90000, E_PERIODIC_MODE);
+	DrvTIMER_Open(E_TMR0, 100000, E_PERIODIC_MODE);
 
 	/* Install callback "TMR0_Callback" and trigger callback when Interrupt happen twice */
 	DrvTIMER_SetTimerEvent(E_TMR0, 1, (TIMER_CALLBACK)TMR0_Callback, 0);

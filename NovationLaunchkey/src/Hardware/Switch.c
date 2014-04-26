@@ -3,7 +3,7 @@
 #include "Switch.h"
 #include "MultiplexControl.h"
 
-volatile uint32_t SwitchRawStates = 0;
+uint32_t SwitchRawStates = 0;
 
 void Switch_GPIO_Init(void)
 {
@@ -59,7 +59,6 @@ uint8_t Switch_GetState(uint8_t index)
 	{
 		return SWITCH_INVALID;
 	}
-	return ((SwitchRawStates & (1<<index)) != 0);
 
 	
 }

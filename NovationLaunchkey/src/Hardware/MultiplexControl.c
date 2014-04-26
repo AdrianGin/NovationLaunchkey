@@ -64,6 +64,7 @@ void MUX_ActivateLineColumn(uint8_t column)
 	PrimaryMuxColumn = column;
 
 	//DrvGPIO_SetPortBits(MUX_LINE_PORT, newData);
+
 }
 
 
