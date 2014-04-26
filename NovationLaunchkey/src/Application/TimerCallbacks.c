@@ -38,7 +38,7 @@ volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {100,0, 0, Callback_ADC_Hand
 
 
 volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{1, 0, 1, Callback_LED_Strobe},
-																  {10, 0, 1, Callback_Switch_Read}};
+												  {10, 0, 1, Callback_Switch_Read}};
 
 
 void Callback_UpdateDisplay(void)
