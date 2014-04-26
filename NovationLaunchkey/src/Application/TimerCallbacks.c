@@ -76,28 +76,30 @@ void Callback_ADC_Handle(void)
 
 void Callback_ColumnMux(void)
 {
-	static uint8_t column = 0;
+	
 
 	//Run our nexted Timers;
-	MUX_ActivateLineColumn(column);
+	
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
 	
 
-	column++;
-	if( column >= MAX_LINE_COLUMNS )
-	{
-		column = 0;
-	}
+
 }
 
 void Callback_LED_Strobe(void)
 {
-	
+	static uint8_t column = 0;
 	static uint8_t ledState = LED_STATE_BLANK;
 
 	if( ledState == LED_STATE_BLANK )
 	{
+		MUX_ActivateLineColumn(column);
 		LED_TimerRoutine( MUX_GetCurrentColumn() );
+		column++;
+		if( column >= MAX_LINE_COLUMNS )
+		{
+			column = 0;
+		}
 
 		ledState = LED_STATE_ON;
 		SoftTimer3[SC_LED].timerCounter = LED_TIME_ON;

@@ -22,7 +22,7 @@ int main(void)
 
 	MUX_GPIO_Init();
 	LED_GPIO_Init();
-	Switch_GPIO_Init();
+	//Switch_GPIO_Init();
 
 	UART_Init();
 
