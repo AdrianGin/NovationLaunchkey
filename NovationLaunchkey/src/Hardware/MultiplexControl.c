@@ -10,6 +10,7 @@ uint8_t MUX_GetCurrentColumn(void)
 }
 
 
+
 void MUX_GPIO_Init(void)
 {
 
