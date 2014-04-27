@@ -133,11 +133,6 @@ typedef struct
    uint32_t interval;
 } LEDElement_t;
 
-typedef struct
-{
-   uint16_t brightnessHi;
-   uint16_t brightnessLo;
-} LEDBrightnessElement_t;
 
 extern uint8_t LED_PAD_SEQUENCE[];
 extern const uint8_t LED_LINE_MAP[];

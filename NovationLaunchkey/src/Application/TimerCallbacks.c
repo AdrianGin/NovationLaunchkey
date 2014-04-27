@@ -38,7 +38,7 @@ volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {6,0, 0, Callback_ADC_Handle
 																	 {100,0, 0, Callback_UpdateDisplay}, };
 
 
-volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{1, 0, 1, Callback_LED_Strobe},
+volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{2, 0, 1, Callback_LED_Strobe},
 																  {1, 0, 0, Callback_Switch_Read}};
 
 
@@ -146,8 +146,8 @@ void Callback_LED_Strobe(void)
 		}
 
 		//LEDState = LED_STATE_ON;
-		SoftTimer3[SC_LED].timerCounter = LED_TIME_ON;
-		SoftTimer3[SC_LED].timeCompare  = LED_TIME_ON;
+		//SoftTimer3[SC_LED].timerCounter = LED_TIME_ON;
+		//SoftTimer3[SC_LED].timeCompare  = LED_TIME_ON;
 	}
 	else
 	{

@@ -34,7 +34,7 @@ void SystemClockInit(void)
 void printMsg(uint8_t* buffer)
 {
 	UART_TxByte(0xF0);
-	UART_TxBuffer(buffer, strlen(buffer) );
+	UART_TxBuffer(buffer, strlen((const char*)buffer) );
 	UART_TxByte(0xF7);
 }
 
