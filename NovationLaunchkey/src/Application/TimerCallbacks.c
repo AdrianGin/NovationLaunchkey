@@ -35,12 +35,12 @@ THE SOFTWARE.
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_ColumnMux},};
 
-volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {6,0, 0, Callback_ADC_Handle},
-																	 {100,0, 0, Callback_UpdateDisplay}, };
+volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {6,0, 1, Callback_ADC_Handle},
+																	 {100,0, 1, Callback_UpdateDisplay}, };
 
 
 volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{1, 0, 1, Callback_LED_Strobe},
-																  {1, 0, 0, Callback_Switch_Read}};
+												  {1, 0, 0, Callback_Switch_Read}};
 
 
 void Callback_UpdateDisplay(void)
@@ -58,7 +58,7 @@ void Callback_UpdateDisplay(void)
 			{
 				//DrvTIMER_Close(E_TMR0);
 				//Timer_Init(26000);
-				printNumber(adcSample);
+				//printNumber(adcSample);
 			}
 
 			LED_7Segment_WriteNumber(adcSample);
@@ -86,7 +86,7 @@ void Callback_UpdateDisplay(void)
 				uint8_t switchState;
 				switchState = Switch_GetState(i);
 				LED_7Segment_WriteNumber(i);
-				printNumber(switchState);
+				//printNumber(switchState);
 			}
 		}
 	}
@@ -136,48 +136,55 @@ void Callback_ADC_Handle(void)
 	}
 }
 
-#define LED_TIME_ON	(5)
-#define LED_TIME_OFF	(1)
+#define LED_TIME_NEW_COL	(1)
+#define LED_TIME_SHIFT		(5)
+#define LED_TIME_BLANK		(3)
 
 inline void Callback_ColumnMux(void)
 {
 	//Run our nested Timers;
-	//RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
-	Callback_LED_Strobe();
+	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
+	//Callback_LED_Strobe();
 }
 
-volatile uint8_t LEDState = LED_STATE_BLANK;
+volatile uint8_t LEDState = LED_STATE_NEW_COLUMN;
 
 void Callback_LED_Strobe(void)
 {
 	static uint8_t column = 0;
 
-	static uint16_t count;
-
-
-	if( LEDState == LED_STATE_BLANK )
+	switch( LEDState )
 	{
-		MUX_ActivateLineColumn(column);
-		LED_TimerRoutine( MUX_GetCurrentColumn() );
+		case LED_STATE_NEW_COLUMN:
+			MUX_ActivateLineColumn(column);
+			column++;
+			if( column >= MAX_LINE_COLUMNS )
+			{
+				column = 0;
+			}
 
-		Callback_Switch_Read();
+			LEDState = LED_STATE_SHIFT_DATA;
+			SoftTimer3[SC_LED].timerCounter = LED_TIME_NEW_COL;
+			SoftTimer3[SC_LED].timeCompare  = LED_TIME_NEW_COL;
+			break;
 
-		column++;
-		if( column >= MAX_LINE_COLUMNS )
-		{
-			column = 0;
-		}
+		case LED_STATE_SHIFT_DATA:
+			LED_TimerRoutine( MUX_GetCurrentColumn() );
+			Callback_Switch_Read();
+			LEDState = LED_STATE_BLANK;
+			SoftTimer3[SC_LED].timerCounter = LED_TIME_SHIFT;
+			SoftTimer3[SC_LED].timeCompare  = LED_TIME_SHIFT;
+			break;
 
-		LEDState = LED_STATE_ON;
-		SoftTimer3[SC_LED].timerCounter = LED_TIME_ON;
-		SoftTimer3[SC_LED].timeCompare  = LED_TIME_ON;
-	}
-	else
-	{
-		LEDState = LED_STATE_BLANK;
-		SoftTimer3[SC_LED].timerCounter = LED_TIME_OFF;
-		SoftTimer3[SC_LED].timeCompare  = LED_TIME_OFF;
-		LED_Blank();
+		case LED_STATE_BLANK:
+			LEDState = LED_STATE_NEW_COLUMN;
+			SoftTimer3[SC_LED].timerCounter = LED_TIME_BLANK;
+			SoftTimer3[SC_LED].timeCompare  = LED_TIME_BLANK;
+			LED_Blank();
+		break;
+
+		default:
+			break;
 	}
 
 }

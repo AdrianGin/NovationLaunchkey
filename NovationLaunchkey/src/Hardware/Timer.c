@@ -30,6 +30,43 @@ void TMR0_Callback(uint32_t u32Param)
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer1, TIMER1_COUNT);
 }
 
+
+void Timer_InitNoBSP(uint8_t prescale, uint32_t compare)
+{
+	//Select 12MHz
+	DrvSYS_SetIPClock(E_SYS_TMR0_CLK, 1);
+	DrvSYS_SelectIPClockSource(E_SYS_TMR0_CLKSRC, 0x00);
+
+	TIMER0->TCSR.MODE = E_PERIODIC_MODE;
+	TIMER0->TCSR.TDR_EN = 1;
+
+
+	TIMER0->TCSR.PRESCALE = prescale;
+	TIMER0->TCMPR = compare;
+
+	TIMER0->TCSR.CEN = 1;
+	TIMER0->TCSR.IE = 1;
+
+    NVIC_SetPriority((IRQn_Type)((uint32_t)TMR0_IRQn + (uint32_t)0), (1<<__NVIC_PRIO_BITS) - 2);
+	NVIC_EnableIRQ((IRQn_Type)((uint32_t)TMR0_IRQn + (uint32_t)0));
+}
+
+void Timer_DisableNoBSP(void)
+{
+	TIMER0->TCSR.CEN = 0;
+	TIMER0->TCSR.IE = 0;
+}
+
+
+void TMR0_IRQHandler(void)
+{
+    if ((TIMER0->TCSR.IE == 1) && (TIMER0->TISR.TIF == 1))
+        TIMER0->TISR.TIF = 1;
+
+	TIM_MasterTick = 1;
+	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer1, TIMER1_COUNT);
+}
+
 void Timer_Init(uint32_t kHzSpeed)
 {
 	DrvTIMER_Init();
@@ -37,7 +74,7 @@ void Timer_Init(uint32_t kHzSpeed)
 	DrvSYS_SelectIPClockSource(E_SYS_TMR0_CLKSRC, 0x02);
 	
 	/* Using TIMER0 in PERIODIC_MODE, 100kHz resolution */
-	printNumber(DrvTIMER_Open(E_TMR0, kHzSpeed, E_PERIODIC_MODE));
+	DrvTIMER_Open(E_TMR0, kHzSpeed, E_PERIODIC_MODE);
 
 	/* Install callback "TMR0_Callback" and trigger callback when Interrupt happen twice */
 	DrvTIMER_SetTimerEvent(E_TMR0, 1, (TIMER_CALLBACK)TMR0_Callback, 0);
@@ -48,7 +85,11 @@ void Timer_Init(uint32_t kHzSpeed)
 }
 
 
-
+void Timer_Disable(E_TIMER_CHANNEL ch)
+{
+	DrvTIMER_Close(ch);
+	DrvTIMER_ClearTimerEvent(ch, 0);
+}
 
 
 

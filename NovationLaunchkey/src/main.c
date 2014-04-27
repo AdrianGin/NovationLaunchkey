@@ -47,7 +47,10 @@ int main(void)
 
 	LED_Init();
    
-	Timer_Init(20000);
+	//Timer_Init(76800);
+	//Divide by (11+1) = 12 for a 1MHz prescale
+	Timer_InitNoBSP(11, 15);
+
 	ADC_Init();
 
 
@@ -107,10 +110,28 @@ int main(void)
    {
 	   if( TIM_IsMasterTickTriggered() )
 	   {
-			RunAndExecuteTimers( (SoftTimer_16*)SoftTimer2, TIMER2_COUNT);
+		   //RunAndExecuteTimers( (SoftTimer_16*)SoftTimer2, TIMER2_COUNT);
 		   //RunAuxTimers();
 		   TIM_ResetMasterTick();
 	   }
+
+//		Callback_ADC_Handle();
+//		uint16_t adcSample = ADC_GetSample(ADC_MODULATION);
+//		//Timer_DisableNoBSP();
+//		//Timer_InitNoBSP(11, adcSample);
+//
+//		//Timer_Disable(E_TMR0);
+//		//Timer_Init(adcSample * 1000);
+//		LED_7Segment_WriteNumber(adcSample);
+//		ADC_ClearChangeFlag(ADC_MODULATION);
+//
+//	   printNumber(adcSample);
+//		uint16_t i;
+//	   for( i = 0; i < 100; i++  )
+//	   {
+//		   DrvSYS_Delay(1000);
+//	   }
+
    }
 
 	return 0;
