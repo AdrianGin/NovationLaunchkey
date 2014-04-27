@@ -1,114 +1,133 @@
 
 
-#include "Switch.h"
+#include "Keyboard.h"
 #include "MultiplexControl.h"
 
-
-
-const uint8_t SWITCH_LOOKUP[] = 
+void Keyboard_GPIO_Init(void)
 {
-	SW_MUTE_3,
-	SW_MUTE_2,
-	SW_MUTE_1,
-	SW_MUTE_0,
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_MK0, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_BR0, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_MK1, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_BR1, E_IO_INPUT);
 
-	SW_MUTE_4,
-	SW_MUTE_5,
-	SW_MUTE_6,
-	SW_MUTE_7,
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_MK3, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_BR3, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_MK4, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_BR4, E_IO_INPUT);
 
-	SW_MUTE_8,
-	SW_INCONTROL_BOT,
-	SW_INCONTROL_MID,
-	SW_INCONTROL_TOP,
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_MK5, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_BR5, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_MK6, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_BR6, E_IO_INPUT);
 
-	SW_SCENE_0,
-	SW_SCENE_1,
-	SW_REWIND,
-	SW_FASTFWD,
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_MK7, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_BR7, E_IO_INPUT);
 
-	SW_STOP,
-	SW_PLAY,
-	SW_LOOP,
-	SW_REC,
-
-	SW_TRACK_LEFT,
-	SW_TRACK_RIGHT,
-	SW_OCTAVE_DOWN,
-	SW_OCTAVE_UP,
-
-};
-
-
-volatile uint32_t SwitchRawStates = 0;
-
-void Switch_GPIO_Init(void)
-{
-	DrvGPIO_Open(SWITCH_INPUT_PORT, SWITCH_INPUT0_PIN, E_IO_INPUT);
-	DrvGPIO_Open(SWITCH_INPUT_PORT, SWITCH_INPUT1_PIN, E_IO_INPUT);
-	DrvGPIO_Open(SWITCH_INPUT_PORT, SWITCH_INPUT2_PIN, E_IO_INPUT);
-	DrvGPIO_Open(SWITCH_INPUT_PORT, SWITCH_INPUT3_PIN, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT2, KEYBOARD_MK2, E_IO_INPUT);
+	DrvGPIO_Open(KEYBOARD_INPUT_PORT2, KEYBOARD_BR2, E_IO_INPUT);
 }
 
-uint8_t Switch_ReadState(void)
+
+uint16_t Keyboard_ReadState(void)
 {
 	int32_t portState;
-	portState = DrvGPIO_GetPortBits(SWITCH_INPUT_PORT);
-	portState &= SWITCH_INPUT_PIN_MASK;
-	return (uint8_t)(portState & SWITCH_INPUT_PIN_MASK);
+
+	uint16_t kbState = 0;
+
+	portState = DrvGPIO_GetPortBits(KEYBOARD_INPUT_PORT);
+	portState &= KEYBOARD_INPUT_MASK;
+
+	kbState = portState;
+
+	portState = DrvGPIO_GetPortBits(KEYBOARD_INPUT_PORT2);
+	portState &= KEYBOARD_INPUT_MASK2;
+
+	kbState |= ((portState >> KEYBOARD_MK2) << (KEYBOARD_BR1+1));
+
+	return (kbState);
 }
 
-uint32_t Switch_GetSwitchStates(void)
+
+//Use 1 bit for each key
+uint32_t Keyboard_RawBRStateMap[BYTES_PER_KEYMAP];
+uint32_t Keyboard_RawMKStateMap[BYTES_PER_KEYMAP];
+
+//Indexes 0-2 are for BR, 3-5 are MK
+uint32_t Keyboard_GetStateMap(uint8_t index)
 {
-	return SwitchRawStates;
+	if( index >= (2*BYTES_PER_KEYMAP) )
+	{
+		return 0xFFFFFFFF;
+	}
+
+	if( index < BYTES_PER_KEYMAP )
+	{
+		return Keyboard_RawBRStateMap[index];
+	}
+	else
+	{
+		return Keyboard_RawMKStateMap[index-BYTES_PER_KEYMAP];
+	}
 }
 
-uint32_t Switch_CheckForChange(void)
+void Keyboard_SetMapBit(uint32_t* bitmap, uint8_t bit)
 {
-	uint32_t oldState = SwitchRawStates;
-	uint32_t newState;
+	uint8_t index;
+	uint8_t bitIndex;
 
-	Switch_ProcessState( Switch_ReadState() );
+	index = bit / BITS_PER_KEYMAP;
+	bitIndex = (bit - (index * BITS_PER_KEYMAP));
 
-	newState = SwitchRawStates;
-	return oldState ^ newState;
+	bitmap[index] |= (uint32_t)(1<<bitIndex);
 }
 
-void Switch_ProcessState(uint8_t switchStates)
+void Keyboard_ClrMapBit(uint32_t* bitmap, uint8_t bit)
+{
+	uint8_t index;
+	uint8_t bitIndex;
+
+	index = bit / BITS_PER_KEYMAP;
+	bitIndex = (bit - (index * BITS_PER_KEYMAP));
+
+	bitmap[index] &= ~(uint32_t)(1<<bitIndex);
+}
+
+
+//Turns the keyboard raw state into a keyboard map.
+void Keyboard_ProcessState(uint16_t keyboardState)
 {
 	uint8_t column = MUX_GetCurrentColumn();
 	uint8_t i;
 
-	if( column >= MAX_SW_COLUMNS )
+	if( column >= MAX_LINE_COLUMNS )
 	{
 		return;
 	}
 
-	uint8_t logicalIndex = column*SWITCHES_PER_COLUMN;
-	uint8_t resolvedIndex;
+	uint8_t logicalIndex;
 
-	for( i = 0; i < SWITCHES_PER_COLUMN; i++ )
+	for( i = 0; i < (KEYS_PER_COLUMN) ; i++ )
 	{
-		logicalIndex = (column*SWITCHES_PER_COLUMN) + i;
-		resolvedIndex = SWITCH_LOOKUP[logicalIndex];
+		logicalIndex = (column) + (i*(KEYS_PER_COLUMN));
 
+		Keyboard_ClrMapBit( (uint32_t*)Keyboard_RawMKStateMap, logicalIndex);
+		Keyboard_ClrMapBit( (uint32_t*)Keyboard_RawBRStateMap, logicalIndex);
 
-		SwitchRawStates &= ~(1<<resolvedIndex);
-
-		if( switchStates & (1<<i) )
+		if( keyboardState & (1<<(i*2)) )
 		{
-			SwitchRawStates |= (1<<resolvedIndex);
+			Keyboard_SetMapBit( (uint32_t*)Keyboard_RawBRStateMap, logicalIndex);
+		}
+
+		if( keyboardState & (1<<((i*2)+1)) )
+		{
+			Keyboard_SetMapBit( (uint32_t*)Keyboard_RawMKStateMap, logicalIndex);
 		}
 	}
 }
 
-
-uint8_t Switch_GetState(uint8_t index)
+//Returns 0 to NUMBER_OF_KEYS KEY COUNT, based on the index and bit index
+inline uint8_t Keyboard_GetKeyIndex(uint8_t byteIndex, uint8_t bitIndex)
 {
-	if( index > SW_REC )
-	{
-		return SWITCH_INVALID;
-	}
-	return ((SwitchRawStates & (1<<index)) != 0);
-	
+	return (byteIndex*BITS_PER_KEYMAP) + bitIndex;
 }
+

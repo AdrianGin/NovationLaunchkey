@@ -1,6 +1,6 @@
 
-#ifndef _SWITCH_H
-#define _SWITCH_H
+#ifndef _KEYBOARD_H
+#define _KEYBOARD_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,55 +9,25 @@ extern "C" {
 #include <stdint.h>
 #include "HardwareSpecific.h"
 
-typedef enum
-{
-	SW_MUTE_0 = 0,
-	SW_MUTE_1,
-	SW_MUTE_2,
-	SW_MUTE_3,
 
-	SW_MUTE_4,
-	SW_MUTE_5,
-	SW_MUTE_6,
-	SW_MUTE_7,
+#define KEYS_PER_COLUMN	(8)
 
-	SW_MUTE_8,
-	SW_INCONTROL_TOP,
-	SW_INCONTROL_MID,
-	SW_INCONTROL_BOT,
+#define NUMBER_OF_KEYS	(61)
 
-	SW_SCENE_0,
-	SW_SCENE_1,
+#define BITS_PER_KEYMAP		(32)
+#define BYTES_PER_KEYMAP	(3)
 
-	SW_REWIND,
-	SW_FASTFWD,
-	SW_STOP,
-	SW_PLAY,
-	SW_LOOP,
-	SW_REC,
+void Keyboard_GPIO_Init(void);
+//Obtains the raw Keyboard State
+uint16_t Keyboard_ReadState(void);
 
-	SW_TRACK_LEFT,
-	SW_TRACK_RIGHT,
-	SW_OCTAVE_DOWN,
-	SW_OCTAVE_UP,
+//Turns the keyboard raw state into a keyboard map.
+void Keyboard_ProcessState(uint16_t keyboardState);
 
-	SW_COUNT
-
-
-} E_SWITCH_INDEX;
-
-#define SWITCH_ON  (1)
-#define SWITCH_INVALID (0xFF)
-#define SWITCH_OFF (0)
-
-#define SWITCHES_PER_COLUMN (4)
-
-void Switch_GPIO_Init(void);
-uint8_t Switch_GetState(uint8_t index);
-void Switch_ProcessState(uint8_t switchStates);
-uint32_t Switch_CheckForChange(void);
-uint8_t Switch_ReadState(void);
-uint32_t Switch_GetSwitchStates(void);
+void Keyboard_SetMapBit(uint32_t* bitmap, uint8_t bit);
+void Keyboard_ClrMapBit(uint32_t* bitmap, uint8_t bit);
+uint32_t Keyboard_GetStateMap(uint8_t index);
+uint8_t Keyboard_GetKeyIndex(uint8_t byteIndex, uint8_t bitIndex);
 
 
 #ifdef __cplusplus

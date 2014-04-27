@@ -9,6 +9,8 @@
 #include "Timer.h"
 
 #include "Switch.h"
+#include "Keyboard.h"
+
 #include "TimerCallbacks.h"
 
 
@@ -23,6 +25,8 @@ int main(void)
 	MUX_GPIO_Init();
 	LED_GPIO_Init();
 	Switch_GPIO_Init();
+	Keyboard_GPIO_Init();
+
 
 	UART_Init();
 

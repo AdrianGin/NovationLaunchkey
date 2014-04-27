@@ -80,8 +80,45 @@ typedef enum
 #define SWITCH_INPUT1_PIN (1)
 #define SWITCH_INPUT2_PIN (2)
 #define SWITCH_INPUT3_PIN (3)
-
 #define SWITCH_INPUT_PIN_MASK ( (1<<SWITCH_INPUT0_PIN) | (1<<SWITCH_INPUT1_PIN) | (1<<SWITCH_INPUT2_PIN) | (1<<SWITCH_INPUT3_PIN))
+
+
+#define KEYBOARD_INPUT_PORT	(E_GPB)
+#define KEYBOARD_MK0 (0)
+#define KEYBOARD_BR0 (1)
+#define KEYBOARD_MK1 (2)
+#define KEYBOARD_BR1 (3)
+#define KEYBOARD_MK3 (6)
+#define KEYBOARD_BR3 (7)
+#define KEYBOARD_MK4 (8)
+#define KEYBOARD_BR4 (9)
+#define KEYBOARD_MK5 (10)
+#define KEYBOARD_BR5 (11)
+#define KEYBOARD_MK6 (12)
+#define KEYBOARD_BR6 (13)
+#define KEYBOARD_MK7 (14)
+#define KEYBOARD_BR7 (15)
+
+#define KEYBOARD_INPUT_MASK ( (1<<KEYBOARD_MK0) | \
+							  (1<<KEYBOARD_BR0) | \
+							  (1<<KEYBOARD_MK1) | \
+							  (1<<KEYBOARD_BR1) | \
+							  (1<<KEYBOARD_MK3) | \
+							  (1<<KEYBOARD_BR3) | \
+							  (1<<KEYBOARD_MK4) | \
+							  (1<<KEYBOARD_BR4) | \
+							  (1<<KEYBOARD_MK5) | \
+							  (1<<KEYBOARD_BR5) | \
+							  (1<<KEYBOARD_MK6) | \
+							  (1<<KEYBOARD_BR6) | \
+							  (1<<KEYBOARD_MK7) | \
+							  (1<<KEYBOARD_BR7) )
+
+#define KEYBOARD_INPUT_PORT2	(E_GPC)
+#define KEYBOARD_MK2 (14)
+#define KEYBOARD_BR2 (15)
+
+#define KEYBOARD_INPUT_MASK2  ((1<<KEYBOARD_MK2) | (1<<KEYBOARD_BR2))
 
 
 void SystemClockInit(void);

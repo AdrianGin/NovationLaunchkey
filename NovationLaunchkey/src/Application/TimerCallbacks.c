@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include "ADC.h"
 #include "MultiplexControl.h"
 #include "Switch.h"
+#include "Keyboard.h"
 
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_ColumnMux},};
@@ -88,8 +89,39 @@ void Callback_UpdateDisplay(void)
 				printNumber(switchState);
 			}
 		}
-		
 	}
+
+	uint8_t j;
+	static uint32_t KeyMap[2*BYTES_PER_KEYMAP];
+
+	for( j = 0 ; j < BYTES_PER_KEYMAP*2; j++ )
+	{
+		uint32_t newKeyMap = Keyboard_GetStateMap(j);
+
+		if( KeyMap[j] != newKeyMap )
+		{
+			uint32_t keyChangeMap = KeyMap[j] ^ newKeyMap;
+			KeyMap[j] = newKeyMap;
+
+			for( i = 0 ; i < BITS_PER_KEYMAP; i++ )
+			{
+				if( keyChangeMap & (1<<i) )
+				{
+					uint8_t keyIndex = Keyboard_GetKeyIndex(j%BYTES_PER_KEYMAP, i);
+					if( j >= BYTES_PER_KEYMAP )
+					{
+						LED_7Segment_WriteNumber(keyIndex);
+					}
+					else
+					{
+						printNumber(keyIndex);
+					}
+					
+				}
+			}
+		}
+	}
+	
 
 	
 
@@ -166,8 +198,10 @@ void Callback_Switch_Read(void)
 	//if( LEDState == LED_STATE_BLANK )
 	{
 		Switch_ProcessState( Switch_ReadState() );
+		Keyboard_ProcessState(Keyboard_ReadState());
 	}
 }
+
 
 
 
