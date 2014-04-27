@@ -33,13 +33,13 @@ THE SOFTWARE.
 #include "Keyboard.h"
 
 /* These are the critical timers, 500kHz resolution */
-volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_ColumnMux},};
+volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalTimers},};
 
 volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {6,0, 1, Callback_ADC_Handle},
 																	 {100,0, 1, Callback_UpdateDisplay}, };
 
 
-volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{1, 0, 1, Callback_LED_Strobe},
+volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{1, 0, 1, Callback_ColumnMux},
 												  {1, 0, 0, Callback_Switch_Read}};
 
 
@@ -86,7 +86,6 @@ void Callback_UpdateDisplay(void)
 				uint8_t switchState;
 				switchState = Switch_GetState(i);
 				LED_7Segment_WriteNumber(i);
-				//printNumber(switchState);
 			}
 		}
 	}
@@ -140,16 +139,16 @@ void Callback_ADC_Handle(void)
 #define LED_TIME_SHIFT		(9)
 #define LED_TIME_BLANK		(1)
 
-inline void Callback_ColumnMux(void)
+inline void Callback_CriticalTimers(void)
 {
 	//Run our nested Timers;
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
 	//Callback_LED_Strobe();
 }
 
-volatile uint8_t LEDState = LED_STATE_NEW_COLUMN;
+volatile uint8_t LEDState = LED_STATE_SHIFT_DATA;
 
-void Callback_LED_Strobe(void)
+void Callback_ColumnMux(void)
 {
 	static uint8_t column = 0;
 
@@ -169,17 +168,22 @@ void Callback_LED_Strobe(void)
 			break;
 
 		case LED_STATE_SHIFT_DATA:
+
+			MUX_ActivateLineColumn(column);
+			column++;
+			if( column >= MAX_LINE_COLUMNS )
+			{
+				column = 0;
+			}
 			LED_TimerRoutine( MUX_GetCurrentColumn() );
-
-			Callback_Switch_Read();
-
 			LEDState = LED_STATE_BLANK;
 			SoftTimer3[SC_LED].timerCounter = LED_TIME_SHIFT;
 			SoftTimer3[SC_LED].timeCompare  = LED_TIME_SHIFT;
 			break;
 
 		case LED_STATE_BLANK:
-			LEDState = LED_STATE_NEW_COLUMN;
+			//LEDState = LED_STATE_NEW_COLUMN;
+			LEDState = LED_STATE_SHIFT_DATA;
 			SoftTimer3[SC_LED].timerCounter = LED_TIME_BLANK;
 			SoftTimer3[SC_LED].timeCompare  = LED_TIME_BLANK;
 			LED_Blank();
@@ -188,6 +192,8 @@ void Callback_LED_Strobe(void)
 		default:
 			break;
 	}
+
+	Callback_Switch_Read();
 
 }
 

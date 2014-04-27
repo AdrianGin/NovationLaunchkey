@@ -61,10 +61,10 @@ typedef enum {
 extern volatile SoftTimer_16  SoftTimer1[];
 extern volatile SoftTimer_16  SoftTimer2[];
 
-void Callback_ColumnMux(void);
+void Callback_CriticalTimers(void);
 void Callback_UpdateDisplay(void);
 void Callback_ADC_Handle(void);
-void Callback_LED_Strobe(void);
+void Callback_ColumnMux(void);
 void Callback_Switch_Read(void);
 
 #ifdef __cplusplus
