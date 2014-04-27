@@ -92,22 +92,24 @@ void Callback_UpdateDisplay(void)
 
 	uint8_t j;
 	static uint32_t KeyMap[2*BYTES_PER_KEYMAP];
+	static uint32_t rawBRMKStateMap[BYTES_PER_KEYMAP*2];
+
 
 	for( j = 0 ; j < BYTES_PER_KEYMAP*2; j++ )
 	{
-		uint32_t newKeyMap = Keyboard_GetStateMap(j);
+		uint32_t newKeyMap = Keyboard_GetRawBRMKStateMap(j);
 
-		if( KeyMap[j] != newKeyMap )
+		if( rawBRMKStateMap[j] != newKeyMap )
 		{
-			uint32_t keyChangeMap = KeyMap[j] ^ newKeyMap;
-			KeyMap[j] = newKeyMap;
+			uint32_t keyChangeMap = rawBRMKStateMap[j] ^ newKeyMap;
+			rawBRMKStateMap[j] = newKeyMap;
 
 			for( i = 0 ; i < BITS_PER_KEYMAP; i++ )
 			{
 				if( keyChangeMap & (1<<i) )
 				{
-					uint8_t keyIndex = Keyboard_GetKeyIndex(j%BYTES_PER_KEYMAP, i);
-					if( j >= BYTES_PER_KEYMAP )
+					uint8_t keyIndex = ((j*BITS_PER_KEYMAP) + i) >> 1;
+					if( i & 0x01 )
 					{
 						LED_7Segment_WriteNumber(keyIndex);
 					}
@@ -115,11 +117,38 @@ void Callback_UpdateDisplay(void)
 					{
 						printNumber(keyIndex);
 					}
-					
 				}
 			}
 		}
 	}
+
+
+//	{
+//		uint32_t newKeyMap = Keyboard_GetStateMap(j);
+//
+//		if( KeyMap[j] != newKeyMap )
+//		{
+//			uint32_t keyChangeMap = KeyMap[j] ^ newKeyMap;
+//			KeyMap[j] = newKeyMap;
+//
+//			for( i = 0 ; i < BITS_PER_KEYMAP; i++ )
+//			{
+//				if( keyChangeMap & (1<<i) )
+//				{
+//					uint8_t keyIndex = Keyboard_GetKeyIndex(j%BYTES_PER_KEYMAP, i);
+//					if( j >= BYTES_PER_KEYMAP )
+//					{
+//						LED_7Segment_WriteNumber(keyIndex);
+//					}
+//					else
+//					{
+//						printNumber(keyIndex);
+//					}
+//
+//				}
+//			}
+//		}
+//	}
 	
 
 	

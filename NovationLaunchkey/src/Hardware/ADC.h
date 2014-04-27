@@ -67,7 +67,64 @@ typedef enum
 } E_ADC_INDEX;
 
 
+typedef struct
+{
+	 union {
+        uint32_t ADC_STATUS;
+        struct {
+        	uint32_t	ADC0	:1;
+        	uint32_t	ADC1	:1;
+        	uint32_t	ADC2	:1;
+        	uint32_t	ADC3	:1;
+        	uint32_t	ADC4	:1;
+        	uint32_t	ADC5	:1;
+        	uint32_t	ADC6	:1;
+        	uint32_t	ADC7	:1;
 
+        	uint32_t	ADC8	:1;
+        	uint32_t	ADC9	:1;
+        	uint32_t	ADC10	:1;
+        	uint32_t	ADC11	:1;
+        	uint32_t	ADC12	:1;
+        	uint32_t	ADC13	:1;
+        	uint32_t	ADC14	:1;
+        	uint32_t	ADC15	:1;
+
+        	uint32_t	ADC16	:1;
+        	uint32_t	ADC17	:1;
+        	uint32_t	ADC18	:1;
+        	uint32_t	ADC19	:1;
+        	uint32_t	ADC20	:1;
+        	uint32_t	ADC21	:1;
+        	uint32_t	ADC22	:1;
+        	uint32_t	ADC23	:1;
+
+        	uint32_t	ADC24	:1;
+        	uint32_t	ADC25	:1;
+        	uint32_t	ADC26	:1;
+        	uint32_t	ADC27	:1;
+        	uint32_t	ADC28	:1;
+        	uint32_t	ADC29	:1;
+        	uint32_t	ADC30	:1;
+        	uint32_t	ADC31	:1;
+        } ADC_GROUP1;
+    };
+
+	union {
+		uint32_t ADC_STATUS2;
+		struct {
+			uint32_t	ADC32	:1;
+			uint32_t	ADC33	:1;
+			uint32_t	ADC34	:1;
+			uint32_t	ADC35	:1;
+			uint32_t	ADC36	:1;
+			uint32_t	ADC37	:1;
+			uint32_t	ADC38	:1;
+			uint32_t	ADC39	:1;
+		} ADC_GROUP2;
+	};
+
+} ADC_ChangeStatus_t;
 
 #define ADC_RESOLUTION (12)
 #define ADC_OVERSAMPLING_RES (0)
