@@ -24,48 +24,19 @@ THE SOFTWARE.
 
 
 
-#ifndef _TIMER_CALLBACKS_H
-#define _TIMER_CALLBACKS_H
+#ifndef _HAL_H
+#define _HAL_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "Softtimer.h"
-
-/* CCR1B associated timers */
-typedef enum {  
-	SC_COLUMN_MUX = 0,
-	TIMER1_COUNT
-   
-} timer1Ids;
-
-typedef enum {  
-	SC_ADC,
-	SC_UPDATE_DISPLAY,
-   TIMER2_COUNT 
-   
-} timer2Ids;
+#include <stdint.h>
 
 
-typedef enum {
-	SC_LED = 0,
-	//SC_KEYBOARD,
-	SC_SWITCH,
-   TIMER3_COUNT
 
-} timer3Ids;
 
-#define TMR_ADC_SAMPLE_TIME (20)
 
-extern volatile SoftTimer_16  SoftTimer1[];
-extern volatile SoftTimer_16  SoftTimer2[];
-
-void Callback_CriticalTimers(void);
-void Callback_UpdateDisplay(void);
-void Callback_ADC_Handle(void);
-void Callback_ColumnMux(void);
-void Callback_Switch_Read(void);
 
 #ifdef __cplusplus
 }

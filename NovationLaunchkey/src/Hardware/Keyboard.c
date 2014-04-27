@@ -28,7 +28,7 @@ void Keyboard_GPIO_Init(void)
 }
 
 
-uint16_t Keyboard_ReadState(void)
+uint16_t Keyboard_ReadRawState(void)
 {
 	int32_t portState;
 
@@ -49,6 +49,8 @@ uint16_t Keyboard_ReadState(void)
 
 
 //Use 1 bit for each key
+//BR makes first aka the Top contact,
+//MK is the final contact, the bottom.
 uint32_t Keyboard_RawBRStateMap[BYTES_PER_KEYMAP];
 uint32_t Keyboard_RawMKStateMap[BYTES_PER_KEYMAP];
 
@@ -94,7 +96,7 @@ void Keyboard_ClrMapBit(uint32_t* bitmap, uint8_t bit)
 
 
 //Turns the keyboard raw state into a keyboard map.
-void Keyboard_ProcessState(uint16_t keyboardState)
+void Keyboard_ProcessRawState(uint16_t keyboardState)
 {
 	uint8_t column = MUX_GetCurrentColumn();
 	uint8_t i;
@@ -130,4 +132,17 @@ inline uint8_t Keyboard_GetKeyIndex(uint8_t byteIndex, uint8_t bitIndex)
 {
 	return (byteIndex*BITS_PER_KEYMAP) + bitIndex;
 }
+
+
+
+uint8_t Keyboard_ProcessKeyMap(void)
+{
+
+	//Obtain all the changes since the last ProcessState.
+
+	//Each key will have it's own state. We need to work out which state we're in.
+
+}
+
+
 

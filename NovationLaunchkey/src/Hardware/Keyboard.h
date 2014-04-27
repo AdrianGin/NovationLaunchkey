@@ -19,10 +19,10 @@ extern "C" {
 
 void Keyboard_GPIO_Init(void);
 //Obtains the raw Keyboard State
-uint16_t Keyboard_ReadState(void);
+uint16_t Keyboard_ReadRawState(void);
 
 //Turns the keyboard raw state into a keyboard map.
-void Keyboard_ProcessState(uint16_t keyboardState);
+void Keyboard_ProcessRawState(uint16_t keyboardState);
 
 void Keyboard_SetMapBit(uint32_t* bitmap, uint8_t bit);
 void Keyboard_ClrMapBit(uint32_t* bitmap, uint8_t bit);
