@@ -52,32 +52,6 @@ int main(void)
 
 	ADC_Init();
 
-
-//   LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS/10);
-//   LED_SetLEDBrightness(0, LED_PAD1_G, MAX_LED_BRIGHTNESS/4);
-//   LED_SetLEDBrightness(0, LED_PAD2_G, MAX_LED_BRIGHTNESS/2);
-//   LED_SetLEDBrightness(0, LED_PAD3_G, MAX_LED_BRIGHTNESS);
-//
-//   LED_SetLEDBrightness(0, LED_PAD4_R, MAX_LED_BRIGHTNESS/10);
-//   LED_SetLEDBrightness(0, LED_PAD5_R, MAX_LED_BRIGHTNESS/4);
-//   LED_SetLEDBrightness(0, LED_PAD6_R, MAX_LED_BRIGHTNESS/2);
-//   LED_SetLEDBrightness(0, LED_PAD7_R, MAX_LED_BRIGHTNESS);
-//
-//   LED_SetLEDBrightness(0, LED_PAD8_R, MAX_LED_BRIGHTNESS/10);
-//   LED_SetLEDBrightness(0, LED_PAD9_R, MAX_LED_BRIGHTNESS/4);
-//   LED_SetLEDBrightness(0, LED_PAD10_R, MAX_LED_BRIGHTNESS/2);
-//   LED_SetLEDBrightness(0, LED_PAD11_R, MAX_LED_BRIGHTNESS);
-//
-//   LED_SetLEDBrightness(0, LED_PAD8_G, MAX_LED_BRIGHTNESS/10);
-//   LED_SetLEDBrightness(0, LED_PAD9_G, MAX_LED_BRIGHTNESS/4);
-//   LED_SetLEDBrightness(0, LED_PAD10_G, MAX_LED_BRIGHTNESS/2);
-//   LED_SetLEDBrightness(0, LED_PAD11_G, MAX_LED_BRIGHTNESS);
-//
-//   LED_SetLEDBrightness(0, LED_PAD12_G, MAX_LED_BRIGHTNESS/20);
-//   LED_SetLEDBrightness(0, LED_PAD13_G, MAX_LED_BRIGHTNESS/10);
-//   LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/5);
-//   LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);
-
    LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS/200);
    LED_SetLEDBrightness(0, LED_PAD1_G, MAX_LED_BRIGHTNESS/150);
    LED_SetLEDBrightness(0, LED_PAD2_G, MAX_LED_BRIGHTNESS/110);
@@ -98,8 +72,6 @@ int main(void)
    LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/2);
    LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);
 
-	
-
 
    SoftTimerStart(SoftTimer2[SC_ADC]);
    SoftTimerStart(SoftTimer2[SC_UPDATE_DISPLAY]);
@@ -115,23 +87,6 @@ int main(void)
 		   //RunAuxTimers();
 		   TIM_ResetMasterTick();
 	   }
-
-//		Callback_ADC_Handle();
-//		uint16_t adcSample = ADC_GetSample(ADC_MODULATION);
-//		//Timer_DisableNoBSP();
-//		//Timer_InitNoBSP(11, adcSample);
-//
-//		//Timer_Disable(E_TMR0);
-//		//Timer_Init(adcSample * 1000);
-//		LED_7Segment_WriteNumber(adcSample);
-//		ADC_ClearChangeFlag(ADC_MODULATION);
-//
-//	   printNumber(adcSample);
-//		uint16_t i;
-//	   for( i = 0; i < 100; i++  )
-//	   {
-//		   DrvSYS_Delay(1000);
-//	   }
 
    }
 

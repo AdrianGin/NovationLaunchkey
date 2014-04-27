@@ -4,7 +4,7 @@
 
 volatile uint8_t PrimaryMuxColumn = 0;
 
-uint8_t MUX_GetCurrentColumn(void)
+inline uint8_t MUX_GetCurrentColumn(void)
 {
 	return PrimaryMuxColumn;
 }
