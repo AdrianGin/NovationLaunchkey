@@ -62,6 +62,20 @@ inline uint32_t Keyboard_GetRawBRMKStateMap(uint8_t index)
 	return Keyboard_RawBRMKStateMap[index];
 }
 
+//0 for key 0, 1 for key 1 etc...
+inline uint8_t Keyboard_GetRawKeyState(uint32_t* brmkBitmap, uint8_t logicalIndex)
+{
+	uint8_t index;
+	uint8_t bitIndex;
+	uint32_t state;
+
+	index = logicalIndex / (BITS_PER_KEYMAP/2);
+	bitIndex = (logicalIndex - (index*(BITS_PER_KEYMAP/2)));
+
+	state = brmkBitmap[index] >> (bitIndex*2);
+	return (uint8_t)(state & 0x03);
+}
+
 //Indexes 0-2 are for BR, 3-5 are MK
 uint32_t Keyboard_GetStateMap(uint8_t index)
 {
@@ -110,9 +124,6 @@ void Keyboard_ProcessRawState(uint16_t keyboardState)
 
 		uint8_t index;
 		uint8_t bitIndex;
-		index = logicalIndex / BITS_PER_KEYMAP;
-		bitIndex = (logicalIndex - (index * BITS_PER_KEYMAP));
-
 
 		index = logicalIndex / (BITS_PER_KEYMAP/2);
 		bitIndex = (logicalIndex - (index*(BITS_PER_KEYMAP/2)));
@@ -164,43 +175,57 @@ Keyboard_KeyInformation_t Keyboard_Info[NUMBER_OF_KEYS];
 
 uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, uint8_t oldState, uint8_t newState)
 {
-
-
+	printNumber(keyIndex);
+	printNumber(oldState);
+	printNumber(newState);
 }
+
+
 
 uint8_t Keyboard_ProcessKeyMap(void)
 {
 
 	//Obtain all the changes since the last ProcessState.
 	uint8_t i, j;
-	static uint32_t KeyMapBR[BYTES_PER_KEYMAP];
-	static uint32_t KeyMapMK[BYTES_PER_KEYMAP];
+	//remembers the old state;
+	static uint32_t KeyMapBRMK[BYTES_PER_KEYMAP*2];
 
-	for( j = 0 ; j < BYTES_PER_KEYMAP; j++ )
+	for( j = 0 ; j < (BYTES_PER_KEYMAP*2) ; j++ )
 	{
-		uint32_t newKeyMapBR = Keyboard_GetStateMap(j);
-		uint32_t newKeyMapMK = Keyboard_GetStateMap(j+BYTES_PER_KEYMAP);
+		uint32_t newKeyMap = Keyboard_GetRawBRMKStateMap(j);
 
-		if( (KeyMapBR[j] != newKeyMapBR) || (KeyMapMK[j] != newKeyMapMK)  )
+		if( (KeyMapBRMK[j] != newKeyMap)  )
 		{
-			uint32_t keyChangeMapBR = KeyMapBR[j] ^ newKeyMapBR;
-			uint32_t keyChangeMapMK = KeyMapMK[j] ^ newKeyMapMK;
-			//KeyMap[j] = newKeyMap;
+			uint32_t keyChangeMap = KeyMapBRMK[j] ^ newKeyMap;
+			for( i = 0 ; (i < BITS_PER_KEYMAP) && (keyChangeMap != 0); i=i+2 )
+			{
+				uint8_t changedFlag = FALSE;
+				//Check the BR bit
+				if( keyChangeMap & (1<<(i)) )
+				{
+					keyChangeMap &= ~(1<<(i));
+					changedFlag = TRUE;
+				}
 
-//			for( i = 0 ; (i < BITS_PER_KEYMAP) && keyChangeMap != 0; i++ )
-//			{
-//				if( keyChangeMap & (1<<i) )
-//				{
-//					keyChangeMap &= ~(1<<i);
-//					uint8_t keyIndex = Keyboard_GetKeyIndex(j%BYTES_PER_KEYMAP, i);
-//				}
-//			}
+				//Check the MK bit
+				if( keyChangeMap & (1<<(i+1)) )
+				{
+					keyChangeMap &= ~(1<<(i+1));
+					changedFlag = TRUE;
+				}
+
+				if( changedFlag )
+				{
+					uint8_t keyIndex = ((j*BITS_PER_KEYMAP) + (i) ) >> 1;
+					Keyboard_DetermineNewState(keyIndex, \
+											   Keyboard_GetRawKeyState(KeyMapBRMK,keyIndex), \
+											   Keyboard_GetRawKeyState((uint32_t*)Keyboard_RawBRMKStateMap,keyIndex) );
+				}
+
+			}
 		}
 
-
-
-
-
+		KeyMapBRMK[j] = newKeyMap;
 	}
 	//Each key will have it's own state. We need to work out which state we're in.
 

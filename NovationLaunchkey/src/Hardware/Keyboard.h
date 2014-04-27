@@ -31,6 +31,10 @@ uint32_t Keyboard_GetStateMap(uint8_t index);
 uint8_t Keyboard_GetKeyIndex(uint8_t byteIndex, uint8_t bitIndex);
 
 uint32_t Keyboard_GetRawBRMKStateMap(uint8_t index);
+uint8_t Keyboard_GetRawKeyState(uint32_t* brmkBitmap, uint8_t logicalIndex);
+uint8_t Keyboard_ProcessKeyMap(void);
+
+
 
 #ifdef __cplusplus
 }
