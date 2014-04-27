@@ -19,9 +19,8 @@ int main(void)
 
 	//Initialise Hardware
 	SystemClockInit();
+	NVIC_Config();
 	
-
-
 	MUX_GPIO_Init();
 	LED_GPIO_Init();
 	Switch_GPIO_Init();
@@ -110,7 +109,9 @@ int main(void)
    {
 	   if( TIM_IsMasterTickTriggered() )
 	   {
-		   //RunAndExecuteTimers( (SoftTimer_16*)SoftTimer2, TIMER2_COUNT);
+			
+			
+		   RunAndExecuteTimers( (SoftTimer_16*)SoftTimer2, TIMER2_COUNT);
 		   //RunAuxTimers();
 		   TIM_ResetMasterTick();
 	   }

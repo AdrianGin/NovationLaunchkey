@@ -30,6 +30,13 @@ void SystemClockInit(void)
 }
 
 
+void NVIC_Config(void)
+{
+	NVIC_SetPriority(TMR0_IRQn,  1);
+	NVIC_SetPriority(ADC_IRQn,   2);
+	NVIC_SetPriority(UART1_IRQn, 2);
+}
+
 
 void printMsg(uint8_t* buffer)
 {

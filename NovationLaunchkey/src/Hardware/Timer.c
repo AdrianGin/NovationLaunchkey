@@ -47,7 +47,8 @@ void Timer_InitNoBSP(uint8_t prescale, uint32_t compare)
 	TIMER0->TCSR.CEN = 1;
 	TIMER0->TCSR.IE = 1;
 
-    NVIC_SetPriority((IRQn_Type)((uint32_t)TMR0_IRQn + (uint32_t)0), (1<<__NVIC_PRIO_BITS) - 2);
+	//Needs to be higher priority than the ADC.
+    //NVIC_SetPriority((IRQn_Type)((uint32_t)TMR0_IRQn + (uint32_t)0), (1<<__NVIC_PRIO_BITS) - 3);
 	NVIC_EnableIRQ((IRQn_Type)((uint32_t)TMR0_IRQn + (uint32_t)0));
 }
 
