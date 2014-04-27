@@ -32,7 +32,7 @@ typedef enum
 uint8_t TIM_IsMasterTickTriggered(void);
 void TIM_ResetMasterTick(void);
 
-void Timer_Init(void);
+void Timer_Init(uint32_t kHzSpeed);
 void TMR0_Callback(uint32_t u32Param);
 uint32_t TIM_GetDeltaTime(uint32_t currentTime, uint32_t lastTime);
 

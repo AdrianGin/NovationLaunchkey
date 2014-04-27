@@ -735,7 +735,8 @@ void DrvTIMER_ClearTimerEvent(E_TIMER_CHANNEL ch, uint32_t uTimerEventNo)
 /*                  E_DRVTIMER_CHANNEL                      Invalid Timer channel                          */
 /* Description:                                                                                            */
 /*                  This function is used to enable the specified timer interrupt.                         */
-/*---------------------------------------------------------------------------------------------------------*/int32_t DrvTIMER_EnableInt(E_TIMER_CHANNEL ch)
+/*---------------------------------------------------------------------------------------------------------*/
+int32_t DrvTIMER_EnableInt(E_TIMER_CHANNEL ch)
 {
 	TIMER_T * tTMR;
 

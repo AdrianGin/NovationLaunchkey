@@ -43,7 +43,7 @@ int main(void)
 
 	LED_Init();
    
-	Timer_Init();
+	Timer_Init(20000);
 	ADC_Init();
 
 
