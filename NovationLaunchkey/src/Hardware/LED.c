@@ -225,7 +225,15 @@ void LED_SetData(uint16_t data)
 	newData |= ( ((data & 0x40)  ? 1 : 0)  << LED_DATA_LINE6);
 	newData |= ( ((data & 0x80)  ? 1 : 0)  << LED_DATA_LINE7);
 
-	DrvGPIO_SetPortBits(LED_DATA_PORT, newData);
+	//DrvGPIO_SetPortBits(LED_DATA_PORT, newData);
+
+	GPIO_T * tGPIO;
+	tGPIO = (GPIO_T *)(LED_DATA_GPIO_PORT);
+	tGPIO->DOUT &= (~LED_DATA_LINE_MASK);
+	tGPIO->DOUT |= newData;
+
+
+
 
 }
 

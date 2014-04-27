@@ -48,7 +48,7 @@ int main(void)
    
 	//Timer_Init(76800);
 	//Divide by (11+1) = 12 for a 1MHz prescale
-	Timer_InitNoBSP(11, 15);
+	Timer_InitNoBSP(11, 13);
 
 	ADC_Init();
 

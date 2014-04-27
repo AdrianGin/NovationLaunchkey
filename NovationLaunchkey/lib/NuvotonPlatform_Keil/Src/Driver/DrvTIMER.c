@@ -155,6 +155,7 @@ static uint32_t CalTimerInitValue(uint32_t u32ClockValue, uint32_t u32TicksPerSe
 /* Description:                                                                                            */
 /*                  The TIMER0 default IRQ, declared in startup_NUC1xx.s                                   */
 /*---------------------------------------------------------------------------------------------------------*/
+#if 0
 void TMR0_IRQHandler(void)
 {   
     if ((TIMER0->TCSR.IE == 1) && (TIMER0->TISR.TIF == 1))
@@ -175,7 +176,7 @@ void TMR0_IRQHandler(void)
         }
     }
 }
-
+#endif
 /*---------------------------------------------------------------------------------------------------------*/
 /* Function:        TMR1_IRQHandler                                                                        */
 /*                                                                                                         */

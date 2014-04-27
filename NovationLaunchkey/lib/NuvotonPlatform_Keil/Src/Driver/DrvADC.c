@@ -243,7 +243,9 @@ void DrvADC_EnableADCInt(DRVADC_ADC_CALLBACK Callback, uint32_t u32UserData)
     g_pu32UserData[0] = u32UserData;
     _DRVADC_CLEAR_ADC_INT_FLAG();     /* clear the A/D interrupt flag for safe */
     ADC->ADCR.ADIE = 1;
-    NVIC_SetPriority(ADC_IRQn, (1<<__NVIC_PRIO_BITS) - 2);
+
+    //Priority set in NVIC Config
+    //NVIC_SetPriority(ADC_IRQn, (1<<__NVIC_PRIO_BITS) - 2);
     NVIC_EnableIRQ(ADC_IRQn);
 }
 

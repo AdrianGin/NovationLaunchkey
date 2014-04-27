@@ -23,7 +23,7 @@ extern "C" {
 
 
 
-
+#define LED_DATA_GPIO_PORT (GPIOA)
 #define LED_DATA_PORT	(E_GPA)
 typedef enum
 {
@@ -49,6 +49,7 @@ typedef enum
 #define ADC_INPUTS_PER_COL  (5)
 #define ADC_INPUT_COUNT (ADC_INPUTS_PER_COL*MAX_ADC_COLUMNS)
 
+#define MUX_LINE_GPIO_PORT	(GPIOC)
 #define MUX_LINE_PORT	(E_GPC)
 #define MUX_LINE0_PIN	(6)
 #define MUX_LINE1_PIN	(7)
@@ -56,6 +57,7 @@ typedef enum
 
 #define MUX_LINE_PIN_MASK ((1<<MUX_LINE0_PIN) | (1<<MUX_LINE1_PIN) | (1<<MUX_LINE2_PIN))
 
+#define MUX_ADC_GPIO_PORT	(GPIOC)
 #define MUX_ADC_PORT	(E_GPC)
 #define MUX_ADC0_PIN	(9)
 #define MUX_ADC1_PIN	(10)

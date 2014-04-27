@@ -137,8 +137,8 @@ void Callback_ADC_Handle(void)
 }
 
 #define LED_TIME_NEW_COL	(1)
-#define LED_TIME_SHIFT		(5)
-#define LED_TIME_BLANK		(3)
+#define LED_TIME_SHIFT		(9)
+#define LED_TIME_BLANK		(1)
 
 inline void Callback_ColumnMux(void)
 {
@@ -170,7 +170,9 @@ void Callback_LED_Strobe(void)
 
 		case LED_STATE_SHIFT_DATA:
 			LED_TimerRoutine( MUX_GetCurrentColumn() );
+
 			Callback_Switch_Read();
+
 			LEDState = LED_STATE_BLANK;
 			SoftTimer3[SC_LED].timerCounter = LED_TIME_SHIFT;
 			SoftTimer3[SC_LED].timeCompare  = LED_TIME_SHIFT;
