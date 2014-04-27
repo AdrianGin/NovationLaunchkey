@@ -23,6 +23,14 @@ void MUX_GPIO_Init(void)
 	DrvGPIO_Open(MUX_ADC_PORT, MUX_ADC1_PIN, E_IO_OUTPUT);
 	DrvGPIO_Open(MUX_ADC_PORT, MUX_ADC2_PIN, E_IO_OUTPUT);
 
+	DrvGPIO_DisableDigitalInputBit(MUX_LINE_PORT, MUX_LINE0_PIN);
+	DrvGPIO_DisableDigitalInputBit(MUX_LINE_PORT, MUX_LINE1_PIN);
+	DrvGPIO_DisableDigitalInputBit(MUX_LINE_PORT, MUX_LINE2_PIN);
+
+	DrvGPIO_DisableDigitalInputBit(MUX_ADC_PORT, MUX_ADC0_PIN);
+	DrvGPIO_DisableDigitalInputBit(MUX_ADC_PORT, MUX_ADC1_PIN);
+	DrvGPIO_DisableDigitalInputBit(MUX_ADC_PORT, MUX_ADC2_PIN);
+
 }
 
 

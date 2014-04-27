@@ -11,10 +11,12 @@ const uint8_t SWITCH_LOOKUP[] =
 	SW_MUTE_2,
 	SW_MUTE_1,
 	SW_MUTE_0,
+
 	SW_MUTE_4,
 	SW_MUTE_5,
 	SW_MUTE_6,
 	SW_MUTE_7,
+
 	SW_MUTE_8,
 	SW_INCONTROL_BOT,
 	SW_INCONTROL_MID,
@@ -22,9 +24,9 @@ const uint8_t SWITCH_LOOKUP[] =
 
 	SW_SCENE_0,
 	SW_SCENE_1,
-
 	SW_REWIND,
 	SW_FASTFWD,
+
 	SW_STOP,
 	SW_PLAY,
 	SW_LOOP,
@@ -42,7 +44,6 @@ volatile uint32_t SwitchRawStates = 0;
 
 void Switch_GPIO_Init(void)
 {
-	DrvGPIO_InitFunction(E_FUNC_GPIO);
 	DrvGPIO_Open(SWITCH_INPUT_PORT, SWITCH_INPUT0_PIN, E_IO_INPUT);
 	DrvGPIO_Open(SWITCH_INPUT_PORT, SWITCH_INPUT1_PIN, E_IO_INPUT);
 	DrvGPIO_Open(SWITCH_INPUT_PORT, SWITCH_INPUT2_PIN, E_IO_INPUT);
@@ -54,7 +55,7 @@ uint8_t Switch_ReadState(void)
 	int32_t portState;
 	portState = DrvGPIO_GetPortBits(SWITCH_INPUT_PORT);
 	portState &= SWITCH_INPUT_PIN_MASK;
-	return (uint8_t)(portState & 0x0F);
+	return (uint8_t)(portState & SWITCH_INPUT_PIN_MASK);
 }
 
 uint32_t Switch_GetSwitchStates(void)
@@ -77,6 +78,11 @@ void Switch_ProcessState(uint8_t switchStates)
 {
 	uint8_t column = MUX_GetCurrentColumn();
 	uint8_t i;
+
+	if( column >= MAX_SW_COLUMNS )
+	{
+		return;
+	}
 
 	uint8_t logicalIndex = column*SWITCHES_PER_COLUMN;
 	uint8_t resolvedIndex;

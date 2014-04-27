@@ -12,7 +12,7 @@ extern "C" {
 #include "HardwareSpecific.h"
 
 #define LEDS_PER_COLUMN (8)
-#define LED_BRIGHTNESS_RES (3)
+#define LED_BRIGHTNESS_RES (4)
 #define MAX_LED_BRIGHTNESS ((1<<LED_BRIGHTNESS_RES)-1)
 #define BRIGHTNESS_MULT_FACTOR (1000)
 

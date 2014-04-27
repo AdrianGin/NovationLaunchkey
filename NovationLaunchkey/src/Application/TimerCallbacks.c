@@ -104,6 +104,8 @@ void Callback_ColumnMux(void)
 {
 	//Run our nested Timers;
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
+	//Callback_LED_Strobe();
+
 }
 
 volatile uint8_t LEDState = LED_STATE_BLANK;
@@ -118,37 +120,47 @@ void Callback_LED_Strobe(void)
 
 	if( LEDState == LED_STATE_BLANK )
 	{
-		if( column != MUX_GetCurrentColumn() )
-		{
-			MUX_ActivateLineColumn(column);
-		}
 		//LED_TimerRoutine( MUX_GetCurrentColumn() );
 
-		LED_CountUpRoutine(column, count++);
+
 
 		if( count > MAX_LED_BRIGHTNESS )
 		{
 			count = 0;
+			Callback_Switch_Read();
+			LED_Blank();
+
+			if( column != MUX_GetCurrentColumn() )
+			{
+
+			}
 
 			column++;
 			if( column >= MAX_LINE_COLUMNS )
 			{
 				column = 0;
 			}
+			MUX_ActivateLineColumn(column);
+		}
+		else
+		{
+			LED_CountUpRoutine(column, count++);
 		}
 
-		LEDState = LED_STATE_ON;
+		//LEDState = LED_STATE_ON;
 		SoftTimer3[SC_LED].timerCounter = LED_TIME_ON;
 		SoftTimer3[SC_LED].timeCompare  = LED_TIME_ON;
 	}
 	else
 	{
 		LEDState = LED_STATE_BLANK;
-		SoftTimer3[SC_LED].timerCounter = LED_TIME_OFF;
-		SoftTimer3[SC_LED].timeCompare  = LED_TIME_OFF;
+
+
+		//SoftTimer3[SC_LED].timerCounter = LED_TIME_OFF;
+		//SoftTimer3[SC_LED].timeCompare  = LED_TIME_OFF;
 		LED_Blank();
 
-		Callback_Switch_Read();
+
 
 	}
 
@@ -158,7 +170,7 @@ void Callback_LED_Strobe(void)
 void Callback_Switch_Read(void)
 {
 	//We can only sample when the LEDs are off.
-	if( LEDState == LED_STATE_BLANK )
+	//if( LEDState == LED_STATE_BLANK )
 	{
 		Switch_ProcessState( Switch_ReadState() );
 	}

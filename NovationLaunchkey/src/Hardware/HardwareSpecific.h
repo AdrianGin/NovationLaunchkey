@@ -44,6 +44,7 @@ typedef enum
 
 #define MAX_LINE_COLUMNS	(8)
 #define MAX_ADC_COLUMNS		(8)
+#define MAX_SW_COLUMNS		(6)
 
 #define ADC_INPUTS_PER_COL  (5)
 #define ADC_INPUT_COUNT (ADC_INPUTS_PER_COL*MAX_ADC_COLUMNS)
