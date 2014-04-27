@@ -148,8 +148,42 @@ inline void Callback_ColumnMux(void)
 
 volatile uint8_t LEDState = LED_STATE_BLANK;
 
-
 void Callback_LED_Strobe(void)
+{
+	static uint8_t column = 0;
+
+	static uint16_t count;
+
+
+	if( LEDState == LED_STATE_BLANK )
+	{
+		MUX_ActivateLineColumn(column);
+		LED_TimerRoutine( MUX_GetCurrentColumn() );
+
+		Callback_Switch_Read();
+
+		column++;
+		if( column >= MAX_LINE_COLUMNS )
+		{
+			column = 0;
+		}
+
+		LEDState = LED_STATE_ON;
+		SoftTimer3[SC_LED].timerCounter = LED_TIME_ON;
+		SoftTimer3[SC_LED].timeCompare  = LED_TIME_ON;
+	}
+	else
+	{
+		LEDState = LED_STATE_BLANK;
+		SoftTimer3[SC_LED].timerCounter = LED_TIME_OFF;
+		SoftTimer3[SC_LED].timeCompare  = LED_TIME_OFF;
+		LED_Blank();
+	}
+
+}
+
+
+void Callback_LED_StrobeCount(void)
 {
 	static uint8_t column = 0;
 	
