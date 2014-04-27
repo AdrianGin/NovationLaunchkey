@@ -11,11 +11,20 @@ uint8_t FSR_Processing(uint8_t index, uint16_t sample)
 	uint8_t changedFlag = 0;
 
 	signedValue = sample;
-	if( signedValue < 100 )
+
+	if( (signedValue < 200) )
 	{
-		signedValue = 0;
-		ele->lastValue = 0;
+		
+		if( (ele->lastValue >= 10) )
+		{
+			ele->lastValue = 0;
+			changedFlag = 1;
+		}
+
+		ele->filteredVal = 0; 
+		return changedFlag;
 	}
+
 
 
 	//Need to cutoff the bottom;
@@ -38,6 +47,11 @@ uint8_t FSR_Processing(uint8_t index, uint16_t sample)
 			ele->filteredVal = (signedValue) / ADC_NOM_STEP_SIZE;
 			changedFlag = 1;
 		}
+	}
+
+	if( changedFlag )
+	{
+		ele->lastValue = signedValue;
 	}
 
 	return changedFlag;

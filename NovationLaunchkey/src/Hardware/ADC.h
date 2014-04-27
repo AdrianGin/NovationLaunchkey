@@ -75,7 +75,7 @@ typedef enum
 
 #define ADC_MULT_FACTOR	(100)
 
-#define ADC_OUTPUT_RES	(8)
+#define ADC_OUTPUT_RES	(7)
 #define ADC_OUTPUT_RANGE (1<<ADC_OUTPUT_RES)
 
 #define ADC_MAX_VAL		(4096)

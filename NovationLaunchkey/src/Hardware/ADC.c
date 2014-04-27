@@ -188,7 +188,7 @@ void ADC_Init(void)
 
 
 	/* The maximum ADC clock rate is 16MHz */
-	DrvADC_Open(ADC_SINGLE_END, ADC_SINGLE_CYCLE_OP, ADC_INPUT_PIN_MASK , EXTERNAL_12MHZ, 4);
+	DrvADC_Open(ADC_SINGLE_END, ADC_SINGLE_CYCLE_OP, ADC_INPUT_PIN_MASK , EXTERNAL_12MHZ, 0);
 	DrvADC_EnableADCInt(ADC_IntCallback, 0);
 	MUX_ActivateADCColumn(0);
 
@@ -226,23 +226,29 @@ uint16_t ADC_GetRawSample(uint8_t u8ChannelNum)
 
 void ADC_ApplyFilter(uint8_t index, uint16_t sample)
 {
-	ADC_FilteredElement_t* ele = &ADC_Filtered[index];
+	//Don't do any processing if it's not ready
+	if( ADC_GetChangeFlag(index) != 0 )
+	{
+		return;
+	}
 
+	ADC_FilteredElement_t* ele = &ADC_Filtered[index];
+	uint16_t oldValue = ele->filteredVal;
 	uint8_t changedFlag = 0;
 
 	if( (index >= ADC_KNOB_0) && (index <= ADC_MODULATION) )
 	{
 		changedFlag = ADC_GenericProcessing(index, sample);
 	}
-	else
+
+	if( index <= ADC_PAD_15 )
 	{
 		changedFlag = FSR_Processing(index, sample);
 	}
 
 
-	if( changedFlag )
+	if( changedFlag && (oldValue != ele->filteredVal) )
 	{
-		ele->lastValue = sample;
 		if( index < 32 )
 		{
 			ADC_Statuses.ADC_STATUS |= (1<<index);
@@ -283,6 +289,11 @@ uint8_t ADC_GenericProcessing(uint8_t index, uint16_t sample)
 			ele->filteredVal = (signedValue) / ADC_NOM_STEP_SIZE;
 			changedFlag = 1;
 		}
+	}
+
+	if( changedFlag )
+	{
+		ele->lastValue = signedValue;
 	}
 
 	return changedFlag;

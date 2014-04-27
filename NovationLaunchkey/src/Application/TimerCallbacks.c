@@ -34,7 +34,7 @@ THE SOFTWARE.
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_ColumnMux},};
 
-volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {4,0, 0, Callback_ADC_Handle},
+volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {6,0, 0, Callback_ADC_Handle},
 																	 {100,0, 0, Callback_UpdateDisplay}, };
 
 
@@ -104,8 +104,6 @@ void Callback_ColumnMux(void)
 {
 	//Run our nested Timers;
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
-	//Callback_LED_Strobe();
-
 }
 
 volatile uint8_t LEDState = LED_STATE_BLANK;
