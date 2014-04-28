@@ -20,7 +20,7 @@ inline uint16_t Keyboard_DeltaTime(uint16_t oldTime)
 	}
 	else
 	{
-		return ((oldTime - Keyboard_Timer) - MAX_KB_TIMER) + 1;
+		return (MAX_KB_TIMER - oldTime) + Keyboard_Timer + 1;
 	}
 }
 
@@ -157,14 +157,15 @@ const kbSM_t KB_StateMachine[] =
 
 
 
-void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t currentState, uint8_t action)
+void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t action)
 {
 	uint8_t i;
+
 	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
 
 	for( i = 0 ; i < sizeof(KB_StateMachine)/sizeof(kbSM_t); i++)
 	{
-		if( currentState == KB_StateMachine[i].currentState )
+		if( info->keyState == KB_StateMachine[i].currentState )
 		{
 			if( action == KB_StateMachine[i].inputAction )
 			{
@@ -177,33 +178,53 @@ void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t currentState, uint8_t actio
 
 void Keyboard_StartTimer(uint8_t keyIndex)
 {
-
+	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
+	info->timer = Keyboard_Timer;
 }
 
 void Keyboard_StopTimer(uint8_t keyIndex)
 {
-
+	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
+	info->timer = Keyboard_Timer;
 }
 
 void Keyboard_MaxVelocity(uint8_t keyIndex)
 {
-
+	printNumber(keyIndex);
+	printNumber(127);
 }
 
 void Keyboard_SendOnVelocity(uint8_t keyIndex)
 {
+	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
+	uint16_t deltaTime;
+
+	deltaTime = Keyboard_DeltaTime(info->timer);
+
+	printNumber(keyIndex);
+	printNumber(deltaTime);
+
 
 }
 
 void Keyboard_SendQuickOn(uint8_t keyIndex)
 {
-
+	printNumber(keyIndex);
+	printNumber(1);
 }
 
 void Keyboard_SendOffVelocity(uint8_t keyIndex)
 {
+	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
+	uint16_t deltaTime;
+	deltaTime = Keyboard_DeltaTime(info->timer);
 
+	printNumber(keyIndex);
+	printNumber(deltaTime);
 }
+
+
+
 
 uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, uint8_t oldState, uint8_t newState)
 {
@@ -212,24 +233,9 @@ uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, uint8_t oldState, uint8_t n
 		return 0;
 	}
 
-	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
+	Keyboard_ExecuteState(keyIndex, newState);
 
-	switch( newState )
-	{
-		case KB_WAIT_FOR_BR:
-
-			break;
-	}
-
-
-
-	info->timer = Keyboard_Timer;
-	
-
-
-	printNumber(keyIndex);
-	printNumber(oldState);
-	printNumber(newState);
+	return 1;
 }
 
 
@@ -280,7 +286,7 @@ uint8_t Keyboard_ProcessKeyMap(void)
 		KeyMapBRMK[j] = newKeyMap;
 	}
 	//Each key will have it's own state. We need to work out which state we're in.
-
+	return 1;
 	//Determine what we need to do.
 }
 

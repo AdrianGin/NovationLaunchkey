@@ -84,6 +84,8 @@ void Keyboard_SendQuickOn(uint8_t keyIndex);
 void Keyboard_SendOffVelocity(uint8_t keyIndex);
 
 
+void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t action);
+
 #ifdef __cplusplus
 }
 #endif
