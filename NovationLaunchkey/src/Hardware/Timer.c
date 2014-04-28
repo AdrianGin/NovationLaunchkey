@@ -7,26 +7,29 @@
 #include "LED.h"
 #include "ADC.h"
 
+#include "Keyboard.h"
 #include "Softtimer.h"
 #include "TimerCallbacks.h"
 
 volatile uint8_t TIM_MasterTick = 0;
 
-
-uint8_t TIM_IsMasterTickTriggered(void)
+inline uint8_t TIM_IsMasterTickTriggered(void)
 {
 	return TIM_MasterTick;
 }
 
-void TIM_ResetMasterTick(void)
+inline void TIM_ResetMasterTick(void)
 {
 	TIM_MasterTick = 0;
 }
+
 
 //500kHz Timer;
 void TMR0_Callback(uint32_t u32Param)
 {
 	TIM_MasterTick = 1;
+	Keyboard_IncrementTimer();
+
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer1, TIMER1_COUNT);
 }
 

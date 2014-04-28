@@ -10,6 +10,8 @@ extern "C" {
 #include "DrvSys.h"
 #include "DrvGPIO.h"
 
+#include <limits.h>
+
 #define KEYBOARD_VAR (61)
 
 #if (KEYBOARD_VAR == 61)

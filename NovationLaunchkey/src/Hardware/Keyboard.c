@@ -3,6 +3,28 @@
 #include "Keyboard.h"
 #include "MultiplexControl.h"
 
+Keyboard_KeyInformation_t Keyboard_Info[NUMBER_OF_KEYS];
+volatile uint16_t Keyboard_Timer = 0;
+
+inline void Keyboard_IncrementTimer(void)
+{
+	Keyboard_Timer++;
+}
+
+//gets the time difference between oldTime and current time.
+inline uint16_t Keyboard_DeltaTime(uint16_t oldTime)
+{
+	if( Keyboard_Timer >= oldTime )
+	{
+		return Keyboard_Timer - oldTime;
+	}
+	else
+	{
+		return ((oldTime - Keyboard_Timer) - MAX_KB_TIMER) + 1;
+	}
+}
+
+
 void Keyboard_GPIO_Init(void)
 {
 	DrvGPIO_Open(KEYBOARD_INPUT_PORT, KEYBOARD_MK0, E_IO_INPUT);
@@ -51,9 +73,6 @@ uint16_t Keyboard_ReadRawState(void)
 //Use 1 bit for each key
 //BR makes first aka the Top contact,
 //MK is the final contact, the bottom.
-volatile uint32_t Keyboard_RawBRStateMap[BYTES_PER_KEYMAP];
-volatile uint32_t Keyboard_RawMKStateMap[BYTES_PER_KEYMAP];
-
 //In the format of BR0:MK0, BR1:MK1 bitmap.
 volatile uint32_t Keyboard_RawBRMKStateMap[BYTES_PER_KEYMAP*2];
 
@@ -75,35 +94,6 @@ inline uint8_t Keyboard_GetRawKeyState(uint32_t* brmkBitmap, uint8_t logicalInde
 	state = brmkBitmap[index] >> (bitIndex*2);
 	return (uint8_t)(state & 0x03);
 }
-
-//Indexes 0-2 are for BR, 3-5 are MK
-uint32_t Keyboard_GetStateMap(uint8_t index)
-{
-	if( index >= (2*BYTES_PER_KEYMAP) )
-	{
-		return 0xFFFFFFFF;
-	}
-
-	if( index < BYTES_PER_KEYMAP )
-	{
-		return Keyboard_RawBRStateMap[index];
-	}
-	else
-	{
-		return Keyboard_RawMKStateMap[index-BYTES_PER_KEYMAP];
-	}
-}
-
-inline void Keyboard_SetMapBit(uint32_t* bitmap, uint8_t index, uint8_t bitIndex)
-{
-	bitmap[index] |= (uint32_t)(1<<bitIndex);
-}
-
-inline void Keyboard_ClrMapBit(uint32_t* bitmap, uint8_t index, uint8_t bitIndex)
-{
-	bitmap[index] &= ~(uint32_t)(1<<bitIndex);
-}
-
 
 //Turns the keyboard raw state into a keyboard map.
 void Keyboard_ProcessRawState(uint16_t keyboardState)
@@ -142,39 +132,101 @@ void Keyboard_ProcessRawState(uint16_t keyboardState)
 	}
 }
 
-//Returns 0 to NUMBER_OF_KEYS KEY COUNT, based on the index and bit index
-inline uint8_t Keyboard_GetKeyIndex(uint8_t byteIndex, uint8_t bitIndex)
+
+
+
+
+const kbSM_t KB_StateMachine[] =
 {
-	return (byteIndex*BITS_PER_KEYMAP) + bitIndex;
+		//Normal keypress flow.
+		{KB_WAIT_FOR_BR, TOP_CONTACT  	 	 , Keyboard_StartTimer,		KB_INITIAL_CONTACT},
+		//A very strong hit, didn't even detect the first contact
+		{KB_WAIT_FOR_BR, BOTH_CONTACTS	 	 , Keyboard_MaxVelocity, 	KB_INITIAL_CONTACT},
+		//Released before a hit is made
+		{KB_INITIAL_CONTACT, NO_CONTACT      , Keyboard_StopTimer,		KB_WAIT_FOR_BR},
+		//Final hit is complete - send NoteOn
+		{KB_INITIAL_CONTACT, BOTH_CONTACTS   , Keyboard_SendOnVelocity,	KB_WAIT_FOR_MK_OFF},
+		//First stage of release
+		{KB_WAIT_FOR_MK_OFF, TOP_CONTACT	 , Keyboard_StartTimer,		KB_FINAL_CONTACT},
+		//Key is played before fully released,
+		//Play a Note off, then play Note On again, but use different response curve
+		{KB_FINAL_CONTACT, BOTH_CONTACTS	 , Keyboard_SendQuickOn,		KB_WAIT_FOR_MK_OFF},
+		//Full release is made, send a Note Off with Velocity
+		{KB_FINAL_CONTACT, NO_CONTACT	     , Keyboard_SendOffVelocity,		KB_WAIT_FOR_BR},
+};
+
+
+
+void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t currentState, uint8_t action)
+{
+	uint8_t i;
+	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
+
+	for( i = 0 ; i < sizeof(KB_StateMachine)/sizeof(kbSM_t); i++)
+	{
+		if( currentState == KB_StateMachine[i].currentState )
+		{
+			if( action == KB_StateMachine[i].inputAction )
+			{
+				KB_StateMachine[i].fnPtr(keyIndex);
+				info->keyState = KB_StateMachine[i].newState;
+			}
+		}
+	}
 }
 
-
-
-typedef enum
+void Keyboard_StartTimer(uint8_t keyIndex)
 {
-	KB_WAIT_FOR_BR = 0,
-	KB_INITIAL_CONTACT,
-	KB_WAIT_FOR_MK_OFF,
-	KB_FINAL_CONTACT,
-} KEYBOARD_STATES;
 
-typedef struct
+}
+
+void Keyboard_StopTimer(uint8_t keyIndex)
 {
-	union {
-		uint8_t SWITCHSTATE;
-		struct {
-			uint32_t	MK	:1;
-			uint32_t	BR	:1;
-		} SS;
-	};
 
-	uint16_t timer;
-} Keyboard_KeyInformation_t;
+}
 
-Keyboard_KeyInformation_t Keyboard_Info[NUMBER_OF_KEYS];
+void Keyboard_MaxVelocity(uint8_t keyIndex)
+{
+
+}
+
+void Keyboard_SendOnVelocity(uint8_t keyIndex)
+{
+
+}
+
+void Keyboard_SendQuickOn(uint8_t keyIndex)
+{
+
+}
+
+void Keyboard_SendOffVelocity(uint8_t keyIndex)
+{
+
+}
 
 uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, uint8_t oldState, uint8_t newState)
 {
+	if( keyIndex >= NUMBER_OF_KEYS)
+	{
+		return 0;
+	}
+
+	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
+
+	switch( newState )
+	{
+		case KB_WAIT_FOR_BR:
+
+			break;
+	}
+
+
+
+	info->timer = Keyboard_Timer;
+	
+
+
 	printNumber(keyIndex);
 	printNumber(oldState);
 	printNumber(newState);
