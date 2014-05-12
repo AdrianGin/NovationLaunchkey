@@ -141,13 +141,15 @@ const kbSM_t KB_StateMachine[] =
 		//Normal keypress flow.
 		{KB_WAIT_FOR_BR, TOP_CONTACT  	 	 , Keyboard_StartTimer,		KB_INITIAL_CONTACT},
 		//A very strong hit, didn't even detect the first contact
-		{KB_WAIT_FOR_BR, BOTH_CONTACTS	 	 , Keyboard_MaxVelocity, 	KB_INITIAL_CONTACT},
+		{KB_WAIT_FOR_BR, BOTH_CONTACTS	 	 , Keyboard_MaxVelocity, 	KB_WAIT_FOR_MK_OFF},
 		//Released before a hit is made
 		{KB_INITIAL_CONTACT, NO_CONTACT      , Keyboard_StopTimer,		KB_WAIT_FOR_BR},
 		//Final hit is complete - send NoteOn
 		{KB_INITIAL_CONTACT, BOTH_CONTACTS   , Keyboard_SendOnVelocity,	KB_WAIT_FOR_MK_OFF},
 		//First stage of release
 		{KB_WAIT_FOR_MK_OFF, TOP_CONTACT	 , Keyboard_StartTimer,		KB_FINAL_CONTACT},
+		//A very quick release
+		{KB_WAIT_FOR_MK_OFF, NO_CONTACT	     , Keyboard_SendQuickOff,		KB_WAIT_FOR_BR},
 		//Key is played before fully released,
 		//Play a Note off, then play Note On again, but use different response curve
 		{KB_FINAL_CONTACT, BOTH_CONTACTS	 , Keyboard_SendQuickOn,		KB_WAIT_FOR_MK_OFF},
@@ -163,7 +165,7 @@ void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t action)
 
 	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
 
-	for( i = 0 ; i < sizeof(KB_StateMachine)/sizeof(kbSM_t); i++)
+	for( i = 0 ; i < (sizeof(KB_StateMachine)/sizeof(kbSM_t) ); i++)
 	{
 		if( info->keyState == KB_StateMachine[i].currentState )
 		{
@@ -171,9 +173,16 @@ void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t action)
 			{
 				KB_StateMachine[i].fnPtr(keyIndex);
 				info->keyState = KB_StateMachine[i].newState;
+				return;
 			}
 		}
 	}
+
+	//Invalid state!
+	printNumber(info->keyState);
+	printNumber(action);
+	printNumber(0xFFFF);
+	printNumber(0xFFFF);
 }
 
 void Keyboard_StartTimer(uint8_t keyIndex)
@@ -190,7 +199,7 @@ void Keyboard_StopTimer(uint8_t keyIndex)
 
 void Keyboard_MaxVelocity(uint8_t keyIndex)
 {
-	printNumber(keyIndex);
+	//printNumber(keyIndex);
 	printNumber(127);
 }
 
@@ -201,7 +210,7 @@ void Keyboard_SendOnVelocity(uint8_t keyIndex)
 
 	deltaTime = Keyboard_DeltaTime(info->timer);
 
-	printNumber(keyIndex);
+	//printNumber(keyIndex);
 	printNumber(deltaTime);
 
 
@@ -209,8 +218,14 @@ void Keyboard_SendOnVelocity(uint8_t keyIndex)
 
 void Keyboard_SendQuickOn(uint8_t keyIndex)
 {
-	printNumber(keyIndex);
+	//printNumber(keyIndex);
 	printNumber(1);
+}
+
+void Keyboard_SendQuickOff(uint8_t keyIndex)
+{
+	//printNumber(keyIndex);
+	printNumber(0);
 }
 
 void Keyboard_SendOffVelocity(uint8_t keyIndex)
@@ -219,14 +234,14 @@ void Keyboard_SendOffVelocity(uint8_t keyIndex)
 	uint16_t deltaTime;
 	deltaTime = Keyboard_DeltaTime(info->timer);
 
-	printNumber(keyIndex);
-	printNumber(deltaTime);
+	//printNumber(keyIndex);
+	//printNumber(deltaTime);
 }
 
 
 
 
-uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, uint8_t oldState, uint8_t newState)
+uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, uint8_t newState)
 {
 	if( keyIndex >= NUMBER_OF_KEYS)
 	{
@@ -257,27 +272,16 @@ uint8_t Keyboard_ProcessKeyMap(void)
 			uint32_t keyChangeMap = KeyMapBRMK[j] ^ newKeyMap;
 			for( i = 0 ; (i < BITS_PER_KEYMAP) && (keyChangeMap != 0); i=i+2 )
 			{
-				uint8_t changedFlag = FALSE;
-				//Check the BR bit
-				if( keyChangeMap & (1<<(i)) )
-				{
-					keyChangeMap &= ~(1<<(i));
-					changedFlag = TRUE;
-				}
+				uint8_t singleKeyChangeMap = (keyChangeMap>>i) & 0x03;
 
-				//Check the MK bit
-				if( keyChangeMap & (1<<(i+1)) )
-				{
-					keyChangeMap &= ~(1<<(i+1));
-					changedFlag = TRUE;
-				}
-
-				if( changedFlag )
+				if( singleKeyChangeMap )
 				{
 					uint8_t keyIndex = ((j*BITS_PER_KEYMAP) + (i) ) >> 1;
-					Keyboard_DetermineNewState(keyIndex, \
-											   Keyboard_GetRawKeyState(KeyMapBRMK,keyIndex), \
-											   Keyboard_GetRawKeyState((uint32_t*)Keyboard_RawBRMKStateMap,keyIndex) );
+					Keyboard_DetermineNewState(keyIndex, Keyboard_GetRawKeyState((uint32_t*)Keyboard_RawBRMKStateMap,keyIndex) );
+
+					//printNumber( (newKeyMap>>i) & 0x03);
+					keyChangeMap &= ~(0x03<<i);
+
 				}
 
 			}

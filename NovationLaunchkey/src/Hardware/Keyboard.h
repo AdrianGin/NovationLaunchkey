@@ -17,7 +17,7 @@ extern "C" {
 #define NUMBER_OF_KEYS	(61)
 
 #define BITS_PER_KEYMAP		(32)
-#define BYTES_PER_KEYMAP	(3)
+#define BYTES_PER_KEYMAP	((NUMBER_OF_KEYS/BITS_PER_KEYMAP)+1)
 
 typedef enum
 {
@@ -59,9 +59,12 @@ typedef struct
 	uint8_t newState;
 } kbSM_t;
 
+extern volatile uint16_t Keyboard_Timer;
+
 void Keyboard_IncrementTimer(void);
 //gets the time difference between oldTime and current time.
 uint16_t Keyboard_DeltaTime(uint16_t oldTime);
+uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, uint8_t newState);
 
 void Keyboard_GPIO_Init(void);
 //Obtains the raw Keyboard State
@@ -82,7 +85,7 @@ void Keyboard_MaxVelocity(uint8_t keyIndex);
 void Keyboard_SendOnVelocity(uint8_t keyIndex);
 void Keyboard_SendQuickOn(uint8_t keyIndex);
 void Keyboard_SendOffVelocity(uint8_t keyIndex);
-
+void Keyboard_SendQuickOff(uint8_t keyIndex);
 
 void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t action);
 

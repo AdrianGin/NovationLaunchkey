@@ -48,7 +48,8 @@ int main(void)
    
 	//Timer_Init(76800);
 	//Divide by (11+1) = 12 for a 1MHz prescale
-	Timer_InitNoBSP(11, 13);
+	//Count up to 20 for 50kHz timer.
+	Timer_InitNoBSP(11, 20);
 
 	ADC_Init();
 
@@ -88,6 +89,7 @@ int main(void)
 		   TIM_ResetMasterTick();
 	   }
 
+	   Keyboard_ProcessRawState(Keyboard_ReadRawState());
    }
 
 	return 0;

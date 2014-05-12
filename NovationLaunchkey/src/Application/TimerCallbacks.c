@@ -35,11 +35,11 @@ THE SOFTWARE.
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalTimers},};
 
-volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {6,0, 1, Callback_ADC_Handle},
-																	 {100,0, 1, Callback_UpdateDisplay}, };
+volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {250,0, 1, Callback_ADC_Handle},
+													{100,0, 1, Callback_UpdateDisplay}, };
 
 
-volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{1, 0, 1, Callback_ColumnMux},
+volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{2, 0, 1, Callback_ColumnMux},
 												  {1, 0, 0, Callback_Switch_Read}};
 
 
@@ -135,13 +135,14 @@ void Callback_ADC_Handle(void)
 }
 
 #define LED_TIME_NEW_COL	(1)
-#define LED_TIME_SHIFT		(9)
+#define LED_TIME_SHIFT		(4)
 #define LED_TIME_BLANK		(1)
 
 inline void Callback_CriticalTimers(void)
 {
 	//Run our nested Timers;
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
+
 	//Callback_LED_Strobe();
 }
 
@@ -234,7 +235,7 @@ void Callback_Switch_Read(void)
 	//if( LEDState == LED_STATE_BLANK )
 	{
 		Switch_ProcessState( Switch_ReadState() );
-		Keyboard_ProcessRawState(Keyboard_ReadRawState());
+
 	}
 }
 
