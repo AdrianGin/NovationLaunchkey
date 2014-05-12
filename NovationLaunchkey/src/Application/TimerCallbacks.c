@@ -235,7 +235,7 @@ void Callback_Switch_Read(void)
 	//if( LEDState == LED_STATE_BLANK )
 	{
 		Switch_ProcessState( Switch_ReadState() );
-
+		Keyboard_ProcessRawState(Keyboard_ReadRawState());
 	}
 }
 

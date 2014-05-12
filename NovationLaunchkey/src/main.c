@@ -89,7 +89,7 @@ int main(void)
 		   TIM_ResetMasterTick();
 	   }
 
-	   Keyboard_ProcessRawState(Keyboard_ReadRawState());
+
    }
 
 	return 0;

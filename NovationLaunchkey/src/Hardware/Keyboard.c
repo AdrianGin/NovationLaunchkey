@@ -82,7 +82,8 @@ inline uint32_t Keyboard_GetRawBRMKStateMap(uint8_t index)
 }
 
 //0 for key 0, 1 for key 1 etc...
-inline uint8_t Keyboard_GetRawKeyState(uint32_t* brmkBitmap, uint8_t logicalIndex)
+//returnx 0x00, 01, 10, 11 representing different KB states
+inline KB_SWITCH_STATES Keyboard_GetRawKeyState(uint32_t* brmkBitmap, uint8_t logicalIndex)
 {
 	uint8_t index;
 	uint8_t bitIndex;
@@ -92,7 +93,7 @@ inline uint8_t Keyboard_GetRawKeyState(uint32_t* brmkBitmap, uint8_t logicalInde
 	bitIndex = (logicalIndex - (index*(BITS_PER_KEYMAP/2)));
 
 	state = brmkBitmap[index] >> (bitIndex*2);
-	return (uint8_t)(state & 0x03);
+	return (KB_SWITCH_STATES)(state & 0x03);
 }
 
 //Turns the keyboard raw state into a keyboard map.
@@ -159,7 +160,7 @@ const kbSM_t KB_StateMachine[] =
 
 
 
-void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t action)
+void Keyboard_ExecuteState(uint8_t keyIndex, KB_SWITCH_STATES action)
 {
 	uint8_t i;
 
@@ -241,7 +242,7 @@ void Keyboard_SendOffVelocity(uint8_t keyIndex)
 
 
 
-uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, uint8_t newState)
+uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, KB_SWITCH_STATES newState)
 {
 	if( keyIndex >= NUMBER_OF_KEYS)
 	{

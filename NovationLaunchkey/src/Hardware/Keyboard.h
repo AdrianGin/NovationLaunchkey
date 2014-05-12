@@ -64,7 +64,7 @@ extern volatile uint16_t Keyboard_Timer;
 void Keyboard_IncrementTimer(void);
 //gets the time difference between oldTime and current time.
 uint16_t Keyboard_DeltaTime(uint16_t oldTime);
-uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, uint8_t newState);
+uint8_t Keyboard_DetermineNewState(uint8_t keyIndex, KB_SWITCH_STATES newState);
 
 void Keyboard_GPIO_Init(void);
 //Obtains the raw Keyboard State
@@ -76,7 +76,7 @@ void Keyboard_ProcessRawState(uint16_t keyboardState);
 uint32_t Keyboard_GetStateMap(uint8_t index);
 
 uint32_t Keyboard_GetRawBRMKStateMap(uint8_t index);
-uint8_t Keyboard_GetRawKeyState(uint32_t* brmkBitmap, uint8_t logicalIndex);
+KB_SWITCH_STATES Keyboard_GetRawKeyState(uint32_t* brmkBitmap, uint8_t logicalIndex);
 uint8_t Keyboard_ProcessKeyMap(void);
 
 void Keyboard_StartTimer(uint8_t keyIndex);
@@ -87,7 +87,7 @@ void Keyboard_SendQuickOn(uint8_t keyIndex);
 void Keyboard_SendOffVelocity(uint8_t keyIndex);
 void Keyboard_SendQuickOff(uint8_t keyIndex);
 
-void Keyboard_ExecuteState(uint8_t keyIndex, uint8_t action);
+void Keyboard_ExecuteState(uint8_t keyIndex, KB_SWITCH_STATES action);
 
 #ifdef __cplusplus
 }
