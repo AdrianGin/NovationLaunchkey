@@ -22,24 +22,21 @@ THE SOFTWARE.
 
 */
 
-
-
-#ifndef _KEYBOARD_VELOCITY
-#define _KEYBOARD_VELOCITY
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+#include "KeyboardVelocity.h"
 #include <stdint.h>
 
+#include "MIDICodes.h"
 
 
 
+uint8_t KeyUtil_TimeToVel(uint8_t keyIndex, uint16_t time)
+{
 
 
-#ifdef __cplusplus
+
 }
-#endif
 
-#endif
+uint8_t KeyUtil_IsBlack(uint8_t keyIndex)
+{
+	keyIndex %
+}

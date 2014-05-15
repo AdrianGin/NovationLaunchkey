@@ -23,7 +23,20 @@ THE SOFTWARE.
 */
 
 #include "KeyboardVelocity.h"
+#include <stdint.h>
+
+#include "MIDICodes.h"
 
 
 
+uint8_t KeyUtil_TimeToVel(uint8_t keyIndex, uint16_t time)
+{
 
+
+
+}
+
+uint8_t KeyUtil_IsBlack(uint8_t keyIndex)
+{
+	keyIndex %
+}

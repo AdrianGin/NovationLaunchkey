@@ -66,7 +66,6 @@ void LED_7Segment_Write(uint8_t index, uint8_t number)
 
 	if( number < LED_7SEG_MAX )
 	{
-		uint8_t i;
 		uint16_t* segmentMap = (uint16_t*)LED_7SEG_DIGITS[number];
 
 		LED_7SegmentWriteCode(index, segmentMap);

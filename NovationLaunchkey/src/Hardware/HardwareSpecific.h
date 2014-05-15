@@ -10,6 +10,8 @@ extern "C" {
 #include "DrvSys.h"
 #include "DrvGPIO.h"
 
+#include "MIDICodes.h"
+
 #include <limits.h>
 
 #define KEYBOARD_VAR (61)
@@ -19,6 +21,9 @@ extern "C" {
 #define SLIDER_COUNT 	(8)
 #define POT_COUNT    	(8)
 #define PB_MOD_COUNT	(3)
+
+#define KB_FIRST_OCTAVE (2)
+#define KB_FIRST_KEY	(MN_C + KB_FIRST_OCTAVE*NOTE_COUNT)
 #endif
 
 
