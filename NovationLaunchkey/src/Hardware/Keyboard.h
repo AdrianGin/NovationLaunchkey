@@ -19,6 +19,8 @@ extern "C" {
 #define BITS_PER_KEYMAP		(32)
 #define BYTES_PER_KEYMAP	((NUMBER_OF_KEYS/BITS_PER_KEYMAP)+1)
 
+#define NO_KB_STATE_CHANGE (255)
+
 typedef enum
 {
 	KB_WAIT_FOR_BR = 0,
@@ -72,6 +74,9 @@ uint16_t Keyboard_ReadRawState(void);
 
 //Turns the keyboard raw state into a keyboard map.
 void Keyboard_ProcessRawState(uint16_t keyboardState);
+
+//This function can be used to detect any changes in keyboard state
+uint8_t Keyboard_SaveRawState(uint16_t keyboardState, uint8_t column);
 
 uint32_t Keyboard_GetStateMap(uint8_t index);
 

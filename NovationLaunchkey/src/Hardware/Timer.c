@@ -8,6 +8,7 @@
 #include "ADC.h"
 
 #include "Keyboard.h"
+#include "MultiplexControl.h"
 #include "Softtimer.h"
 #include "TimerCallbacks.h"
 
@@ -65,14 +66,10 @@ void TMR0_IRQHandler(void)
         TIMER0->TISR.TIF = 1;
 
 	TIM_MasterTick = 1;
-
-	static uint16_t rawState = 0;
 	uint16_t tempRawState = Keyboard_ReadRawState();
 
-
-	if(rawState != tempRawState)
+	if( Keyboard_SaveRawState(tempRawState, MUX_GetCurrentColumn()) != NO_KB_STATE_CHANGE )
 	{
-		rawState = tempRawState;
 		Keyboard_ProcessRawState(tempRawState);
 		Keyboard_ProcessKeyMap();
 	}

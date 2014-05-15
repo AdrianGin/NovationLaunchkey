@@ -49,7 +49,8 @@ void Keyboard_GPIO_Init(void)
 	DrvGPIO_Open(KEYBOARD_INPUT_PORT2, KEYBOARD_BR2, E_IO_INPUT);
 }
 
-
+//In the format of
+//BR0:MK0, BR1:MK1... etc
 inline uint16_t Keyboard_ReadRawState(void)
 {
 	int32_t portState;
@@ -76,9 +77,18 @@ inline uint16_t Keyboard_ReadRawState(void)
 //In the format of BR0:MK0, BR1:MK1 bitmap.
 volatile uint32_t Keyboard_RawBRMKStateMap[BYTES_PER_KEYMAP*2];
 
+
+volatile uint16_t Keyboard_RawColumnState[MAX_LINE_COLUMNS];
+volatile uint16_t  Keyboard_ColumnChangedBitMap;
+
 inline uint32_t Keyboard_GetRawBRMKStateMap(uint8_t index)
 {
 	return Keyboard_RawBRMKStateMap[index];
+}
+
+inline uint8_t Keyboard_GetColumnChanged(uint8_t column)
+{
+	return (Keyboard_ColumnChangedBitMap & (1<<column));
 }
 
 //0 for key 0, 1 for key 1 etc...
@@ -94,6 +104,26 @@ inline KB_SWITCH_STATES Keyboard_GetRawKeyState(uint32_t* brmkBitmap, uint8_t lo
 
 	state = brmkBitmap[index] >> (bitIndex*2);
 	return (KB_SWITCH_STATES)(state & 0x03);
+}
+
+
+//Put the new column keyboard state into here,
+//If it has changed, return a the column, else return NO_KB_STATE_CHANGE
+uint8_t Keyboard_SaveRawState(uint16_t keyboardState, uint8_t column)
+{
+	if( column >= MAX_LINE_COLUMNS )
+	{
+		return NO_KB_STATE_CHANGE;
+	}
+
+	if( Keyboard_RawColumnState[column] != keyboardState )
+	{
+		Keyboard_RawColumnState[column] = keyboardState;
+		Keyboard_ColumnChangedBitMap |= (1<<column);
+		return column;
+	}
+	return NO_KB_STATE_CHANGE;
+
 }
 
 //Turns the keyboard raw state into a keyboard map.
