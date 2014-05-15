@@ -50,7 +50,7 @@ void Keyboard_GPIO_Init(void)
 }
 
 
-uint16_t Keyboard_ReadRawState(void)
+inline uint16_t Keyboard_ReadRawState(void)
 {
 	int32_t portState;
 

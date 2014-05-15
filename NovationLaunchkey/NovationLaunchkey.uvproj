@@ -459,6 +459,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\Hardware\Switch.c</FilePath>
             </File>
+            <File>
+              <FileName>Keyboard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\Keyboard.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

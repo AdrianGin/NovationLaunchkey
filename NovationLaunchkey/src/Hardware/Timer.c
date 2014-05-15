@@ -65,6 +65,18 @@ void TMR0_IRQHandler(void)
         TIMER0->TISR.TIF = 1;
 
 	TIM_MasterTick = 1;
+
+	static uint16_t rawState = 0;
+	uint16_t tempRawState = Keyboard_ReadRawState();
+
+
+	if(rawState != tempRawState)
+	{
+		rawState = tempRawState;
+		Keyboard_ProcessRawState(tempRawState);
+		Keyboard_ProcessKeyMap();
+	}
+
 	Keyboard_IncrementTimer();
 	//Keyboard_Timer++;
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer1, TIMER1_COUNT);

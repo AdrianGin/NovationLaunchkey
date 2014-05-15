@@ -90,7 +90,7 @@ void Callback_UpdateDisplay(void)
 		}
 	}
 
-	Keyboard_ProcessKeyMap();
+	//Keyboard_ProcessKeyMap();
 
 
 //	{
@@ -229,13 +229,13 @@ void Callback_LED_StrobeCount(void)
 }
 
 
-void Callback_Switch_Read(void)
+inline void Callback_Switch_Read(void)
 {
 	//We can only sample when the LEDs are off.
 	//if( LEDState == LED_STATE_BLANK )
 	{
 		Switch_ProcessState( Switch_ReadState() );
-		Keyboard_ProcessRawState(Keyboard_ReadRawState());
+
 	}
 }
 

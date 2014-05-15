@@ -192,10 +192,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>21</ColumnNumber>
+      <ColumnNumber>14</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>4</TopLine>
-      <CurrentLine>29</CurrentLine>
+      <TopLine>43</TopLine>
+      <CurrentLine>54</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -218,7 +218,7 @@
       <Focus>0</Focus>
       <ColumnNumber>11</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>10</TopLine>
+      <TopLine>11</TopLine>
       <CurrentLine>18</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\Hardware\HardwareSpecific.c</PathWithFileName>
@@ -232,10 +232,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>61</ColumnNumber>
+      <ColumnNumber>26</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>63</TopLine>
-      <CurrentLine>77</CurrentLine>
+      <TopLine>45</TopLine>
+      <CurrentLine>46</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\Hardware\LED.c</PathWithFileName>
       <FilenameWithoutPath>LED.c</FilenameWithoutPath>
@@ -248,10 +248,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>1</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>63</TopLine>
-      <CurrentLine>68</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\Hardware\MultiplexControl.c</PathWithFileName>
       <FilenameWithoutPath>MultiplexControl.c</FilenameWithoutPath>
@@ -266,8 +266,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>11</TopLine>
-      <CurrentLine>30</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\Hardware\Timer.c</PathWithFileName>
       <FilenameWithoutPath>Timer.c</FilenameWithoutPath>
@@ -298,8 +298,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>217</TopLine>
-      <CurrentLine>224</CurrentLine>
+      <TopLine>84</TopLine>
+      <CurrentLine>53</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\Hardware\ADC.c</PathWithFileName>
       <FilenameWithoutPath>ADC.c</FilenameWithoutPath>
@@ -312,10 +312,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>2</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>180</TopLine>
-      <CurrentLine>202</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\Hardware\LED_7Seg.c</PathWithFileName>
       <FilenameWithoutPath>LED_7Seg.c</FilenameWithoutPath>
@@ -328,10 +328,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>45</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>1</TopLine>
-      <CurrentLine>8</CurrentLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\Hardware\FSR.c</PathWithFileName>
       <FilenameWithoutPath>FSR.c</FilenameWithoutPath>
@@ -344,13 +344,29 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
+      <ColumnNumber>26</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>2</TopLine>
+      <CurrentLine>8</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\src\Hardware\Switch.c</PathWithFileName>
+      <FilenameWithoutPath>Switch.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>2</GroupNumber>
+      <FileNumber>11</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\src\Hardware\Switch.c</PathWithFileName>
-      <FilenameWithoutPath>Switch.c</FilenameWithoutPath>
+      <PathWithFileName>.\src\Hardware\Keyboard.c</PathWithFileName>
+      <FilenameWithoutPath>Keyboard.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -364,7 +380,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>11</FileNumber>
+      <FileNumber>12</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -380,7 +396,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>12</FileNumber>
+      <FileNumber>13</FileNumber>
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -396,7 +412,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>13</FileNumber>
+      <FileNumber>14</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -420,7 +436,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>14</FileNumber>
+      <FileNumber>15</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -436,13 +452,13 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>15</FileNumber>
+      <FileNumber>16</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1075</TopLine>
+      <TopLine>1076</TopLine>
       <CurrentLine>1082</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\lib\NuvotonPlatform_Keil\Src\Driver\DrvSYS.c</PathWithFileName>
@@ -452,7 +468,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>16</FileNumber>
+      <FileNumber>17</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -468,13 +484,13 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>17</FileNumber>
+      <FileNumber>18</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
       <ColumnNumber>109</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>730</TopLine>
+      <TopLine>731</TopLine>
       <CurrentLine>738</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\lib\NuvotonPlatform_Keil\Src\Driver\DrvTIMER.c</PathWithFileName>
@@ -484,7 +500,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>18</FileNumber>
+      <FileNumber>19</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -508,7 +524,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>19</FileNumber>
+      <FileNumber>20</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -524,14 +540,14 @@
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>20</FileNumber>
+      <FileNumber>21</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>13</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>1</TopLine>
-      <CurrentLine>21</CurrentLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\Application\TimerCallbacks.c</PathWithFileName>
       <FilenameWithoutPath>TimerCallbacks.c</FilenameWithoutPath>
