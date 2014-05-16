@@ -1,0 +1,10 @@
+TODO:
+Pitch and Modulation Wheel Conditioning (need 8 bit)
+Presets for Controller Mode
+
+Preset Format for each of the 8 templates.
+
+ReMap Mode
+
+Global:
+Octave & Transport - use main LCD

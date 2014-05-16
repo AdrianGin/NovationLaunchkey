@@ -129,9 +129,9 @@ typedef enum
 typedef struct
 {
    uint8_t index;
-   uint16_t brightness;
-   uint32_t brightnessError;
-   uint32_t interval;
+   uint8_t brightness;
+   uint16_t brightnessError;
+   uint16_t interval;
 } LEDElement_t;
 
 
