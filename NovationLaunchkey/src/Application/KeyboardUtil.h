@@ -33,8 +33,7 @@ extern "C" {
 
 #include <stdint.h>
 
-const uint16_t WHITE_KEYMAP[];
-const uint16_t BLACK_KEYMAP[];
+
 
 
 uint8_t KeyUtil_TimeToVel(uint8_t keyIndex, uint16_t time);

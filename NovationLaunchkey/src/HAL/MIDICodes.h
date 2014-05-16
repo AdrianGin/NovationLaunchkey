@@ -16,6 +16,7 @@
 #define MIDI_MAX_CHANNELS (16)
 #define MIDI_MAX_DATA   (127)
 #define MIDI_MAX_KEY    (127)
+#define MIDI_MAX_VELOCITY (127)
 
 #define MIDI_DRUM_CHANNEL   (0x09)
 

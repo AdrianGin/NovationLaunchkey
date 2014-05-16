@@ -2,6 +2,7 @@
 
 #include "Keyboard.h"
 #include "MultiplexControl.h"
+#include "HAL_KB.h"
 
 Keyboard_KeyInformation_t Keyboard_Info[NUMBER_OF_KEYS];
 volatile uint16_t Keyboard_Timer = 0;
@@ -239,18 +240,46 @@ void Keyboard_SendOnVelocity(uint8_t keyIndex)
 	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
 	uint16_t deltaTime;
 
+	uint8_t velocity;
+	uint8_t HALkey;
+
 	deltaTime = Keyboard_DeltaTime(info->timer);
 
+	velocity = HAL_KB_TimeToVel(keyIndex, deltaTime);
+	HALkey = HAL_KB_ConvertKeyIndex2MIDIKey(keyIndex);
+
+	UART_TxByte(0x90);
+	UART_TxByte(HALkey);
+	UART_TxByte(velocity);
 	//printNumber(keyIndex);
-	printNumber(deltaTime);
+	//printNumber(deltaTime);
 
 
 }
 
 void Keyboard_SendQuickOn(uint8_t keyIndex)
 {
-	//printNumber(keyIndex);
-	printNumber(1);
+
+	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
+	uint16_t deltaTime;
+
+	uint8_t velocity;
+	uint8_t HALkey;
+
+	HALkey = HAL_KB_ConvertKeyIndex2MIDIKey(keyIndex);
+	//Send an off note first
+	UART_TxByte(0x80);
+	UART_TxByte(HALkey);
+	UART_TxByte(64);
+
+
+	deltaTime = Keyboard_DeltaTime(info->timer);
+	velocity = HAL_KB_TimeToVel(keyIndex, deltaTime);
+
+	UART_TxByte(0x90);
+	UART_TxByte(HALkey);
+	UART_TxByte(velocity);
+
 }
 
 void Keyboard_SendQuickOff(uint8_t keyIndex)
@@ -263,8 +292,16 @@ void Keyboard_SendOffVelocity(uint8_t keyIndex)
 {
 	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
 	uint16_t deltaTime;
+	uint8_t velocity;
+	uint8_t HALkey;
 	deltaTime = Keyboard_DeltaTime(info->timer);
 
+	velocity = HAL_KB_TimeToVel(keyIndex, deltaTime);
+	HALkey = HAL_KB_ConvertKeyIndex2MIDIKey(keyIndex);
+
+	UART_TxByte(0x80);
+	UART_TxByte(HALkey);
+	UART_TxByte(velocity);
 	//printNumber(keyIndex);
 	//printNumber(deltaTime);
 }

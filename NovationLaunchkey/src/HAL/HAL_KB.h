@@ -32,15 +32,12 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include "HardwareSpecific.h"
+#include "MIDICodes.h"
 
-const uint16_t WHITE_KEYMAP[];
-const uint16_t BLACK_KEYMAP[];
-
-
-uint8_t KeyUtil_TimeToVel(uint8_t keyIndex, uint16_t time);
-
-uint8_t KeyUtil_IsBlack(uint8_t keyIndex);
-
+uint8_t HAL_KB_ConvertKeyIndex2MIDIKey(uint8_t keyIndex);
+uint8_t HAL_KB_IsBlack(uint8_t keyIndex);
+uint8_t HAL_KB_TimeToVel(uint8_t keyIndex, uint16_t time);
 
 
 #ifdef __cplusplus

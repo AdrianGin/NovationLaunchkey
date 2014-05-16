@@ -361,7 +361,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\lib\CMSIS\CM0\DeviceSupport\Nuvoton\NUC1xx;.\lib\CMSIS\CM0\CoreSupport;.\src\Hardware;.\lib\NuvotonPlatform_Keil\Include;.\lib\NuvotonPlatform_Keil\Include\Driver;.\src\Application</IncludePath>
+              <IncludePath>.\lib\CMSIS\CM0\DeviceSupport\Nuvoton\NUC1xx;.\lib\CMSIS\CM0\CoreSupport;.\src\Hardware;.\lib\NuvotonPlatform_Keil\Include;.\lib\NuvotonPlatform_Keil\Include\Driver;.\src\Application;.\src\HAL;.\src\Util</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -528,6 +528,26 @@
               <FileName>TimerCallbacks.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\Application\TimerCallbacks.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HAL</GroupName>
+          <Files>
+            <File>
+              <FileName>HAL_KB.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\HAL_KB.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Util</GroupName>
+          <Files>
+            <File>
+              <FileName>binarySearch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Util\binarySearch.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,0 +1,36 @@
+# Project: Test
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = ../Util/binarySearch.o TestMain.o Test_BinarySearch.o $(RES)
+LINKOBJ  = ../Util/binarySearch.o TestMain.o Test_BinarySearch.o $(RES)
+LIBS =  -L"D:/Dev-Cpp/lib"  
+INCS =  -I"D:/Dev-Cpp/include"  -I"../Util" 
+CXXINCS =  -I"D:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"D:/Dev-Cpp/include/c++/3.4.2/backward"  -I"D:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"D:/Dev-Cpp/include/c++/3.4.2"  -I"D:/Dev-Cpp/include"  -I"../Util" 
+BIN  = Test.exe
+CXXFLAGS = $(CXXINCS)   -O3
+CFLAGS = $(INCS)   -O3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before Test.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "Test.exe" $(LIBS)
+
+../Util/binarySearch.o: ../Util/binarySearch.c
+	$(CC) -c ../Util/binarySearch.c -o ../Util/binarySearch.o $(CFLAGS)
+
+TestMain.o: TestMain.c
+	$(CC) -c TestMain.c -o TestMain.o $(CFLAGS)
+
+Test_BinarySearch.o: Test_BinarySearch.c
+	$(CC) -c Test_BinarySearch.c -o Test_BinarySearch.o $(CFLAGS)

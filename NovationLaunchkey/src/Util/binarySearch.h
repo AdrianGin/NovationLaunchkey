@@ -22,10 +22,26 @@ THE SOFTWARE.
 
 */
 
-#include "KeyboardUtil.h"
+
+
+#ifndef _BINARY_SEARCH_H
+#define _BINARY_SEARCH_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
-#include "MIDICodes.h"
-#include "HAL_KB.h"
-#include "binarySearch.h"
 
+#define BSEARCH_GREATER_THAN_LARGEST (0xFFFE)
+#define BSEARCH_LESS_THAN_SMALLEST   (0xFFFD)
+#define BSEARCH_ERROR 				 (0xFFFC)
+uint16_t findElement_binarySearch(uint16_t element, uint16_t* sortedArray, uint16_t size);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
