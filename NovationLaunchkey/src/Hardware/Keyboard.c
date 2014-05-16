@@ -260,6 +260,8 @@ void Keyboard_SendOnVelocity(uint8_t keyIndex)
 void Keyboard_SendQuickOn(uint8_t keyIndex)
 {
 
+	return;
+
 	Keyboard_KeyInformation_t* info = &Keyboard_Info[keyIndex];
 	uint16_t deltaTime;
 
