@@ -161,6 +161,20 @@ const uint16_t WHITE_KEYMAP[] =
 
 const uint16_t BLACK_KEYMAP[];
 
+static uint8_t HAL_KB_CurrentOctave = 0;
+static uint8_t HAL_KB_CurrentTranspose = 0;
+
+
+inline uint8_t HAL_KB_GetCurrentOctave(void)
+{
+	return HAL_KB_CurrentOctave;
+}
+
+inline uint8_t HAL_KB_GetCurrentTranspose(void)
+{
+	return HAL_KB_CurrentTranspose;
+}
+
 //convert the hardwareKey Index into a MIDI Keyboard Keynote
 inline uint8_t HAL_KB_ConvertKeyIndex2MIDIKey(uint8_t keyIndex)
 {

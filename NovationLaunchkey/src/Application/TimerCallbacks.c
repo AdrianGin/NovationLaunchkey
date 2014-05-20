@@ -32,6 +32,10 @@ THE SOFTWARE.
 #include "Switch.h"
 #include "Keyboard.h"
 
+
+#include "EventManager.h"
+#include "DisplayManager.h"
+
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalTimers},};
 
@@ -85,10 +89,16 @@ void Callback_UpdateDisplay(void)
 			{
 				uint8_t switchState;
 				switchState = Switch_GetState(i);
-				LED_7Segment_WriteNumber(i);
+				//LED_7Segment_WriteNumber(i);
+
+				EM_ProcessButton(i, switchState);
+
 			}
 		}
 	}
+
+
+	DispMan_Poll();
 
 	//Keyboard_ProcessKeyMap();
 

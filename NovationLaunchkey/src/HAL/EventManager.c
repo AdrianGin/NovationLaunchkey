@@ -22,29 +22,36 @@ THE SOFTWARE.
 
 */
 
+#include "EventManager.h"
 
 
-#ifndef _KEYBOARD_UTIL
-#define _KEYBOARD_UTIL
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+uint8_t EM_ProcessKeyboard(uint8_t midiNote, uint8_t velocity)
+{
 
-#include <stdint.h>
-#include "HardwareSpecific.h"
-#include "MIDICodes.h"
-
-uint8_t HAL_KB_ConvertKeyIndex2MIDIKey(uint8_t keyIndex);
-uint8_t HAL_KB_IsBlack(uint8_t keyIndex);
-uint8_t HAL_KB_TimeToVel(uint8_t keyIndex, uint16_t time);
-
-uint8_t HAL_KB_GetCurrentOctave(void);
-uint8_t HAL_KB_GetCurrentTranspose(void);
-
-
-#ifdef __cplusplus
+	return 0;
 }
-#endif
 
-#endif
+
+uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value)
+{
+	return 0;
+}
+
+
+uint8_t EM_ProcessButton(uint8_t inputIndex, uint8_t value)
+{
+	GlobEvents_ProcessButton(inputIndex, value);
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+

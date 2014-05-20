@@ -22,29 +22,55 @@ THE SOFTWARE.
 
 */
 
+#include "DisplayManager.h"
 
 
-#ifndef _KEYBOARD_UTIL
-#define _KEYBOARD_UTIL
+typedef struct
+{
+	uint16_t number;
+	uint8_t counter;
+	uint8_t rate;
+	uint8_t state;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+} Flash_7Seg;
 
-#include <stdint.h>
-#include "HardwareSpecific.h"
-#include "MIDICodes.h"
+Flash_7Seg DispMan_7SegDisplay;
 
-uint8_t HAL_KB_ConvertKeyIndex2MIDIKey(uint8_t keyIndex);
-uint8_t HAL_KB_IsBlack(uint8_t keyIndex);
-uint8_t HAL_KB_TimeToVel(uint8_t keyIndex, uint16_t time);
-
-uint8_t HAL_KB_GetCurrentOctave(void);
-uint8_t HAL_KB_GetCurrentTranspose(void);
-
-
-#ifdef __cplusplus
+//Flash rate of 0 means no FLASH.
+void DispMan_Print7Seg(uint16_t number, uint8_t flashRate)
+{
+	DispMan_7SegDisplay.rate = flashRate;
+	LED_7Segment_WriteNumber(number);
+	DispMan_7SegDisplay.number = number;
 }
-#endif
 
-#endif
+void DispMan_Poll(void)
+{
+
+	if( DispMan_7SegDisplay.counter++ >= DispMan_7SegDisplay.rate )
+	{
+		DispMan_7SegDisplay.counter = 0;
+		DispMan_7SegDisplay.state ^= 1;
+	}
+
+
+	if( DispMan_7SegDisplay.state )
+	{
+		LED_7Segment_Write(0, LED_7SEG_CLEAR);
+		LED_7Segment_Write(1, LED_7SEG_CLEAR);
+		LED_7Segment_Write(2, LED_7SEG_CLEAR);
+	}
+	else
+	{
+		LED_7Segment_WriteNumber(DispMan_7SegDisplay.number);
+	}
+
+}
+
+
+
+
+
+
+
+

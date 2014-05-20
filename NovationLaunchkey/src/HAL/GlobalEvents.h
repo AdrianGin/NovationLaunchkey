@@ -24,23 +24,22 @@ THE SOFTWARE.
 
 
 
-#ifndef _KEYBOARD_UTIL
-#define _KEYBOARD_UTIL
+#ifndef _GLOBAL_EVENTS
+#define _GLOBAL_EVENTS
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <stdint.h>
-#include "HardwareSpecific.h"
-#include "MIDICodes.h"
+#include "Switch.h"
 
-uint8_t HAL_KB_ConvertKeyIndex2MIDIKey(uint8_t keyIndex);
-uint8_t HAL_KB_IsBlack(uint8_t keyIndex);
-uint8_t HAL_KB_TimeToVel(uint8_t keyIndex, uint16_t time);
+#include "DisplayManager.h"
+#include "HAL_KB.h"
 
-uint8_t HAL_KB_GetCurrentOctave(void);
-uint8_t HAL_KB_GetCurrentTranspose(void);
+
+uint8_t GlobEvents_ProcessButton(uint8_t inputIndex, uint8_t value);
+
 
 
 #ifdef __cplusplus

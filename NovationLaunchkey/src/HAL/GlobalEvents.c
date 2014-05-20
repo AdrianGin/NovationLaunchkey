@@ -22,29 +22,79 @@ THE SOFTWARE.
 
 */
 
+#include "GlobalEvents.h"
 
 
-#ifndef _KEYBOARD_UTIL
-#define _KEYBOARD_UTIL
+//Each button must remember the Application Mode of when it was pressed (done in EventManager)
+uint32_t ButtonStates;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stdint.h>
-#include "HardwareSpecific.h"
-#include "MIDICodes.h"
-
-uint8_t HAL_KB_ConvertKeyIndex2MIDIKey(uint8_t keyIndex);
-uint8_t HAL_KB_IsBlack(uint8_t keyIndex);
-uint8_t HAL_KB_TimeToVel(uint8_t keyIndex, uint16_t time);
-
-uint8_t HAL_KB_GetCurrentOctave(void);
-uint8_t HAL_KB_GetCurrentTranspose(void);
-
-
-#ifdef __cplusplus
+inline void SetButtonState(uint8_t index)
+{
+	ButtonStates |= (1<<index);
 }
-#endif
 
-#endif
+inline uint8_t GetButtonState(uint8_t index)
+{
+	if( index > SW_REC )
+	{
+		return SWITCH_INVALID;
+	}
+	return ((ButtonStates & (1<<index)) != 0);
+}
+
+
+void ProcessButtonOn(uint8_t inputIndex)
+{
+	SetButtonState(inputIndex);
+	switch(inputIndex)
+	{
+		case 	SW_TRACK_LEFT:
+		break;
+
+		case 	SW_TRACK_RIGHT:
+		break;
+
+		case 	SW_OCTAVE_DOWN:
+			if( GetButtonState(SW_OCTAVE_UP) )
+			{
+				DispMan_Print7Seg(HAL_KB_GetCurrentOctave(), 20);
+			}
+		break;
+
+		case 	SW_OCTAVE_UP:
+			if( GetButtonState(SW_OCTAVE_DOWN) )
+			{
+				DispMan_Print7Seg(HAL_KB_GetCurrentOctave(), 20);
+			}
+		break;
+
+		default:
+		break;
+	}
+
+}
+
+uint8_t GlobEvents_ProcessButton(uint8_t inputIndex, uint8_t value)
+{
+	if( value )
+	{
+		ProcessButtonOn(inputIndex);
+	}
+	else
+	{
+		//ProcessButtonOff(inputIndex);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

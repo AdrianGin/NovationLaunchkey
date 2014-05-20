@@ -17,6 +17,7 @@ extern "C" {
 #define BRIGHTNESS_MULT_FACTOR (1000)
 
 #define LED_7SEG_MAX (10)
+#define LED_7SEG_CLEAR (LED_7SEG_MAX)
 #define LED_7SEG_SEGMENT_COUNT (7)
 #define LED_7SEG_DP (0x80)
 #define LED_7SEG_LED_COUNT (8)

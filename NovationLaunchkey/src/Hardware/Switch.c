@@ -110,5 +110,4 @@ uint8_t Switch_GetState(uint8_t index)
 		return SWITCH_INVALID;
 	}
 	return ((SwitchRawStates & (1<<index)) != 0);
-	
 }

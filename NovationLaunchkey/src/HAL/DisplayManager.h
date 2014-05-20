@@ -24,24 +24,21 @@ THE SOFTWARE.
 
 
 
-#ifndef _KEYBOARD_UTIL
-#define _KEYBOARD_UTIL
+#ifndef _DISPLAY_MANAGER
+#define _DISPLAY_MANAGER
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <stdint.h>
-#include "HardwareSpecific.h"
-#include "MIDICodes.h"
+#include "LED.h"
 
-uint8_t HAL_KB_ConvertKeyIndex2MIDIKey(uint8_t keyIndex);
-uint8_t HAL_KB_IsBlack(uint8_t keyIndex);
-uint8_t HAL_KB_TimeToVel(uint8_t keyIndex, uint16_t time);
+#define DISPLAY_MODE_NORMAL		(0)
+#define DISPLAY_MODE_FLASHING	(1)
 
-uint8_t HAL_KB_GetCurrentOctave(void);
-uint8_t HAL_KB_GetCurrentTranspose(void);
-
+void DispMan_Print7Seg(uint16_t number, uint8_t flashRate);
+void DispMan_Poll(void);
 
 #ifdef __cplusplus
 }
