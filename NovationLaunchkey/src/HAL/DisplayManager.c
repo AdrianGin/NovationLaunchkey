@@ -42,25 +42,31 @@ void DispMan_Print7Seg(uint16_t number, uint8_t flashRate)
 	DispMan_7SegDisplay.rate = flashRate;
 	LED_7Segment_WriteNumber(number);
 	DispMan_7SegDisplay.number = number;
+	DispMan_7SegDisplay.state = DISPLAY_MODE_NORMAL;
 }
 
 void DispMan_Poll(void)
 {
 
-	if( DispMan_7SegDisplay.counter++ >= DispMan_7SegDisplay.rate )
+	if( DispMan_7SegDisplay.rate )
 	{
-		DispMan_7SegDisplay.counter = 0;
-		DispMan_7SegDisplay.state ^= 1;
-	}
+
+		if( DispMan_7SegDisplay.counter++ >= DispMan_7SegDisplay.rate )
+		{
+			DispMan_7SegDisplay.counter = 0;
+			DispMan_7SegDisplay.state ^= 1;
+		}
 
 
-	if( DispMan_7SegDisplay.state )
-	{
-		LED_7Segment_Write(0, LED_7SEG_CLEAR);
-		LED_7Segment_Write(1, LED_7SEG_CLEAR);
-		LED_7Segment_Write(2, LED_7SEG_CLEAR);
+		if( DispMan_7SegDisplay.state )
+		{
+			LED_7Segment_Write(0, LED_7SEG_CLEAR);
+			LED_7Segment_Write(1, LED_7SEG_CLEAR);
+			LED_7Segment_Write(2, LED_7SEG_CLEAR);
+		}
 	}
-	else
+
+	if( DispMan_7SegDisplay.state == DISPLAY_MODE_NORMAL )
 	{
 		LED_7Segment_WriteNumber(DispMan_7SegDisplay.number);
 	}

@@ -105,7 +105,7 @@ void Switch_ProcessState(uint8_t switchStates)
 
 uint8_t Switch_GetState(uint8_t index)
 {
-	if( index > SW_REC )
+	if( index >= SW_COUNT )
 	{
 		return SWITCH_INVALID;
 	}

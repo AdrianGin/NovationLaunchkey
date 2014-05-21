@@ -35,7 +35,7 @@ extern "C" {
 #include "LED.h"
 
 #define DISPLAY_MODE_NORMAL		(0)
-#define DISPLAY_MODE_FLASHING	(1)
+#define DISPLAY_MODE_OFF		(1)
 
 void DispMan_Print7Seg(uint16_t number, uint8_t flashRate);
 void DispMan_Poll(void);

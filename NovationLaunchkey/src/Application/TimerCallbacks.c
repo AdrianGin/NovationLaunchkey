@@ -65,7 +65,7 @@ void Callback_UpdateDisplay(void)
 				//printNumber(adcSample);
 			}
 
-			LED_7Segment_WriteNumber(adcSample);
+			DispMan_Print7Seg(adcSample, 0);
 			ADC_ClearChangeFlag(i);
 			adcSample = ADC_GetRawSample(i);
 			

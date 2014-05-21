@@ -35,7 +35,7 @@ inline void SetButtonState(uint8_t index)
 
 inline uint8_t GetButtonState(uint8_t index)
 {
-	if( index > SW_REC )
+	if( index >= SW_COUNT )
 	{
 		return SWITCH_INVALID;
 	}
@@ -57,14 +57,14 @@ void ProcessButtonOn(uint8_t inputIndex)
 		case 	SW_OCTAVE_DOWN:
 			if( GetButtonState(SW_OCTAVE_UP) )
 			{
-				DispMan_Print7Seg(HAL_KB_GetCurrentOctave(), 20);
+				DispMan_Print7Seg(HAL_KB_GetCurrentTranspose(), 20);
 			}
 		break;
 
 		case 	SW_OCTAVE_UP:
 			if( GetButtonState(SW_OCTAVE_DOWN) )
 			{
-				DispMan_Print7Seg(HAL_KB_GetCurrentOctave(), 20);
+				DispMan_Print7Seg(HAL_KB_GetCurrentTranspose(), 20);
 			}
 		break;
 
