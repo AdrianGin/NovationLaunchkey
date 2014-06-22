@@ -158,7 +158,8 @@ int32_t DrvUSB_Open(void * pVoid)
     DrvUSB_PreDispatchFDTEvent(&gsUsbDevice);
     DrvUSB_DispatchMiscEvent(&gsUsbDevice);
     
-    NVIC_SetPriority (USBD_IRQn, (1<<__NVIC_PRIO_BITS) - 2);
+    //NVIC_SetPriority (USBD_IRQn, (1<<__NVIC_PRIO_BITS) - 2);
+    NVIC_SetPriority (USBD_IRQn, 0);
     NVIC_EnableIRQ(USBD_IRQn);
 
     return 0;
@@ -425,8 +426,8 @@ int32_t DrvUSB_DataOutTrigger(uint32_t u32EpNum, uint32_t u32Size)
         return E_DRVUSB_SIZE_TOO_LONG;
 
         
-    _DRVUSB_SET_EP_BUF(u32EpId, (uint32_t)psDevice->sEpCrl[u32EpId].u8SramBuffer);
-    _DRVUSB_TRIG_EP(u32EpId, u32Size);
+//    _DRVUSB_SET_EP_BUF(u32EpId, (uint32_t)psDevice->sEpCrl[u32EpId].u8SramBuffer);
+//    _DRVUSB_TRIG_EP(u32EpId, u32Size);
     
     return 0;
 }
@@ -484,9 +485,10 @@ int32_t DrvUSB_DataIn(uint32_t u32EpNum, const uint8_t * u8Buffer, uint32_t u32S
     uint32_t u32EpId;
     
     u32EpId = DrvUSB_GetEpIdentity(u32EpNum, EP_INPUT);
-    
+#if 0
     if (u32Size > psDevice->sEpCrl[u32EpId].u32MaxPacketSize)
         return E_DRVUSB_SIZE_TOO_LONG;
+#endif
 
     
     if (u8Buffer && u32Size)
@@ -1757,6 +1759,10 @@ void DrvUSB_CtrlSetupSetConfiguration(void * pVoid)
         pDrvDevice->u8UsbConfiguration = pDrvDevice->au8Setup[2];
 
         DrvUSB_DataIn(0, NULL, 0);
+
+
+
+
     }
     else
     {

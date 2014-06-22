@@ -14,6 +14,8 @@
 #include "TimerCallbacks.h"
 
 
+#include "USB_Audio.h"
+
 int main(void)
 {
 
@@ -49,10 +51,13 @@ int main(void)
 	//Timer_Init(76800);
 	//Divide by (11+1) = 12 for a 1MHz prescale
 	//Count up to (2nd Param) for 50kHz timer.
-	Timer_InitNoBSP(11, 20);
+
+	//Timer_InitNoBSP(11, 20);
+	Timer_InitNoBSP(12, 20);
 
 	ADC_Init();
 
+	/*
    LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS/200);
    LED_SetLEDBrightness(0, LED_PAD1_G, MAX_LED_BRIGHTNESS/150);
    LED_SetLEDBrightness(0, LED_PAD2_G, MAX_LED_BRIGHTNESS/110);
@@ -71,15 +76,38 @@ int main(void)
    LED_SetLEDBrightness(0, LED_PAD12_G, 1);
    LED_SetLEDBrightness(0, LED_PAD13_G, MAX_LED_BRIGHTNESS/5);
    LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/2);
-   LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);
+   LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);*/
 
+	LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/2);
 
    SoftTimerStart(SoftTimer2[SC_ADC]);
    SoftTimerStart(SoftTimer2[SC_UPDATE_DISPLAY]);
    SoftTimerStart(SoftTimer1[SC_COLUMN_MUX]);
 
+	int32_t i32Ret;
+   i32Ret = DrvUSB_Open((void *)DrvUSB_DispatchEvent);
+    if(i32Ret != 0)
+        return i32Ret;
+
+	/* Disable USB-related interrupts. */
+	_DRVUSB_ENABLE_MISC_INT(0);
+
+	/* Enable float-detection interrupt. */
+	_DRVUSB_ENABLE_FLDET_INT();
+
+	USBAudio_Open();
+
+		/* Enable USB-related interrupts. */
+	_DRVUSB_ENABLE_MISC_INT(INTEN_WAKEUP | INTEN_WAKEUPEN | INTEN_FLDET | INTEN_USB | INTEN_BUS);
+
+
+
+
    while(1)
    {
+
+		UART_TxByte(0xF8);
+
 	   if( TIM_IsMasterTickTriggered() )
 	   {
 			
@@ -89,6 +117,20 @@ int main(void)
 		   TIM_ResetMasterTick();
 	   }
 
+	    E_DRVUSB_STATE eUsbState;
+	    eUsbState = DrvUSB_GetUsbState();
+	    if ( (eUsbState == eDRVUSB_CONFIGURED) && (g_UsbInReady==0) )
+	    {
+	        uint8_t i;
+	        for( i = 0; i < 64 ; i++ )
+	        {
+	          const uint8_t testData[64] = {0x0F, 0xFE, 0x00, 0x00};
+	          while( g_UsbInReady == 1 );
+	          g_UsbInReady = 1;
+	          DrvUSB_DataIn(BULK_IN_EP_NUM, testData, 64);
+				 //DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
+	        }
+		 }
 
    }
 

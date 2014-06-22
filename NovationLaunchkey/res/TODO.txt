@@ -6,5 +6,7 @@ Preset Format for each of the 8 templates.
 
 ReMap Mode
 
+USB
+
 Global:
 Octave & Transport - use main LCD

@@ -343,7 +343,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>4</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -464,6 +464,16 @@
               <FileType>1</FileType>
               <FilePath>.\src\Hardware\Keyboard.c</FilePath>
             </File>
+            <File>
+              <FileName>USB_Audio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\USB_Audio.c</FilePath>
+            </File>
+            <File>
+              <FileName>USB_Descriptors.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\USB_Descriptors.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -514,6 +524,11 @@
               <FileType>1</FileType>
               <FilePath>.\lib\NuvotonPlatform_Keil\Src\Driver\DrvUART.c</FilePath>
             </File>
+            <File>
+              <FileName>DrvUSB.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\NuvotonPlatform_Keil\Src\Driver\DrvUSB.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -538,6 +553,21 @@
               <FileName>HAL_KB.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\HAL\HAL_KB.c</FilePath>
+            </File>
+            <File>
+              <FileName>GlobalEvents.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\GlobalEvents.c</FilePath>
+            </File>
+            <File>
+              <FileName>EventManager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\EventManager.c</FilePath>
+            </File>
+            <File>
+              <FileName>DisplayManager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\DisplayManager.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -5,24 +5,11 @@
 
 #include "USB_Audio.h"
 
+#include "LED.h"
 
 
-typedef struct
-{
-	S_DRVUSB_VENDOR_INFO sVendorInfo;
 
-	const uint8_t *au8DeviceDescriptor;
-	const uint8_t *au8ConfigDescriptor;
-	const uint8_t *pu8IntInEPDescriptor;
-	const uint8_t *pu8ReportDescriptor;
 
-	void * *device;
-
-} USBAUDIO_DEVICE;
-
-static const uint8_t * gpu8UsbBuf = 0;
-static uint32_t gu32BytesInUsbBuf = 0;
-static int8_t gIsOverRequest = 0;
 
 USBAUDIO_DEVICE USBAudio_Device;
 
@@ -52,10 +39,10 @@ S_DRVUSB_EVENT_PROCESS g_sUsbOps[12] =
 {
 	{DrvUSB_CtrlDataInAck   , &USBAudio_Device},/* ctrl pipe0 (EP address 0) In ACK callback */
 	{DrvUSB_CtrlDataOutAck  , &USBAudio_Device},/* ctrl pipe0 (EP address 0) Out ACK callback */
-	{NULL      , &USBAudio_Device},/* EP address 1 In ACK callback */
-	{NULL, NULL},                             /* EP address 1 Out ACK callback */
+	{USBAudio_BulkInAckCallback, &USBAudio_Device},/* EP address 1 In ACK callback */
+	{USBAudio_BulkOutAckCallback, &USBAudio_Device},                             /* EP address 1 Out ACK callback */
 	{NULL, NULL},                             /* EP address 2 In ACK callback */
-	{NULL, NULL},                             /* EP address 2 Out ACK callback */
+	{USBAudio_BulkOutAckCallback, &USBAudio_Device},                             /* EP address 2 Out ACK callback */
 	{NULL, NULL},                             /* EP address 3 In ACK callback */
 	{NULL, NULL},                             /* EP address 3 Out ACK callback */
 	{NULL, NULL},                             /* EP address 4 In ACK callback */
@@ -77,21 +64,108 @@ S_DRVUSB_CTRL_CALLBACK_ENTRY g_asCtrlCallbackEntry[] =
 	{REQ_STANDARD, GET_INTERFACE, DrvUSB_CtrlSetupGetInterface, 0, 0, &USBAudio_Device},
 	{REQ_STANDARD, SET_INTERFACE, DrvUSB_CtrlSetupSetInterface, 0, 0, &USBAudio_Device},
 	{REQ_STANDARD, GET_DESCRIPTOR, USBAudio_CtrlSetupGetDescriptor, USBAudio_CtrlGetDescriptorIn, 0/*HID_CtrlGetDescriptorOut*/, &USBAudio_Device},
-	{REQ_STANDARD, SET_CONFIGURATION, DrvUSB_CtrlSetupSetConfiguration, 0, 0, &USBAudio_Device},
+	{REQ_STANDARD, SET_CONFIGURATION, USBAudio_CtrlSetupSetConfiguration, 0, 0, &USBAudio_Device},
 };
 
+
+
+//register to USB driver
+S_DRVUSB_CLASS USBClass =
+{
+	(void *)&USBAudio_Device,
+	//USBAudio_StartCallBack,
+	0,
+	0
+};
+
+
+/* To handle the data transfer size > maximum packet size */
+static const uint8_t * gpu8UsbBuf = 0;
+static uint32_t gu32BytesInUsbBuf = 0;
+static int8_t gIsOverRequest = 0;
+
+volatile uint8_t g_UsbInReady = 0;
+
+int32_t USBAudio_Open(void)
+{
+	int32_t i32Ret = 0;
+
+	USBAudio_Device.device = (void *)DrvUSB_InstallClassDevice(&USBClass);
+
+	i32Ret = DrvUSB_InstallCtrlHandler(USBAudio_Device.device, g_asCtrlCallbackEntry,
+					sizeof(g_asCtrlCallbackEntry) / sizeof(g_asCtrlCallbackEntry[0]));
+
+	return i32Ret;
+}
+
+void USBAudio_Close(void)
+{
+
+}
+
+//uint8_t inputBuffer[MAX_PACKET_SIZE_BULK_IN] = {;
+
+          const uint8_t testData[4] = {0x0F, 0xFE, 0x00, 0x00};
+
+
+void USBAudio_BulkInAckCallback(void* pVoid)
+{
+
+	LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS);
+
+	 //DrvUSB_DataIn(BULK_IN_EP_NUM, testData, 4);
+
+	 g_UsbInReady = 0;
+
+}
+
+void USBAudio_BulkOutAckCallback(void* pVoid)
+{
+
+	uint32_t gu32RxSize;
+
+	LED_SetLEDBrightness(0, LED_PAD0_R, MAX_LED_BRIGHTNESS);
+
+	DrvUSB_GetOutData(BULK_OUT_EP_NUM,&gu32RxSize);
+
+	DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
+
+	//DrvUSB_GetOutData(BULK_OUT_EP_NUM,&gu32RxSize);
+	//gpu8RxBuf = DrvUSB_GetOutData(BULK_OUT_EP_NUM,&gu32RxSize);
+}
+
+
+
+void USBAudio_StartCallBack(void * pVoid)
+{
+    USBAudio_Reset((USBAUDIO_DEVICE *)pVoid);
+    USBAudio_Start((USBAUDIO_DEVICE *)pVoid);
+}
+
+void USBAudio_Reset(USBAUDIO_DEVICE *psDevice)
+{
+    DrvUSB_Reset(USB_AUDIO_EP);
+}
+
+void USBAudio_Start(USBAUDIO_DEVICE *psDevice)
+{
+    //DrvUSB_DataIn(USB_AUDIO_EP, psDevice->pu8Report, psDevice->u32ReportSize);
+    //DrvUSB_DataOutTrigger(USB_AUDIO_EP, MAX_PACKET_SIZE_BULK_IN);
+}
 
 
 void USBAudio_PrepareDescriptors(const uint8_t *pu8Descriptor, uint32_t u32DescriptorSize, uint32_t u32RequestSize, uint32_t u32MaxPacketSize)
 {
 
     gu32BytesInUsbBuf = u32RequestSize;
+    gpu8UsbBuf = pu8Descriptor;
+
     if(u32RequestSize > u32DescriptorSize)
     {
         gu32BytesInUsbBuf = u32DescriptorSize;
         gIsOverRequest = 1;
     }
-    gpu8UsbBuf = pu8Descriptor;
+
 
 	if(gu32BytesInUsbBuf < u32MaxPacketSize)
 	{
@@ -105,9 +179,7 @@ void USBAudio_PrepareDescriptors(const uint8_t *pu8Descriptor, uint32_t u32Descr
 		gpu8UsbBuf += u32MaxPacketSize;
 		gu32BytesInUsbBuf -= u32MaxPacketSize;
     }
-
 }
-
 
 void USBAudio_CtrlGetDescriptorOut(void * pVoid)
 {
@@ -115,6 +187,15 @@ void USBAudio_CtrlGetDescriptorOut(void * pVoid)
     gpu8UsbBuf = 0;
     gIsOverRequest = 0;
 }
+
+static uint32_t Minimum(uint32_t a, uint32_t b)
+{
+	if (a > b)
+		return b;
+	else
+		return a;
+}
+
 
 void USBAudio_CtrlGetDescriptorIn(void * pVoid)
 {
@@ -180,12 +261,15 @@ void USBAudio_CtrlGetDescriptorIn(void * pVoid)
 /*		Otherwise	error												 */
 /*                                                                       */
 /*************************************************************************/
+
+
+static uint8_t buffer[USB_STRING_DESC_MAX_LEN*2 + 2];
+
 void USBAudio_CtrlSetupGetDescriptor(void * pVoid)
 {
 	USBAUDIO_DEVICE *psDevice = (USBAUDIO_DEVICE *) pVoid;
 	S_DRVUSB_DEVICE *pUsbDevice = (S_DRVUSB_DEVICE *)psDevice->device;
 	uint16_t u16Len;
-	uint8_t buffer[MAX_PACKET_SIZE_CTRL];
 
 	u16Len = 0;
 	u16Len = pUsbDevice->au8Setup[7];
@@ -200,18 +284,16 @@ void USBAudio_CtrlSetupGetDescriptor(void * pVoid)
 		// Get Device Descriptor
 	case DESC_DEVICE:
 	{
-		USBAudio_PrepareDescriptors(DeviceDescriptor, LEN_DEVICE, u16Len, MAX_PACKET_SIZE_CTRL);
-
-	    /* Prepare the OUT to avoid HOST stop data phase without all data transfered. */
-		_DRVUSB_TRIG_EP(1,0x00);
-
+		uint32_t transferLen = Minimum(u16Len, LEN_DEVICE);
+		USBAudio_PrepareDescriptors(DeviceDescriptor, transferLen, u16Len, MAX_PACKET_SIZE_CTRL);
 		break;
 	}
 
 	// Get Configuration Descriptor
 	case DESC_CONFIG:
 	{
-		USBAudio_PrepareDescriptors(ConfigDescriptor, ConfigDescriptor[2], u16Len, MAX_PACKET_SIZE_CTRL);
+		uint32_t transferLen = Minimum(u16Len, CONFIG_DESCRIPTOR_LENGTH);
+		USBAudio_PrepareDescriptors(ConfigDescriptor, transferLen , u16Len, MAX_PACKET_SIZE_CTRL);
 		break;
     }
     // Get String Descriptor
@@ -221,13 +303,13 @@ void USBAudio_CtrlSetupGetDescriptor(void * pVoid)
 		if (pUsbDevice->au8Setup[2] == 0)
 		{
 			USBAudio_PrepareDescriptors(StringLang, 4, u16Len, MAX_PACKET_SIZE_CTRL);
+			_DRVUSB_TRIG_EP(1,0x00);
 		}
 		else
 		{
 			// Get String Descriptor
 			switch (pUsbDevice->au8Setup[2])
 			{
-
 
 			case 1:
 				USB_DescriptorGetString(VendorStringDesc, buffer);
@@ -244,7 +326,15 @@ void USBAudio_CtrlSetupGetDescriptor(void * pVoid)
 				USBAudio_PrepareDescriptors((const uint8_t *)buffer, buffer[0], u16Len, MAX_PACKET_SIZE_CTRL);
 				break;
 
+			case 4:
+				USB_DescriptorGetString(JackDesc, buffer);
+				USBAudio_PrepareDescriptors((const uint8_t *)buffer, buffer[0], u16Len, MAX_PACKET_SIZE_CTRL);
+				break;
+
+
 			default:
+				printNumber(55555);
+				printNumber(pUsbDevice->au8Setup[2]);
 				/* Not support. Reply STALL. */
 				DrvUSB_ClrCtrlReadyAndTrigStall();
 			}
@@ -258,6 +348,50 @@ void USBAudio_CtrlSetupGetDescriptor(void * pVoid)
 	}
 }
 
+
+
+void USBAudio_CtrlSetupSetConfiguration(void* pVoid)
+{
+	S_DRVUSB_DEVICE *pDrvDevice = &gsUsbDevice;
+	S_DRVUSB_CLASS *psUsbClass = pDrvDevice->psUsbClass;
+	int32_t bIsDeviceConfigure;
+
+	bIsDeviceConfigure = psUsbClass->pfnCompare ? psUsbClass->pfnCompare(pDrvDevice->au8Setup[2]) : 1;
+
+	if (pDrvDevice->au8Setup[2] == 0)
+	{
+		// USB address state.
+		DrvUSB_SetUsbState(eDRVUSB_ADDRESS);
+		pDrvDevice->u8UsbConfiguration = pDrvDevice->au8Setup[2];
+		DrvUSB_DataIn(0, NULL, 0);
+
+	}
+	else if(bIsDeviceConfigure)
+	{
+		// USB configured state.
+		DrvUSB_SetUsbState(eDRVUSB_CONFIGURED);
+
+		// Call USB class's start function
+		if(psUsbClass->pfnStart)
+			psUsbClass->pfnStart(pVoid);
+
+		pDrvDevice->u8UsbConfiguration = pDrvDevice->au8Setup[2];
+
+		DrvUSB_DataIn(0, NULL, 0);
+
+		/* Reset bulk in/out endpoint */
+		DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
+		DrvUSB_DataIn(BULK_IN_EP_NUM, 0, 0);
+
+		LED_SetLEDBrightness(0, LED_PAD2_R, MAX_LED_BRIGHTNESS);
+	}
+	else
+	{
+		LED_SetLEDBrightness(0, LED_PAD1_R, MAX_LED_BRIGHTNESS);
+		// Not support. Reply STALL.
+		DrvUSB_ClrCtrlReadyAndTrigStall();
+	}
+}
 
 void DrvUSB_BusSuspendCallback(void * pVoid)
 {
