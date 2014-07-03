@@ -42,7 +42,7 @@ S_DRVUSB_EVENT_PROCESS g_sUsbOps[12] =
 	{USBAudio_BulkInAckCallback, &USBAudio_Device},/* EP address 1 In ACK callback */
 	{USBAudio_BulkOutAckCallback, &USBAudio_Device},                             /* EP address 1 Out ACK callback */
 	{NULL, NULL},                             /* EP address 2 In ACK callback */
-	{USBAudio_BulkOutAckCallback, &USBAudio_Device},                             /* EP address 2 Out ACK callback */
+	{USBAudio_BulkOutAckCallback, &USBAudio_Device},                              /* EP address 2 Out ACK callback */
 	{NULL, NULL},                             /* EP address 3 In ACK callback */
 	{NULL, NULL},                             /* EP address 3 Out ACK callback */
 	{NULL, NULL},                             /* EP address 4 In ACK callback */
@@ -105,7 +105,7 @@ void USBAudio_Close(void)
 
 //uint8_t inputBuffer[MAX_PACKET_SIZE_BULK_IN] = {;
 
-          const uint8_t testData[4] = {0x0F, 0xFE, 0x00, 0x00};
+const uint8_t testData[4] = {0x0F, 0xFE, 0x00, 0x00};
 
 
 void USBAudio_BulkInAckCallback(void* pVoid)
@@ -286,6 +286,7 @@ void USBAudio_CtrlSetupGetDescriptor(void * pVoid)
 	{
 		uint32_t transferLen = Minimum(u16Len, LEN_DEVICE);
 		USBAudio_PrepareDescriptors(DeviceDescriptor, transferLen, u16Len, MAX_PACKET_SIZE_CTRL);
+		_DRVUSB_TRIG_EP(1,0x00);
 		break;
 	}
 

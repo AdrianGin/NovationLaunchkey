@@ -23,7 +23,7 @@ extern "C" {
 #define USB_PID (0x1111)
 
 
-#define USB_MAX_POWER	(32)
+#define USB_MAX_POWER	(64)
 
 #define USB_AUDIO_CLASS		(1)
 #define USB_AUDIO_CONTROL	(1)
@@ -72,7 +72,7 @@ extern "C" {
 #define MS_MIDI_OUT_JACK_SUBTYPE	(0x03)
 
 #define MS_MIDI_EMBEDDED_TYPE		(0x01)
-#define MS_MIDI_EXTERNAL_TYPE		(0x01)
+#define MS_MIDI_EXTERNAL_TYPE		(0x02)
 
 #define USB_STRING_DESC_MAX_LEN		(32)
 

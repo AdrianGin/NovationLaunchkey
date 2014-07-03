@@ -128,22 +128,6 @@ const uint8_t ConfigDescriptor[CONFIG_DESCRIPTOR_LENGTH] =
 		0x01, 	//BaSourcePin(1)
 		4,		//iJack can be used to specify the name of the MIDI Port
 
-		MS_MIDI_BULK_IN_LEN,
-		DESC_ENDPOINT,								// bDescriptorType
-		EP_INPUT | BULK_IN_EP_NUM,				//bEndpointAddress
-		EP_BULK,									//bmAttributes
-		MAX_PACKET_SIZE_BULK_IN & 0x00FF,			//wMaxPacketSize
-		(MAX_PACKET_SIZE_BULK_IN & 0xFF00) >> 8, 	//wMaxPacketSize
-		0, 											//bInterval
-		0, //bRefresh
-		0, //bSyncAddress
-
-		MS_MIDI_CS_BULK_IN_LEN,
-		CLASS_SPECIFIC_ENDPOINT,								// bDescriptorType
-		MS_GENERAL,				//bDescriptorSubtype
-		MS_EMBEDDED_OUT_PORT_COUNT,									//bNumEmbMIDIJack
-		3,						//Jack IDs of MIDI OUT Embeddeds
-
 		MS_MIDI_BULK_OUT_LEN,
 		DESC_ENDPOINT,								// bDescriptorType
 		EP_OUTPUT | BULK_OUT_EP_NUM,				//bEndpointAddress
@@ -160,6 +144,21 @@ const uint8_t ConfigDescriptor[CONFIG_DESCRIPTOR_LENGTH] =
 		MS_EMBEDDED_IN_PORT_COUNT,									//bNumEmbMIDIJack
 		1,	//Jack IDs of MIDI IN Embeddeds
 
+		MS_MIDI_BULK_IN_LEN,
+		DESC_ENDPOINT,								// bDescriptorType
+		EP_INPUT | BULK_IN_EP_NUM,				//bEndpointAddress
+		EP_BULK,									//bmAttributes
+		MAX_PACKET_SIZE_BULK_IN & 0x00FF,			//wMaxPacketSize
+		(MAX_PACKET_SIZE_BULK_IN & 0xFF00) >> 8, 	//wMaxPacketSize
+		0, 											//bInterval
+		0, //bRefresh
+		0, //bSyncAddress
+
+		MS_MIDI_CS_BULK_IN_LEN,
+		CLASS_SPECIFIC_ENDPOINT,								// bDescriptorType
+		MS_GENERAL,				//bDescriptorSubtype
+		MS_EMBEDDED_OUT_PORT_COUNT,									//bNumEmbMIDIJack
+		3,						//Jack IDs of MIDI OUT Embeddeds
 
 };
 

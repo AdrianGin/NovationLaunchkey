@@ -100,14 +100,10 @@ int main(void)
 		/* Enable USB-related interrupts. */
 	_DRVUSB_ENABLE_MISC_INT(INTEN_WAKEUP | INTEN_WAKEUPEN | INTEN_FLDET | INTEN_USB | INTEN_BUS);
 
-
-
+	uint8_t startUp = 1;
 
    while(1)
    {
-
-		UART_TxByte(0xF8);
-
 	   if( TIM_IsMasterTickTriggered() )
 	   {
 			
@@ -119,17 +115,18 @@ int main(void)
 
 	    E_DRVUSB_STATE eUsbState;
 	    eUsbState = DrvUSB_GetUsbState();
-	    if ( (eUsbState == eDRVUSB_CONFIGURED) && (g_UsbInReady==0) )
+	    if ( (eUsbState == eDRVUSB_CONFIGURED) && (g_UsbInReady==0) && (startUp == 1) )
 	    {
 	        uint8_t i;
 	        for( i = 0; i < 64 ; i++ )
 	        {
-	          const uint8_t testData[64] = {0x0F, 0xFE, 0x00, 0x00};
+	          const uint8_t testData[4] = {0x0F, 0xFE, 0x00, 0x00};
 	          while( g_UsbInReady == 1 );
 	          g_UsbInReady = 1;
-	          DrvUSB_DataIn(BULK_IN_EP_NUM, testData, 64);
+	          //DrvUSB_DataIn(BULK_IN_EP_NUM, testData, 4);
 				 //DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
 	        }
+			  //startUp = 0;
 		 }
 
    }
