@@ -1,4 +1,9 @@
 TODO:
+
+Event Stacks which get processed in the main loop.
+
+
+
 Pitch and Modulation Wheel Conditioning (need 8 bit)
 Presets for Controller Mode
 

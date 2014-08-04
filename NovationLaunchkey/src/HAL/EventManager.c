@@ -25,7 +25,6 @@ THE SOFTWARE.
 #include "EventManager.h"
 
 
-
 uint8_t EM_ProcessKeyboard(uint8_t midiNote, uint8_t velocity)
 {
 
