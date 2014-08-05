@@ -44,7 +44,7 @@ void* VoidBuffer_PeekData(VoidBuffer_t* buf)
         return buf->memPtrArray + (buf->readPtr * buf->elementSize);
     } else
     {
-        return VOIDBUFFER_OVERFLOW; /* This is really trying to get a nonexistant byte */
+        return VOIDBUFFER_NO_DATA; /* This is really trying to get a nonexistant byte */
     }
 
 }

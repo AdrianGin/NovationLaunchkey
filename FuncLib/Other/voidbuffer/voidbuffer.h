@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #define VOIDBUFFER_OVERFLOW	(0)
+#define VOIDBUFFER_NO_DATA  (0)
 #define VOIDBUFFER_EMPTY    (0)
 
 /* Size has to be a size of power of 2 */

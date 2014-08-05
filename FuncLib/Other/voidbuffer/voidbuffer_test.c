@@ -158,7 +158,7 @@ int VB_EmptyPopTest(VoidBuffer_t* buf)
 	VoidBuffer_Clear(buf);
 	res = VoidBuffer_PopData(buf);
 
-	if( res != VOIDBUFFER_OVERFLOW )
+	if( res != VOIDBUFFER_NO_DATA )
 	{
 		printf("Pop Test failed!\n");
 		printf("Test Failed Line: %d, File %s\n", __LINE__, __FILE__);
@@ -172,13 +172,15 @@ int VB_EmptyPopTest(VoidBuffer_t* buf)
 //Fills the buffer to the max, and then empties it.
 int VB_FillThenEmpty(VoidBuffer_t* buf)
 {
+	VoidBuffer_Clear(buf);
+
 	uint8_t testStatus = TEST_SUCCESS;
 	//Test that it can be emptied first.
 	int i;
-	for( i = 0; i < buf->bufferSize; i++ )
+	for( i = 0; i < (buf->bufferSize - 1); i++ )
 	{
 		uint8_t len;
-		len = VoidBuffer_PushData(buf, (void*)&VB_TestCases[i]);
+		len = VoidBuffer_PushData(buf, (void*)&VB_TestCases[i+2]);
 
 		if( len == VOIDBUFFER_OVERFLOW )
 		{
@@ -186,11 +188,23 @@ int VB_FillThenEmpty(VoidBuffer_t* buf)
 			printf("Test Failed Line: %d, File %s\n", __LINE__, __FILE__);
 			testStatus = TEST_FAILED;
 		}
+	}
 
+	for( i = 0; i < buf->bufferSize - 1; i++ )
+	{
 		TestStruct_t* tmp;
 		tmp = VoidBuffer_PopData(buf);
-		VB_MatchTestStructs(tmp, &VB_TestCases[i]);
+
+		if( tmp == VOIDBUFFER_NO_DATA)
+		{
+			printf("PopData Failed = %d\n", tmp);
+			printf("Test Failed Line: %d, File %s\n", __LINE__, __FILE__);
+			testStatus = TEST_FAILED;
+		}
+
+		VB_MatchTestStructs(tmp, &VB_TestCases[i+2]);
 	}
+
 	return testStatus;
 }
 
@@ -271,6 +285,12 @@ int main(void)
 	}
 
 	if( VB_EmptyPopTest(&TestBuffer) != TEST_SUCCESS )
+	{
+		printf("Test Failed Line: %d, File %s\n", __LINE__, __FILE__);
+		return 1;
+	}
+
+	if( VB_FillThenEmpty(&TestBuffer) != TEST_SUCCESS )
 	{
 		printf("Test Failed Line: %d, File %s\n", __LINE__, __FILE__);
 		return 1;
