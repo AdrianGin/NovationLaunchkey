@@ -22,28 +22,49 @@ THE SOFTWARE.
 
 */
 
+#include "KeyboardEvents.h"
+
+KeyboardEvent_t KeyboardMsgArray[KEYBOARD_EVENT_MSG_COUNT];
 
 
-#ifndef _KEYBOARD_UTIL
-#define _KEYBOARD_UTIL
+VoidBuffer_t KeyboardMsgQueue =
+{
+		.memPtrArray = (void*)KeyboardMsgArray,
+		.bufferSize = KEYBOARD_EVENT_MSG_COUNT,
+		.elementSize = sizeof(KeyboardEvent_t),
+};
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stdint.h>
-
-
-
-
-uint8_t KeyUtil_TimeToVel(uint8_t keyIndex, uint16_t time);
-
-uint8_t KeyUtil_IsBlack(uint8_t keyIndex);
-
-
-
-#ifdef __cplusplus
+uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event)
+{
+	return VoidBuffer_PushData(&KeyboardMsgQueue, (void*) event);
 }
-#endif
 
-#endif
+KeyboardEvent_t KeyboardEvents_GetEvent(void)
+{
+	KeyboardEvent_t* event;
+	event = VoidBuffer_PopData(&KeyboardMsgQueue);
+
+	if( event != 0 )
+	{
+		return *event;
+	}
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

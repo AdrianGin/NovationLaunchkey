@@ -4,6 +4,8 @@
 #include "MultiplexControl.h"
 #include "HAL_KB.h"
 
+#include "KeyboardEvents.h"
+
 Keyboard_KeyInformation_t Keyboard_Info[NUMBER_OF_KEYS];
 volatile uint16_t Keyboard_Timer = 0;
 
@@ -211,10 +213,10 @@ void Keyboard_ExecuteState(uint8_t keyIndex, KB_SWITCH_STATES action)
 	}
 
 	//Invalid state!
-	printNumber(info->keyState);
-	printNumber(action);
-	printNumber(0xFFFF);
-	printNumber(0xFFFF);
+//	printNumber(info->keyState);
+//	printNumber(action);
+//	printNumber(0xFFFF);
+//	printNumber(0xFFFF);
 }
 
 void Keyboard_StartTimer(uint8_t keyIndex)
@@ -232,7 +234,7 @@ void Keyboard_StopTimer(uint8_t keyIndex)
 void Keyboard_MaxVelocity(uint8_t keyIndex)
 {
 	//printNumber(keyIndex);
-	printNumber(127);
+//	printNumber(127);
 }
 
 void Keyboard_SendOnVelocity(uint8_t keyIndex)
@@ -248,12 +250,17 @@ void Keyboard_SendOnVelocity(uint8_t keyIndex)
 	velocity = HAL_KB_TimeToVel(keyIndex, deltaTime);
 	HALkey = HAL_KB_ConvertKeyIndex2MIDIKey(keyIndex);
 
-	UART_TxByte(0x90);
-	UART_TxByte(HALkey);
-	UART_TxByte(velocity);
+//	UART_TxByte(0x90);
+//	UART_TxByte(HALkey);
+//	UART_TxByte(velocity);
 	//printNumber(keyIndex);
 	//printNumber(deltaTime);
 
+	KeyboardEvent_t tmp;
+	tmp.status = MIDI_NOTE_ON;
+	tmp.note = HALkey;
+	tmp.velocity = velocity;
+	KeyboardEvents_AddEvent(&tmp);
 
 }
 
@@ -270,24 +277,24 @@ void Keyboard_SendQuickOn(uint8_t keyIndex)
 
 	HALkey = HAL_KB_ConvertKeyIndex2MIDIKey(keyIndex);
 	//Send an off note first
-	UART_TxByte(0x80);
-	UART_TxByte(HALkey);
-	UART_TxByte(64);
+//	UART_TxByte(0x80);
+//	UART_TxByte(HALkey);
+//	UART_TxByte(64);
 
 
 	deltaTime = Keyboard_DeltaTime(info->timer);
 	velocity = HAL_KB_TimeToVel(keyIndex, deltaTime);
 
-	UART_TxByte(0x90);
-	UART_TxByte(HALkey);
-	UART_TxByte(velocity);
+//	UART_TxByte(0x90);
+//	UART_TxByte(HALkey);
+//	UART_TxByte(velocity);
 
 }
 
 void Keyboard_SendQuickOff(uint8_t keyIndex)
 {
 	//printNumber(keyIndex);
-	printNumber(0);
+//	printNumber(0);
 }
 
 void Keyboard_SendOffVelocity(uint8_t keyIndex)
@@ -301,11 +308,16 @@ void Keyboard_SendOffVelocity(uint8_t keyIndex)
 	velocity = HAL_KB_TimeToVel(keyIndex, deltaTime);
 	HALkey = HAL_KB_ConvertKeyIndex2MIDIKey(keyIndex);
 
-	UART_TxByte(0x80);
-	UART_TxByte(HALkey);
-	UART_TxByte(velocity);
+//	UART_TxByte(0x80);
+//	UART_TxByte(HALkey);
+//	UART_TxByte(velocity);
 	//printNumber(keyIndex);
 	//printNumber(deltaTime);
+	KeyboardEvent_t tmp;
+	tmp.status = MIDI_NOTE_OFF;
+	tmp.note = HALkey;
+	tmp.velocity = velocity;
+	KeyboardEvents_AddEvent(&tmp);
 }
 
 

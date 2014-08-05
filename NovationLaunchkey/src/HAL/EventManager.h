@@ -36,7 +36,7 @@ extern "C" {
 
 #include "GlobalEvents.h"
 
-uint8_t EM_ProcessKeyboard(uint8_t midiNote, uint8_t velocity);
+uint8_t EM_ProcessKeyboard(void);
 uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value);
 uint8_t EM_ProcessButton(uint8_t inputIndex, uint8_t value);
 

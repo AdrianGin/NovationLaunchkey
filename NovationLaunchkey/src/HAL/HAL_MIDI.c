@@ -22,42 +22,15 @@ THE SOFTWARE.
 
 */
 
-#include "EventManager.h"
+#include "HAL_MIDI.h"
 
 
-uint8_t EM_ProcessKeyboard(uint8_t midiNote, uint8_t velocity)
+
+void HAL_MIDI_TxMsg(MIDIMsg_t* msg)
 {
-	KeyboardEvent_t kbEvent;
-	kbEvent = KeyboardEvents_GetEvent();
-
-	if( kbEvent )
-	{
-
-	}
-
-	return 0;
+	UART_TxByte(msg->status);
+	UART_TxByte(msg->data1);
+	UART_TxByte(msg->data2);
 }
-
-
-uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value)
-{
-	return 0;
-}
-
-
-uint8_t EM_ProcessButton(uint8_t inputIndex, uint8_t value)
-{
-	GlobEvents_ProcessButton(inputIndex, value);
-	return 0;
-}
-
-
-
-
-
-
-
-
-
 
 

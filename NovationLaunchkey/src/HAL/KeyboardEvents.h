@@ -22,42 +22,35 @@ THE SOFTWARE.
 
 */
 
-#include "EventManager.h"
 
 
-uint8_t EM_ProcessKeyboard(uint8_t midiNote, uint8_t velocity)
+#ifndef _KEYBOARD_EVENTS
+#define _KEYBOARD_EVENTS
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdint.h>
+#include "voidbuffer.h"
+
+typedef struct
 {
-	KeyboardEvent_t kbEvent;
-	kbEvent = KeyboardEvents_GetEvent();
+	uint8_t status; //so we can use Note On / Off
+	uint8_t note;
+	uint8_t velocity;
+} KeyboardEvent_t;
 
-	if( kbEvent )
-	{
 
-	}
+#define KEYBOARD_EVENT_MSG_COUNT (16)
 
-	return 0;
+extern VoidBuffer_t KeyboardMsgQueue;
+
+uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event);
+KeyboardEvent_t KeyboardEvents_GetEvent(void);
+
+#ifdef __cplusplus
 }
+#endif
 
-
-uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value)
-{
-	return 0;
-}
-
-
-uint8_t EM_ProcessButton(uint8_t inputIndex, uint8_t value)
-{
-	GlobEvents_ProcessButton(inputIndex, value);
-	return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
+#endif

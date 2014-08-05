@@ -40,8 +40,10 @@ void* VoidBuffer_PeekData(VoidBuffer_t* buf)
     //buffer not empty?
     if (buf->readPtr != buf->writePtr)
     {
+			  void* tmp;
+			  tmp = (void*)((uint32_t)buf->memPtrArray + (uint32_t)(buf->readPtr * buf->elementSize));
         //get byte from buffer, update read position and return
-        return buf->memPtrArray + (buf->readPtr * buf->elementSize);
+        return tmp;
     } else
     {
         return VOIDBUFFER_NO_DATA; /* This is really trying to get a nonexistant byte */
@@ -71,7 +73,9 @@ uint8_t VoidBuffer_PushData(VoidBuffer_t* buf, void* data)
     {
         //wrap around write position
         //write the character
-    	memcpy(buf->memPtrArray + (buf->writePtr * buf->elementSize), data, buf->elementSize);
+		  void* tmp;
+			tmp = (void*)((uint32_t)buf->memPtrArray + (uint32_t)(buf->writePtr * buf->elementSize));
+    	memcpy(tmp, data, buf->elementSize);
         //update size info
     	buf->writePtr = (buf->writePtr + 1) & bufferMask;
         return VoidBuffer_Len(buf);
