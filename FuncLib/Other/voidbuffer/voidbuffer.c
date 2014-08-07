@@ -40,12 +40,17 @@ void* VoidBuffer_PeekData(VoidBuffer_t* buf)
     //buffer not empty?
     if (buf->readPtr != buf->writePtr)
     {
-			  void* tmp;
-			  tmp = (void*)((uint32_t)buf->memPtrArray + (uint32_t)(buf->readPtr * buf->elementSize));
+    	printNumber(buf->readPtr);
+    	printNumber(0xFFFF);
+    	printNumber(buf->writePtr);
+
+		void* tmp;
+		tmp = (void*)((uint32_t)buf->memPtrArray + (uint32_t)(buf->readPtr * buf->elementSize));
         //get byte from buffer, update read position and return
         return tmp;
     } else
     {
+
         return VOIDBUFFER_NO_DATA; /* This is really trying to get a nonexistant byte */
     }
 
@@ -54,11 +59,21 @@ void* VoidBuffer_PeekData(VoidBuffer_t* buf)
 
 /* Critical means disable interrupts on entry and restore interrupt
  * state on exit */
-void* VoidBuffer_PopData(VoidBuffer_t* buf)
+void* VoidBuffer_PopData(VoidBuffer_t* buf, void* dest)
 {
 
     void* ptr = VoidBuffer_PeekData(buf);
-    buf->readPtr = (buf->readPtr + 1) & (buf->bufferSize - 1);
+
+    if( dest && ptr )
+    {
+    	memcpy(dest, ptr, buf->elementSize);
+    }
+
+    if( ptr )
+    {
+    	buf->readPtr = (buf->readPtr + 1) & (buf->bufferSize - 1);
+    }
+
     return ptr;
 }
 

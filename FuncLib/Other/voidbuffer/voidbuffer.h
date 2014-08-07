@@ -4,9 +4,10 @@
 #define __VOIDBUFFER_H
 
 #include <stdint.h>
+#include <stdlib.h>
 
 #define VOIDBUFFER_OVERFLOW	(0)
-#define VOIDBUFFER_NO_DATA  (0)
+#define VOIDBUFFER_NO_DATA  (NULL)
 #define VOIDBUFFER_EMPTY    (0)
 
 /* Size has to be a size of power of 2 */
@@ -25,7 +26,7 @@ void* VoidBuffer_PeekData(VoidBuffer_t* buf);
 
 /* Critical means disable interrupts on entry and restore interrupt
  * state on exit */
-void* VoidBuffer_PopData(VoidBuffer_t* buf);
+void* VoidBuffer_PopData(VoidBuffer_t* buf, void* dest);
 /* returns the size of the buf */
 uint8_t VoidBuffer_PushData(VoidBuffer_t* buf, void* data);
 

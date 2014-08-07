@@ -144,9 +144,18 @@ int VB_PopNPushTest(VoidBuffer_t* buf)
 			testStatus = TEST_FAILED;
 		}
 
-		TestStruct_t* tmp;
-		tmp = VoidBuffer_PopData(buf);
-		VB_MatchTestStructs(tmp, &VB_TestCases[i]);
+		TestStruct_t tmp;
+		void* ptr;
+		ptr = VoidBuffer_PopData(buf, &tmp);
+
+		if( ptr == 0 )
+		{
+			printf("Invalid Get!\n");
+			printf("Test Failed Line: %d, File %s\n", __LINE__, __FILE__);
+			testStatus = TEST_FAILED;
+		}
+
+		VB_MatchTestStructs(&tmp, &VB_TestCases[i]);
 	}
 	return testStatus;
 }
@@ -156,7 +165,7 @@ int VB_EmptyPopTest(VoidBuffer_t* buf)
 {
 	uint8_t res;
 	VoidBuffer_Clear(buf);
-	res = VoidBuffer_PopData(buf);
+	res = VoidBuffer_PopData(buf, 0);
 
 	if( res != VOIDBUFFER_NO_DATA )
 	{
@@ -192,17 +201,18 @@ int VB_FillThenEmpty(VoidBuffer_t* buf)
 
 	for( i = 0; i < buf->bufferSize - 1; i++ )
 	{
-		TestStruct_t* tmp;
-		tmp = VoidBuffer_PopData(buf);
+		TestStruct_t tmp;
+		void* res;
+		res = VoidBuffer_PopData(buf, &tmp);
 
-		if( tmp == VOIDBUFFER_NO_DATA)
+		if( res == VOIDBUFFER_NO_DATA)
 		{
-			printf("PopData Failed = %d\n", tmp);
+			printf("PopData Failed = %d\n", &tmp);
 			printf("Test Failed Line: %d, File %s\n", __LINE__, __FILE__);
 			testStatus = TEST_FAILED;
 		}
 
-		VB_MatchTestStructs(tmp, &VB_TestCases[i+2]);
+		VB_MatchTestStructs(&tmp, &VB_TestCases[i+2]);
 	}
 
 	return testStatus;
