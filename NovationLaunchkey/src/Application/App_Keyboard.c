@@ -28,8 +28,22 @@ THE SOFTWARE.
 #include "KeyboardEvents.h"
 
 
+#include "HAL_MIDI.h"
 
 
-void App_HandleKeyEvent()
+void App_HandleKeyEvent(KeyboardEvent_t* kbEvent)
+{
+	MIDIMsg_t msg;
+
+	msg.port = 0x00;
+
+	msg.status = kbEvent->status;
+	msg.data1 = kbEvent->note;
+	msg.data2 = kbEvent->velocity;
+
+	HAL_MIDI_TxMsg(&msg);
+
+
+}
 
 

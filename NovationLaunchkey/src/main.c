@@ -14,6 +14,8 @@
 
 #include "USB_Audio.h"
 
+#include "EventManager.h"
+
 int main(void)
 {
 
@@ -126,6 +128,9 @@ int main(void)
 			}
 			startUp = 0;
 		}
+
+
+		EM_ProcessKeyboard();
 
 	}
 

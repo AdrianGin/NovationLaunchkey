@@ -27,30 +27,41 @@ THE SOFTWARE.
 KeyboardEvent_t KeyboardMsgArray[KEYBOARD_EVENT_MSG_COUNT];
 
 
-VoidBuffer_t KeyboardMsgQueue =
+volatile VoidBuffer_t KeyboardMsgQueue =
 {
 		.memPtrArray = (void*)KeyboardMsgArray,
 		.bufferSize = KEYBOARD_EVENT_MSG_COUNT,
 		.elementSize = sizeof(KeyboardEvent_t),
 };
 
+
+
+
 uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event)
 {
 	return VoidBuffer_PushData(&KeyboardMsgQueue, (void*) event);
 }
 
-KeyboardEvent_t KeyboardEvents_GetEvent(void)
+uint8_t KeyboardEvents_GetEvent(KeyboardEvent_t* event)
 {
-	KeyboardEvent_t* event;
-	event = VoidBuffer_PopData(&KeyboardMsgQueue);
+	void* eventPtr;
+	eventPtr = VoidBuffer_PopData(&KeyboardMsgQueue, event);
 
-	if( event != 0 )
+	if( eventPtr != VOIDBUFFER_NO_DATA )
 	{
-		return *event;
+		return HAS_EVENT;
+	}
+	else
+	{
+		return !HAS_EVENT;
 	}
 
-	return 0;
 }
+
+
+
+
+
 
 
 

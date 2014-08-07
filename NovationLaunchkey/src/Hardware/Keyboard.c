@@ -308,8 +308,8 @@ void Keyboard_SendOffVelocity(uint8_t keyIndex)
 	velocity = HAL_KB_TimeToVel(keyIndex, deltaTime);
 	HALkey = HAL_KB_ConvertKeyIndex2MIDIKey(keyIndex);
 
-//	UART_TxByte(0x80);
-//	UART_TxByte(HALkey);
+	//UART_TxByte(0x80);
+	//UART_TxByte(HALkey);
 //	UART_TxByte(velocity);
 	//printNumber(keyIndex);
 	//printNumber(deltaTime);

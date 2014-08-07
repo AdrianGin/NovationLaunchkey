@@ -41,13 +41,13 @@ typedef struct
 	uint8_t velocity;
 } KeyboardEvent_t;
 
-
+#define HAS_EVENT (1)
 #define KEYBOARD_EVENT_MSG_COUNT (16)
 
-extern VoidBuffer_t KeyboardMsgQueue;
+extern volatile VoidBuffer_t KeyboardMsgQueue;
 
 uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event);
-KeyboardEvent_t KeyboardEvents_GetEvent(void);
+uint8_t KeyboardEvents_GetEvent(KeyboardEvent_t* event);
 
 #ifdef __cplusplus
 }

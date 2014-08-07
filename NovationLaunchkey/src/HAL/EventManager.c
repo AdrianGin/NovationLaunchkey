@@ -25,14 +25,15 @@ THE SOFTWARE.
 #include "EventManager.h"
 
 
-uint8_t EM_ProcessKeyboard(uint8_t midiNote, uint8_t velocity)
+uint8_t EM_ProcessKeyboard(void)
 {
 	KeyboardEvent_t kbEvent;
-	kbEvent = KeyboardEvents_GetEvent();
+	uint8_t res;
+	res = KeyboardEvents_GetEvent(&kbEvent);
 
-	if( kbEvent )
+	if( res == HAS_EVENT)
 	{
-
+		App_HandleKeyEvent(&kbEvent);
 	}
 
 	return 0;

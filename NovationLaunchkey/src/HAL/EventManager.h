@@ -33,7 +33,7 @@ extern "C" {
 
 #include <stdint.h>
 
-
+#include "KeyboardEvents.h"
 #include "GlobalEvents.h"
 
 uint8_t EM_ProcessKeyboard(void);
