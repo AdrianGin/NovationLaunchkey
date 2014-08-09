@@ -24,27 +24,18 @@ THE SOFTWARE.
 
 
 
-#ifndef _EVENT_MANAGER
-#define _EVENT_MANAGER
+#ifndef _APP_MIDI_H
+#define _APP_MIDI_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <stdint.h>
-
-#include "KeyboardEvents.h"
-#include "GlobalEvents.h"
-
 #include "HAL_MIDI.h"
-#include "USBMIDI.h"
-
-uint8_t EM_ProcessKeyboard(void);
-uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value);
-uint8_t EM_ProcessButton(uint8_t inputIndex, uint8_t value);
-uint8_t EM_ProcessMIDI(void);
 
 
+void App_MIDIEvent(MIDIMsg_t* msg);
 
 #ifdef __cplusplus
 }

@@ -53,7 +53,36 @@ uint8_t EM_ProcessButton(uint8_t inputIndex, uint8_t value)
 }
 
 
+uint8_t EM_ProcessMIDI(void)
+{
+	//do MIDI processing here for Application
+	uint8_t i;
+	MIDIMsg_t msg;
+	for( i = 0; i < USB_MIDI_CABLE_COUNT; i++ )
+	{
+		uint8_t byte;
+		uint8_t result = 0;
+		msg.port = i;
 
+		result = USBMIDI_GetByte(&byte, i);
+
+		if(result != NO_DATA_BYTE)
+		{
+			msg.status = byte;
+
+			result = USBMIDI_GetByte(&byte, i);
+			msg.data1 = byte;
+
+			result = USBMIDI_GetByte(&byte, i);
+			msg.data2 = byte;
+
+			App_MIDIEvent(&msg);
+		}
+	}
+
+	USBMIDI_SetReadyToReceive();
+	return 0;
+}
 
 
 

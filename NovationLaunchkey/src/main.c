@@ -13,7 +13,7 @@
 #include "TimerCallbacks.h"
 
 #include "USB_Audio.h"
-
+#include "USBMIDI.h"
 #include "EventManager.h"
 
 int main(void)
@@ -130,6 +130,8 @@ int main(void)
 
 	  //DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
 		EM_ProcessKeyboard();
+		EM_ProcessMIDI();
+		USBMIDI_Poll();
 
 	}
 

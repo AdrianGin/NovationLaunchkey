@@ -20,6 +20,8 @@ typedef struct
 
 extern volatile uint8_t g_UsbInReady;
 
+#define USB_BULK_IN_IS_READY (0)
+
 void USBAudio_StartCallBack(void * pVoid);
 void USBAudio_Reset(USBAUDIO_DEVICE *psDevice);
 void USBAudio_Start(USBAUDIO_DEVICE *psDevice);

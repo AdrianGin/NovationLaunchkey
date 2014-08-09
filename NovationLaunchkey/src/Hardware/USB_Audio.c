@@ -110,28 +110,16 @@ const uint8_t testData[4] = {0x0F, 0xFE, 0x00, 0x00};
 
 void USBAudio_BulkInAckCallback(void* pVoid)
 {
-
-	LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS);
-
-	 //DrvUSB_DataIn(BULK_IN_EP_NUM, testData, 4);
-
 	 g_UsbInReady = 0;
-
 }
 
 void USBAudio_BulkOutAckCallback(void* pVoid)
 {
 
-	uint32_t gu32RxSize;
-
-	LED_SetLEDBrightness(0, LED_PAD0_R, MAX_LED_BRIGHTNESS);
-
-	DrvUSB_GetOutData(BULK_OUT_EP_NUM,&gu32RxSize);
-
-	DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
-
-	//DrvUSB_GetOutData(BULK_OUT_EP_NUM,&gu32RxSize);
-	//gpu8RxBuf = DrvUSB_GetOutData(BULK_OUT_EP_NUM,&gu32RxSize);
+	uint32_t  len;
+	uint8_t*  dataPtr;
+	dataPtr = DrvUSB_GetOutData(BULK_OUT_EP_NUM,&len);
+	USBMIDI_ProcessOutData(dataPtr, len);
 }
 
 

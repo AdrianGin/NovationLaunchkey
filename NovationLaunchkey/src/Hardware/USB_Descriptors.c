@@ -6,11 +6,11 @@
 
 #include "USB_Descriptors.h"
 
-const uint8_t VendorStringDesc[]  = "Focusrite A.E. Ltd";
-const uint8_t ProductStringDesc[]  = "Launchkey 61X";
+const uint8_t VendorStringDesc[]  = "AG Funds Ltd.";
+const uint8_t ProductStringDesc[]  = "AG Launchkey X";
 
 const uint8_t SerialStringDesc[]  = "2.0A";
-const uint8_t JackDesc[]  =         "Launchkey 61 MIDI";
+const uint8_t JackDesc[]  =         "AG Launchkey X";
 
 const uint8_t StringLang[] =
 {
