@@ -34,7 +34,9 @@ extern "C" {
 #include <stdint.h>
 
 #include "UART.h"
-#include "USB_Audio.h"
+#include "USBMIDI.h"
+
+
 
 
 typedef struct
@@ -46,6 +48,8 @@ typedef struct
 } MIDIMsg_t;
 
 void HAL_MIDI_TxMsg(MIDIMsg_t* msg);
+void HAL_USB_MIDI_TxMsg(uint8_t cableNo, MIDIMsg_t* msg);
+
 
 #ifdef __cplusplus
 }

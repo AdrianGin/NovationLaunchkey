@@ -120,8 +120,7 @@ int main(void)
 			for (i = 0; i < 64; i++)
 			{
 				const uint8_t testData[4] = { 0x0F, 0xFE, 0x00, 0x00 };
-				while (g_UsbInReady == 1)
-					;
+				while (g_UsbInReady == 1);
 				g_UsbInReady = 1;
 				DrvUSB_DataIn(BULK_IN_EP_NUM, testData, 4);
 				//DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
@@ -129,7 +128,7 @@ int main(void)
 			startUp = 0;
 		}
 
-
+	  //DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
 		EM_ProcessKeyboard();
 
 	}

@@ -49,6 +49,7 @@ uint8_t KeyboardEvents_GetEvent(KeyboardEvent_t* event)
 
 	if( eventPtr != VOIDBUFFER_NO_DATA )
 	{
+ 
 		return HAS_EVENT;
 	}
 	else

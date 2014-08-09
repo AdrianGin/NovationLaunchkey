@@ -477,6 +477,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\Hardware\USB_Descriptors.c</FilePath>
             </File>
+            <File>
+              <FileName>USBMIDI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Hardware\USBMIDI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

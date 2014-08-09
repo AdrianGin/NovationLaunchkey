@@ -40,10 +40,6 @@ void* VoidBuffer_PeekData(VoidBuffer_t* buf)
     //buffer not empty?
     if (buf->readPtr != buf->writePtr)
     {
-    	printNumber(buf->readPtr);
-    	printNumber(0xFFFF);
-    	printNumber(buf->writePtr);
-
 		void* tmp;
 		tmp = (void*)((uint32_t)buf->memPtrArray + (uint32_t)(buf->readPtr * buf->elementSize));
         //get byte from buffer, update read position and return
@@ -69,7 +65,7 @@ void* VoidBuffer_PopData(VoidBuffer_t* buf, void* dest)
     	memcpy(dest, ptr, buf->elementSize);
     }
 
-    if( ptr )
+    if( ptr != VOIDBUFFER_NO_DATA)
     {
     	buf->readPtr = (buf->readPtr + 1) & (buf->bufferSize - 1);
     }
@@ -78,7 +74,9 @@ void* VoidBuffer_PopData(VoidBuffer_t* buf, void* dest)
 }
 
 
-/* returns the size of the buf */
+/* returns the size of the buf
+ * Note that this is not multithread safe.
+ */
 uint8_t VoidBuffer_PushData(VoidBuffer_t* buf, void* data)
 {
     //is there space in the buffer?
