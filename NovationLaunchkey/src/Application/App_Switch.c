@@ -31,11 +31,3 @@ THE SOFTWARE.
 
 
 
-void App_MIDIEvent(MIDIMsg_t* msg)
-{
-	USBMIDI_PutByte(msg->status, 0);
-	USBMIDI_PutByte(msg->data1, 0);
-	USBMIDI_PutByte(msg->data2, 0);
-}
-
-
