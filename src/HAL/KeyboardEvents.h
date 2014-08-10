@@ -40,6 +40,7 @@ typedef struct
 	uint8_t status; //so we can use Note On / Off
 	uint8_t note;
 	uint8_t velocity;
+	uint8_t phyKey; //the physical key.
 } KeyboardEvent_t;
 
 

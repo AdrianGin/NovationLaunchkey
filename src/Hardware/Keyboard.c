@@ -261,6 +261,7 @@ void Keyboard_SendOnVelocity(uint8_t keyIndex)
 	tmp.status = MIDI_NOTE_ON;
 	tmp.note = HALkey;
 	tmp.velocity = velocity;
+	tmp.phyKey = keyIndex;
 	GenericEvents_AddEvent( (VoidBuffer_t*)&KeyboardMsgQueue, (void*)&tmp);
 
 }
@@ -318,6 +319,7 @@ void Keyboard_SendOffVelocity(uint8_t keyIndex)
 	tmp.status = MIDI_NOTE_OFF;
 	tmp.note = HALkey;
 	tmp.velocity = velocity;
+	tmp.phyKey = keyIndex;
 	
 	GenericEvents_AddEvent( (VoidBuffer_t*)&KeyboardMsgQueue, (void*)&tmp);
 }

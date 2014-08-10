@@ -35,6 +35,8 @@ extern "C" {
 #include "HardwareSpecific.h"
 #include "MIDICodes.h"
 
+#define NUMBER_OF_KEYS	(61)
+
 uint8_t HAL_KB_ConvertKeyIndex2MIDIKey(uint8_t keyIndex);
 uint8_t HAL_KB_IsBlack(uint8_t keyIndex);
 uint8_t HAL_KB_TimeToVel(uint8_t keyIndex, uint16_t time);

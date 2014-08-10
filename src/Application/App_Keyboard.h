@@ -33,7 +33,10 @@ extern "C" {
 
 #include <stdint.h>
 
-
+enum {
+	APP_KB_KEY_IS_OFF = 0,
+	APP_KB_KEY_IS_ON
+};
 
 
 uint8_t KeyUtil_TimeToVel(uint8_t keyIndex, uint16_t time);

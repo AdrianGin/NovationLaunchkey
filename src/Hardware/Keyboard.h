@@ -9,12 +9,12 @@ extern "C" {
 #include <stdint.h>
 
 #include "HardwareSpecific.h"
-
+#include "HAL_KB.h"
 
 #define KEYS_PER_COLUMN	(8)
 #define MAX_KB_TIMER	(65535)
 
-#define NUMBER_OF_KEYS	(61)
+
 
 #define BITS_PER_KEYMAP		(32)
 #define BYTES_PER_KEYMAP	((NUMBER_OF_KEYS/BITS_PER_KEYMAP)+1)

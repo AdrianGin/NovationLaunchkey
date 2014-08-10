@@ -27,9 +27,12 @@ THE SOFTWARE.
 
 #include "KeyboardEvents.h"
 
-
+#include "HAL_KB.h"
 #include "HAL_MIDI.h"
 
+#include "MIDICodes.h"
+
+uint8_t KeyOnMap[NUMBER_OF_KEYS];
 
 void App_HandleKeyEvent(KeyboardEvent_t* kbEvent)
 {
@@ -37,11 +40,29 @@ void App_HandleKeyEvent(KeyboardEvent_t* kbEvent)
 
 	msg.port = 0x00;
 
-	kbEvent->note = KB_ApplyOctaveTranspose(kbEvent->note, KB_GetCurrentOctave(), KB_GetCurrentTranspose() );
-
 	msg.status = kbEvent->status;
-	msg.data1 = kbEvent->note;
+	msg.data1 = KB_ApplyOctaveTranspose(kbEvent->note, KB_GetCurrentOctave(), KB_GetCurrentTranspose() );
 	msg.data2 = kbEvent->velocity;
+
+	if( (msg.status & MIDI_MSG_TYPE_MASK) == MIDI_NOTE_ON)
+	{
+		if( kbEvent->phyKey < NUMBER_OF_KEYS)
+		{
+			KeyOnMap[kbEvent->phyKey] = msg.data1;
+		}
+	}
+
+	if( (msg.status & MIDI_MSG_TYPE_MASK) == MIDI_NOTE_OFF )
+	{
+		if( kbEvent->phyKey < NUMBER_OF_KEYS)
+		{
+			if(KeyOnMap[kbEvent->phyKey] != msg.data1)
+			{
+				msg.data1 = KeyOnMap[kbEvent->phyKey];
+			}
+			KeyOnMap[kbEvent->phyKey] = APP_KB_KEY_IS_OFF;
+		}
+	}
 
 	HAL_MIDI_TxMsg(&msg);
 }
