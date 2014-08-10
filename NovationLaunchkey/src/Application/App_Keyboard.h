@@ -40,6 +40,11 @@ uint8_t KeyUtil_TimeToVel(uint8_t keyIndex, uint16_t time);
 
 uint8_t KeyUtil_IsBlack(uint8_t keyIndex);
 
+uint8_t KB_ApplyOctaveTranspose(uint8_t rawNote, int8_t octave, int8_t transpose);
+int8_t KB_GetCurrentOctave(void);
+int8_t KB_GetCurrentTranspose(void);
+void KB_SetOctave(int8_t newOctave);
+void KB_SetTranspose(int8_t newTranspose);
 
 
 #ifdef __cplusplus

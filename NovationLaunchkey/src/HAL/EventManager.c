@@ -31,6 +31,7 @@ uint8_t EM_ProcessKeyboard(void)
 	uint8_t res;
 	res = KeyboardEvents_GetEvent(&kbEvent);
 
+	//Can do a raw Keypress here too.
 	if( res == HAS_EVENT)
 	{
 		App_HandleKeyEvent(&kbEvent);
@@ -42,6 +43,7 @@ uint8_t EM_ProcessKeyboard(void)
 
 uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value)
 {
+	DispMan_Print7Seg(value, 0);
 	return 0;
 }
 

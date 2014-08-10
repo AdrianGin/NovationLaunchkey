@@ -90,10 +90,21 @@ int32_t USBAudio_Open(void)
 {
 	int32_t i32Ret = 0;
 
+	/* Disable USB-related interrupts. */
+	_DRVUSB_ENABLE_MISC_INT(0);
+
+	/* Enable float-detection interrupt. */
+	_DRVUSB_ENABLE_FLDET_INT();
+
 	USBAudio_Device.device = (void *)DrvUSB_InstallClassDevice(&USBClass);
 
 	i32Ret = DrvUSB_InstallCtrlHandler(USBAudio_Device.device, g_asCtrlCallbackEntry,
 					sizeof(g_asCtrlCallbackEntry) / sizeof(g_asCtrlCallbackEntry[0]));
+
+	/* Enable USB-related interrupts. */
+	_DRVUSB_ENABLE_MISC_INT(
+			INTEN_WAKEUP | INTEN_WAKEUPEN | INTEN_FLDET | INTEN_USB | INTEN_BUS);
+
 
 	return i32Ret;
 }

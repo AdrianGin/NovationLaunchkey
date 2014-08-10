@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include "App_MIDI.h"
 
 
-#include "HAL_MIDI.h"
+
 
 
 void App_MIDIEvent(MIDIMsg_t* msg)

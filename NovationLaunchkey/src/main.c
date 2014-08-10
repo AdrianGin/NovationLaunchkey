@@ -87,17 +87,7 @@ int main(void)
 	if (i32Ret != 0)
 		return i32Ret;
 
-	/* Disable USB-related interrupts. */
-	_DRVUSB_ENABLE_MISC_INT(0);
-
-	/* Enable float-detection interrupt. */
-	_DRVUSB_ENABLE_FLDET_INT();
-
 	USBAudio_Open();
-
-	/* Enable USB-related interrupts. */
-	_DRVUSB_ENABLE_MISC_INT(
-			INTEN_WAKEUP | INTEN_WAKEUPEN | INTEN_FLDET | INTEN_USB | INTEN_BUS);
 
 	uint8_t startUp = 1;
 

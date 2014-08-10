@@ -58,17 +58,9 @@ void Callback_UpdateDisplay(void)
 		if( ADC_GetChangeFlag(i) )
 		{
 			adcSample = ADC_GetSample(i);
-			if( i == ADC_MODULATION)
-			{
-				//DrvTIMER_Close(E_TMR0);
-				//Timer_Init(26000);
-				//printNumber(adcSample);
-			}
-
-			DispMan_Print7Seg(adcSample, 0);
+			EM_ProcessADC(i, adcSample);
 			ADC_ClearChangeFlag(i);
-			adcSample = ADC_GetRawSample(i);
-			
+
 		}
 	}
 

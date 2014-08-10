@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 #include "GlobalEvents.h"
 
+#include "App_Keyboard.h"
+
 
 //Each button must remember the Application Mode of when it was pressed (done in EventManager)
 uint32_t ButtonStates;
@@ -31,6 +33,11 @@ uint32_t ButtonStates;
 inline void SetButtonState(uint8_t index)
 {
 	ButtonStates |= (1<<index);
+}
+
+inline void ClearButtonState(uint8_t index)
+{
+	ButtonStates &= ~(1<<index);
 }
 
 inline uint8_t GetButtonState(uint8_t index)
@@ -55,22 +62,30 @@ void ProcessButtonOn(uint8_t inputIndex)
 		break;
 
 		case 	SW_OCTAVE_DOWN:
+			KB_SetOctave(KB_GetCurrentOctave() - 1 );
+
+			DispMan_Print7Seg( abs(KB_GetCurrentOctave()), 0);
+
 			if( GetButtonState(SW_OCTAVE_UP) )
 			{
-				DispMan_Print7Seg(HAL_KB_GetCurrentTranspose(), 20);
+				
 			}
 		break;
 
 		case 	SW_OCTAVE_UP:
+			KB_SetOctave(KB_GetCurrentOctave() + 1 );
+			DispMan_Print7Seg( abs(KB_GetCurrentOctave()), 0);
 			if( GetButtonState(SW_OCTAVE_DOWN) )
 			{
-				DispMan_Print7Seg(HAL_KB_GetCurrentTranspose(), 20);
+				
 			}
 		break;
 
 		default:
 		break;
 	}
+
+
 
 }
 
