@@ -22,17 +22,30 @@ THE SOFTWARE.
 
 */
 
-#include "KeyboardEvents.h"
-
-KeyboardEvent_t KeyboardMsgArray[KEYBOARD_EVENT_MSG_COUNT];
+#include "GenericEvents.h"
 
 
-volatile VoidBuffer_t KeyboardMsgQueue =
+uint8_t GenericEvents_AddEvent(VoidBuffer_t* queue, void* event)
 {
-		.memPtrArray = (void*)KeyboardMsgArray,
-		.bufferSize = KEYBOARD_EVENT_MSG_COUNT,
-		.elementSize = sizeof(KeyboardEvent_t),
-};
+	return VoidBuffer_PushData( (VoidBuffer_t*)queue, (void*) event);
+}
+
+uint8_t GenericEvents_GetEvent(VoidBuffer_t* queue, void* event)
+{
+	void* eventPtr;
+	eventPtr = VoidBuffer_PopData((VoidBuffer_t*)queue, event);
+
+	if( eventPtr != VOIDBUFFER_NO_DATA )
+	{
+		return HAS_EVENT;
+	}
+	else
+	{
+		return !HAS_EVENT;
+	}
+
+}
+
 
 
 

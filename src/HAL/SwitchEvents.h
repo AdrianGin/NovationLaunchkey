@@ -45,9 +45,6 @@ typedef struct
 
 extern volatile VoidBuffer_t SwitchMsgQueue;
 
-uint8_t SwitchEvents_AddEvent(SwitchEvent_t* event);
-uint8_t SwitchEvents_GetEvent(SwitchEvent_t* event);
-
 #ifdef __cplusplus
 }
 #endif

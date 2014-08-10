@@ -5,6 +5,7 @@
 #include "HAL_KB.h"
 
 #include "KeyboardEvents.h"
+#include "GenericEvents.h"
 
 Keyboard_KeyInformation_t Keyboard_Info[NUMBER_OF_KEYS];
 volatile uint16_t Keyboard_Timer = 0;
@@ -260,7 +261,7 @@ void Keyboard_SendOnVelocity(uint8_t keyIndex)
 	tmp.status = MIDI_NOTE_ON;
 	tmp.note = HALkey;
 	tmp.velocity = velocity;
-	KeyboardEvents_AddEvent(&tmp);
+	GenericEvents_AddEvent( (VoidBuffer_t*)&KeyboardMsgQueue, (void*)&tmp);
 
 }
 
@@ -317,7 +318,8 @@ void Keyboard_SendOffVelocity(uint8_t keyIndex)
 	tmp.status = MIDI_NOTE_OFF;
 	tmp.note = HALkey;
 	tmp.velocity = velocity;
-	KeyboardEvents_AddEvent(&tmp);
+	
+	GenericEvents_AddEvent( (VoidBuffer_t*)&KeyboardMsgQueue, (void*)&tmp);
 }
 
 

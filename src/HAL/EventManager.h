@@ -45,7 +45,7 @@ extern "C" {
 #define HAS_EVENT (1)
 
 uint8_t EM_ProcessKeyboard(void);
-uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value);
+uint8_t EM_ProcessADC(void);
 uint8_t EM_ProcessButton(void);
 uint8_t EM_ProcessMIDI(void);
 

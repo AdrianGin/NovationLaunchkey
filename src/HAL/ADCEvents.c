@@ -34,28 +34,6 @@ volatile VoidBuffer_t ADCMsgQueue =
 };
 
 
-uint8_t ADCEvents_AddEvent(ADCEvent_t* event)
-{
-	return VoidBuffer_PushData( (VoidBuffer_t*) &ADCMsgQueue, (void*) event);
-}
-
-uint8_t ADCEvents_GetEvent(ADCEvent_t* event)
-{
-	void* eventPtr;
-	eventPtr = VoidBuffer_PopData((VoidBuffer_t*)&ADCMsgQueue, event);
-
-	if( eventPtr != VOIDBUFFER_NO_DATA )
-	{
-		return HAS_EVENT;
-	}
-	else
-	{
-		return !HAS_EVENT;
-	}
-
-}
-
-
 
 
 

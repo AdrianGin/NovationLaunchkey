@@ -31,6 +31,11 @@ THE SOFTWARE.
 extern "C" {
 #endif
 
+#include <stdint.h>
+#include "voidbuffer.h"
+
+uint8_t GenericEvents_AddEvent(VoidBuffer_t* queue, void* event);
+uint8_t GenericEvents_GetEvent(VoidBuffer_t* queue, void* event);
 
 #define HAS_EVENT (1)
 

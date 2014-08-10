@@ -46,8 +46,6 @@ typedef struct
 
 extern volatile VoidBuffer_t ADCMsgQueue;
 
-uint8_t ADCEvents_AddEvent(ADCEvent_t* event);
-uint8_t ADCEvents_GetEvent(ADCEvent_t* event);
 
 #ifdef __cplusplus
 }

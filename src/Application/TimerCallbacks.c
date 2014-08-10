@@ -66,7 +66,7 @@ void Callback_UpdateDisplay(void)
 			event.index = i;
 			event.value = adcSample;
 
-			ADCEvents_AddEvent(&event);
+			GenericEvents_AddEvent( (VoidBuffer_t*)&ADCMsgQueue, (void*)&event);
 
 			ADC_ClearChangeFlag(i);
 
@@ -91,7 +91,9 @@ void Callback_UpdateDisplay(void)
 				SwitchEvent_t event;
 				event.index = i;
 				event.value = Switch_GetState(i);
-				SwitchEvents_AddEvent(&event);
+
+				GenericEvents_AddEvent( (VoidBuffer_t*)&SwitchMsgQueue, (void*)&event);
+
 			}
 		}
 	}

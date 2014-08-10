@@ -32,7 +32,7 @@ uint8_t EM_ProcessKeyboard(void)
 
 	while( res == HAS_EVENT)
 	{
-		res = KeyboardEvents_GetEvent(&kbEvent);
+		res = GenericEvents_GetEvent( (VoidBuffer_t*)&KeyboardMsgQueue, (void*)&kbEvent);
 		//Can do a raw Keypress here too.
 		if (res == HAS_EVENT)
 		{
@@ -43,7 +43,7 @@ uint8_t EM_ProcessKeyboard(void)
 	return 0;
 }
 
-uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value)
+uint8_t EM_ProcessADC(void)
 {
 
 	ADCEvent_t adcEvent;
@@ -51,7 +51,7 @@ uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value)
 
 	while( res == HAS_EVENT)
 	{
-		res = ADCEvents_GetEvent(&adcEvent);
+		res = GenericEvents_GetEvent( (VoidBuffer_t*)&ADCMsgQueue, (void*)&adcEvent);
 		//Can do a raw Keypress here too.
 		if (res == HAS_EVENT)
 		{
@@ -69,7 +69,7 @@ uint8_t EM_ProcessButton(void)
 
 	while( res == HAS_EVENT)
 	{
-		res = SwitchEvents_GetEvent(&swEvent);
+		res = GenericEvents_GetEvent( (VoidBuffer_t*)&SwitchMsgQueue, (void*)&swEvent);
 		//Can do a raw Keypress here too.
 		if (res == HAS_EVENT)
 		{

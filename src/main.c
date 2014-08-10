@@ -122,6 +122,7 @@ int main(void)
 		EM_ProcessKeyboard();
 		EM_ProcessMIDI();
 		EM_ProcessButton();
+		EM_ProcessADC();
 		USBMIDI_Poll();
 
 	}

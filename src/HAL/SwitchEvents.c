@@ -35,26 +35,7 @@ volatile VoidBuffer_t SwitchMsgQueue =
 };
 
 
-uint8_t SwitchEvents_AddEvent(SwitchEvent_t* event)
-{
-	return VoidBuffer_PushData( (VoidBuffer_t*) &SwitchMsgQueue, (void*) event);
-}
 
-uint8_t SwitchEvents_GetEvent(SwitchEvent_t* event)
-{
-	void* eventPtr;
-	eventPtr = VoidBuffer_PopData((VoidBuffer_t*)&SwitchMsgQueue, event);
-
-	if( eventPtr != VOIDBUFFER_NO_DATA )
-	{
-		return HAS_EVENT;
-	}
-	else
-	{
-		return !HAS_EVENT;
-	}
-
-}
 
 
 

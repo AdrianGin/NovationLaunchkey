@@ -47,8 +47,6 @@ typedef struct
 
 extern volatile VoidBuffer_t KeyboardMsgQueue;
 
-uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event);
-uint8_t KeyboardEvents_GetEvent(KeyboardEvent_t* event);
 
 #ifdef __cplusplus
 }
