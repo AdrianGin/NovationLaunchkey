@@ -63,13 +63,36 @@ void ProcessButtonOn(uint8_t inputIndex)
 		break;
 
 		case 	SW_OCTAVE_DOWN:
+		break;
+
+		case 	SW_OCTAVE_UP:
+		break;
+
+		default:
+		break;
+	}
+}
+
+
+void GE_ProcessButtonOff(uint8_t inputIndex)
+{
+	SetButtonState(inputIndex);
+	switch(inputIndex)
+	{
+		case 	SW_TRACK_LEFT:
+		break;
+
+		case 	SW_TRACK_RIGHT:
+		break;
+
+		case 	SW_OCTAVE_DOWN:
 			KB_SetOctave(KB_GetCurrentOctave() - 1 );
 
 			DispMan_Print7Seg( abs(KB_GetCurrentOctave()), 0);
 
 			if( GetButtonState(SW_OCTAVE_UP) )
 			{
-				
+
 			}
 		break;
 
@@ -78,7 +101,7 @@ void ProcessButtonOn(uint8_t inputIndex)
 			DispMan_Print7Seg( abs(KB_GetCurrentOctave()), 0);
 			if( GetButtonState(SW_OCTAVE_DOWN) )
 			{
-				
+
 			}
 		break;
 
@@ -98,8 +121,10 @@ uint8_t GlobEvents_ProcessButton(uint8_t inputIndex, uint8_t value)
 	}
 	else
 	{
-		//ProcessButtonOff(inputIndex);
+		GE_ProcessButtonOff(inputIndex);
 	}
+	
+	return 0;
 }
 
 
