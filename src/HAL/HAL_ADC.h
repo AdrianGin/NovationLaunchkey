@@ -1,0 +1,72 @@
+
+#ifndef HAL_ADC_H
+#define HAL_ADC_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+typedef enum
+{
+	ADC_PAD_0 = 0,
+	ADC_PAD_1	,
+	ADC_PAD_2	,
+	ADC_PAD_3	,
+	ADC_PAD_4	,
+	ADC_PAD_5	,
+	ADC_PAD_6	,
+	ADC_PAD_7	,
+	ADC_PAD_8	,
+	ADC_PAD_9	,
+	ADC_PAD_10	,
+	ADC_PAD_11	,
+	ADC_PAD_12	,
+	ADC_PAD_13	,
+	ADC_PAD_14	,
+	ADC_PAD_15	,
+
+	ADC_KNOB_0	,
+	ADC_KNOB_1	,
+	ADC_KNOB_2	,
+	ADC_KNOB_3	,
+	ADC_KNOB_4	,
+	ADC_KNOB_5	,
+	ADC_KNOB_6	,
+	ADC_KNOB_7	,
+
+	ADC_SLIDER_0	,
+	ADC_SLIDER_1	,
+	ADC_SLIDER_2	,
+	ADC_SLIDER_3	,
+	ADC_SLIDER_4	,
+	ADC_SLIDER_5	,
+	ADC_SLIDER_6	,
+	ADC_SLIDER_7	,
+
+	ADC_VOLUME,
+	ADC_PITCHBEND,
+	ADC_MODULATION,
+	ADC_INVALID0,
+	ADC_INVALID1,
+	ADC_INVALID2,
+	ADC_INVALID3,
+	ADC_INVALID4,
+
+
+
+} E_ADC_INDEX;
+
+
+#ifdef __cplusplus
+}
+#endif
+
+
+
+#endif
+
+
+
+
+
