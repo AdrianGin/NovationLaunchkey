@@ -2,7 +2,7 @@
 
 #include "MultiplexControl.h"
 
-uint8_t PrimaryMuxColumn = 0;
+volatile uint8_t PrimaryMuxColumn = 0;
 
 uint8_t MUX_GetCurrentColumn(void)
 {

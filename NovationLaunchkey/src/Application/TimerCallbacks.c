@@ -37,13 +37,8 @@ volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {200,0, 0, Callback_ADC_Hand
 													{600,0, 0, Callback_UpdateDisplay}, };
 
 
-#define TIMER3_MAX_TIME (10)
-
 volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{1, 0, 1, Callback_LED_Strobe},
 												  {10, 0, 1, Callback_Switch_Read}};
-
-
-volatile static uint8_t CanChangeColumn = FALSE;
 
 
 void Callback_UpdateDisplay(void)
@@ -59,7 +54,6 @@ void Callback_UpdateDisplay(void)
 			adcSample = ADC_GetSample(i);
 			LED_7Segment_WriteNumber(adcSample);
 			ADC_ClearChangeFlag(i);
-			adcSample = ADC_GetRawSample(30);
 			printNumber(adcSample);
 		}
 	}
@@ -72,7 +66,6 @@ void Callback_ADC_Handle(void)
 	if( ADC_IsFinishedSampling() )
 	{
 		ADC_StartConversion();
-		SoftTimerStop(SoftTimer2[SC_ADC]);
 	}
 }
 
@@ -81,36 +74,14 @@ void Callback_ADC_Handle(void)
 
 void Callback_ColumnMux(void)
 {
-	static uint8_t column = 0;
-
 
 	//Run our nexted Timers;
-	//MUX_ActivateLineColumn(column);
+	
 	RunAndExecuteTimers( (SoftTimer_16*)SoftTimer3, TIMER3_COUNT);
+	
 
-	if( CanChangeColumn )
-	{
-		CanChangeColumn = FALSE;
 
-		column++;
-		if( column >= MAX_LINE_COLUMNS )
-		{
-			column = 0;
-		}
-	}
 }
-
-uint8_t TIM_IsColumnChangeReady(uint8_t count)
-{
-	if( count == TIMER3_MAX_TIME )
-	{
-		return 1;
-	}
-	return 0;
-}
-
-
-
 
 void Callback_LED_Strobe(void)
 {
@@ -139,9 +110,6 @@ void Callback_LED_Strobe(void)
 		SoftTimer3[SC_LED].timerCounter = LED_TIME_OFF;
 		SoftTimer3[SC_LED].timeCompare  = LED_TIME_OFF;
 		LED_Blank();
-
-		CanChangeColumn = TRUE;
-
 	}
 
 }
