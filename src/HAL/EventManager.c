@@ -23,7 +23,57 @@
  */
 
 #include "EventManager.h"
+#include "ModeManager.h"
+
 #include <string.h>
+
+
+void (*KeyBoardEventCallBack)(KeyboardEvent_t* ) = 0;
+void (*ADCEventCallBack)(ADCEvent_t* ) = 0;
+void (*SwitchEventCallBack)(SwitchEvent_t* ) = 0;
+void (*MIDIEventCallBack)(MIDIMsg_t* ) = 0;
+
+void EM_RegisterCallBack(eINPUT_TYPES inputType, void (*fnPtr)(void*) )
+{
+	switch (inputType)
+	{
+		case eSW_INPUT:
+		{
+			void (*FnPtr)(SwitchEvent_t*) = (void(*)(SwitchEvent_t*))(fnPtr);
+			SwitchEventCallBack = FnPtr;
+			break;
+		}
+
+
+		case eADC_INPUT:
+		{
+			void (*FnPtr)(ADCEvent_t*) = (void(*)(ADCEvent_t*))(fnPtr);
+			ADCEventCallBack = FnPtr;
+			break;
+		}
+
+		case eKEYBOARD_INPUT:
+		{
+			void (*FnPtr)(KeyboardEvent_t*) = (void(*)(KeyboardEvent_t*))(fnPtr);
+			KeyBoardEventCallBack = FnPtr;
+			break;
+		}
+
+		case eMIDI_INPUT:
+		{
+			void (*FnPtr)(MIDIMsg_t*) = (void(*)(MIDIMsg_t*))(fnPtr);
+			MIDIEventCallBack = FnPtr;			
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+
+	}
+}
+
 
 uint8_t EM_ProcessKeyboard(void)
 {
@@ -36,7 +86,12 @@ uint8_t EM_ProcessKeyboard(void)
 		//Can do a raw Keypress here too.
 		if (res == HAS_EVENT)
 		{
-			App_HandleKeyEvent(&kbEvent);
+			if( KeyBoardEventCallBack )
+			{
+				KeyBoardEventCallBack(&kbEvent);
+			}
+
+			//App_HandleKeyEvent(&kbEvent);
 		}
 	}
 
@@ -55,7 +110,11 @@ uint8_t EM_ProcessADC(void)
 		//Can do a raw Keypress here too.
 		if (res == HAS_EVENT)
 		{
-			DispMan_Print7Seg(adcEvent.value, 0);
+			if( ADCEventCallBack )
+			{
+				ADCEventCallBack(&adcEvent);
+			}
+//			DispMan_Print7Seg(adcEvent.value, 0);
 		}
 	}
 
@@ -73,8 +132,13 @@ uint8_t EM_ProcessButton(void)
 		//Can do a raw Keypress here too.
 		if (res == HAS_EVENT)
 		{
-			GlobEvents_ProcessButton(swEvent.index, swEvent.value);
-			DispMan_Print7Seg(swEvent.index, 0);
+			if( SwitchEventCallBack )
+			{
+				SwitchEventCallBack(&swEvent);
+			}
+
+//			GlobEvents_ProcessButton(swEvent.index, swEvent.value);
+//			DispMan_Print7Seg(swEvent.index, 0);
 		}
 	}
 	
@@ -99,7 +163,14 @@ uint8_t EM_ProcessMIDI(void)
 			if ( data[i] )
 			{
 				memcpy(&msg, &data[i], sizeof(usbMIDIMessage_t));
-				App_MIDIEvent(&msg);
+
+				if( MIDIEventCallBack )
+				{
+					MIDIEventCallBack(&msg);
+				}
+
+
+				//App_MIDIEvent(&msg);
 			}
 		}
 		USBMIDI_SetReadyToReceive();

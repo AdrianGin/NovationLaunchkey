@@ -16,6 +16,9 @@
 #include "USBMIDI.h"
 #include "EventManager.h"
 
+#include "InputManager.h"
+
+
 int main(void)
 {
 
@@ -55,28 +58,7 @@ int main(void)
 
 	ADC_Init();
 
-	/*
-	 LED_SetLEDBrightness(0, LED_PAD0_G, MAX_LED_BRIGHTNESS/200);
-	 LED_SetLEDBrightness(0, LED_PAD1_G, MAX_LED_BRIGHTNESS/150);
-	 LED_SetLEDBrightness(0, LED_PAD2_G, MAX_LED_BRIGHTNESS/110);
-	 LED_SetLEDBrightness(0, LED_PAD3_G, MAX_LED_BRIGHTNESS/100);
-
-	 LED_SetLEDBrightness(0, LED_PAD4_G, MAX_LED_BRIGHTNESS/90);
-	 LED_SetLEDBrightness(0, LED_PAD5_G, MAX_LED_BRIGHTNESS/80);
-	 //   LED_SetLEDBrightness(0, LED_PAD6_G, MAX_LED_BRIGHTNESS/70);
-
-
-	 LED_SetLEDBrightness(0, LED_PAD8_G, MAX_LED_BRIGHTNESS/50);
-	 LED_SetLEDBrightness(0, LED_PAD9_G, MAX_LED_BRIGHTNESS/40);
-	 LED_SetLEDBrightness(0, LED_PAD10_G, MAX_LED_BRIGHTNESS/30);
-	 LED_SetLEDBrightness(0, LED_PAD11_G, MAX_LED_BRIGHTNESS/20);
-
-	 LED_SetLEDBrightness(0, LED_PAD12_G, 1);
-	 LED_SetLEDBrightness(0, LED_PAD13_G, MAX_LED_BRIGHTNESS/5);
-	 LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS/2);
-	 LED_SetLEDBrightness(0, LED_PAD15_G, MAX_LED_BRIGHTNESS);*/
-
-	LED_SetLEDBrightness(0, LED_PAD14_G, MAX_LED_BRIGHTNESS / 2);
+	IM_InitCallBacks();
 
 	SoftTimerStart(SoftTimer2[SC_ADC]);
 	SoftTimerStart(SoftTimer2[SC_UPDATE_DISPLAY]);

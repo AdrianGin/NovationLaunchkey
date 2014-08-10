@@ -42,6 +42,17 @@ extern "C" {
 #include "USBMIDI.h"
 #include "USB_Audio.h"
 
+
+typedef enum
+{
+	eSW_INPUT,
+	eADC_INPUT,
+	eKEYBOARD_INPUT,
+	eMIDI_INPUT,
+	eINVALID_INPUT,
+} eINPUT_TYPES;
+
+
 #define HAS_EVENT (1)
 
 uint8_t EM_ProcessKeyboard(void);
@@ -49,7 +60,7 @@ uint8_t EM_ProcessADC(void);
 uint8_t EM_ProcessButton(void);
 uint8_t EM_ProcessMIDI(void);
 
-
+void EM_RegisterCallBack(eINPUT_TYPES inputType, void (*fnPtr)(void*) );
 
 #ifdef __cplusplus
 }
