@@ -28,13 +28,16 @@
 uint8_t EM_ProcessKeyboard(void)
 {
 	KeyboardEvent_t kbEvent;
-	uint8_t res;
-	res = KeyboardEvents_GetEvent(&kbEvent);
+	uint8_t res = HAS_EVENT;
 
-	//Can do a raw Keypress here too.
-	if (res == HAS_EVENT)
+	while( res == HAS_EVENT)
 	{
-		App_HandleKeyEvent(&kbEvent);
+		res = KeyboardEvents_GetEvent(&kbEvent);
+		//Can do a raw Keypress here too.
+		if (res == HAS_EVENT)
+		{
+			App_HandleKeyEvent(&kbEvent);
+		}
 	}
 
 	return 0;
@@ -46,9 +49,22 @@ uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value)
 	return 0;
 }
 
-uint8_t EM_ProcessButton(uint8_t inputIndex, uint8_t value)
+uint8_t EM_ProcessButton(void)
 {
-	GlobEvents_ProcessButton(inputIndex, value);
+	SwitchEvent_t swEvent;
+	uint8_t res = HAS_EVENT;
+
+	while( res == HAS_EVENT)
+	{
+		res = SwitchEvents_GetEvent(&swEvent);
+		//Can do a raw Keypress here too.
+		if (res == HAS_EVENT)
+		{
+			GlobEvents_ProcessButton(swEvent.index, swEvent.value);
+			DispMan_Print7Seg(swEvent.index, 0);
+		}
+	}
+	
 	return 0;
 }
 

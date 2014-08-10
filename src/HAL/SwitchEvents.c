@@ -22,28 +22,28 @@ THE SOFTWARE.
 
 */
 
-#include "KeyboardEvents.h"
+#include "SwitchEvents.h"
 
-KeyboardEvent_t KeyboardMsgArray[KEYBOARD_EVENT_MSG_COUNT];
+SwitchEvent_t SwitchMsgArray[SWITCH_EVENT_MSG_COUNT];
 
 
-volatile VoidBuffer_t KeyboardMsgQueue =
+volatile VoidBuffer_t SwitchMsgQueue =
 {
-		.memPtrArray = (void*)KeyboardMsgArray,
-		.bufferSize = KEYBOARD_EVENT_MSG_COUNT,
-		.elementSize = sizeof(KeyboardEvent_t),
+		.memPtrArray = (void*)SwitchMsgArray,
+		.bufferSize = SWITCH_EVENT_MSG_COUNT,
+		.elementSize = sizeof(SwitchEvent_t),
 };
 
 
-uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event)
+uint8_t SwitchEvents_AddEvent(SwitchEvent_t* event)
 {
-	return VoidBuffer_PushData((VoidBuffer_t*)&KeyboardMsgQueue, (void*) event);
+	return VoidBuffer_PushData( (VoidBuffer_t*) &SwitchMsgQueue, (void*) event);
 }
 
-uint8_t KeyboardEvents_GetEvent(KeyboardEvent_t* event)
+uint8_t SwitchEvents_GetEvent(SwitchEvent_t* event)
 {
 	void* eventPtr;
-	eventPtr = VoidBuffer_PopData((VoidBuffer_t*)&KeyboardMsgQueue, event);
+	eventPtr = VoidBuffer_PopData((VoidBuffer_t*)&SwitchMsgQueue, event);
 
 	if( eventPtr != VOIDBUFFER_NO_DATA )
 	{

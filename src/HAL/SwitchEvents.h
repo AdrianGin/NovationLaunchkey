@@ -22,58 +22,34 @@ THE SOFTWARE.
 
 */
 
-#include "KeyboardEvents.h"
-
-KeyboardEvent_t KeyboardMsgArray[KEYBOARD_EVENT_MSG_COUNT];
 
 
-volatile VoidBuffer_t KeyboardMsgQueue =
+#ifndef _SWITCH_EVENTS
+#define _SWITCH_EVENTS
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdint.h>
+#include "voidbuffer.h"
+
+typedef struct
 {
-		.memPtrArray = (void*)KeyboardMsgArray,
-		.bufferSize = KEYBOARD_EVENT_MSG_COUNT,
-		.elementSize = sizeof(KeyboardEvent_t),
-};
+	uint8_t index;
+	uint8_t value;
+} SwitchEvent_t;
 
+#define HAS_EVENT (1)
+#define SWITCH_EVENT_MSG_COUNT (16)
 
-uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event)
-{
-	return VoidBuffer_PushData((VoidBuffer_t*)&KeyboardMsgQueue, (void*) event);
+extern volatile VoidBuffer_t SwitchMsgQueue;
+
+uint8_t SwitchEvents_AddEvent(SwitchEvent_t* event);
+uint8_t SwitchEvents_GetEvent(SwitchEvent_t* event);
+
+#ifdef __cplusplus
 }
+#endif
 
-uint8_t KeyboardEvents_GetEvent(KeyboardEvent_t* event)
-{
-	void* eventPtr;
-	eventPtr = VoidBuffer_PopData((VoidBuffer_t*)&KeyboardMsgQueue, event);
-
-	if( eventPtr != VOIDBUFFER_NO_DATA )
-	{
-		return HAS_EVENT;
-	}
-	else
-	{
-		return !HAS_EVENT;
-	}
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif

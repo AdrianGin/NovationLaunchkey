@@ -36,6 +36,8 @@ THE SOFTWARE.
 #include "EventManager.h"
 #include "DisplayManager.h"
 
+#include "SwitchEvents.h"
+
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalTimers},};
 
@@ -80,52 +82,17 @@ void Callback_UpdateDisplay(void)
 			if( switchChangeMap & (1<<i) )
 			{
 				uint8_t switchState;
-				switchState = Switch_GetState(i);
-				//LED_7Segment_WriteNumber(i);
 
-				EM_ProcessButton(i, switchState);
-
+				SwitchEvent_t event;
+				event.index = i;
+				event.value = Switch_GetState(i);
+				SwitchEvents_AddEvent(&event);
 			}
 		}
 	}
 
 
 	DispMan_Poll();
-
-	//Keyboard_ProcessKeyMap();
-
-
-//	{
-//		uint32_t newKeyMap = Keyboard_GetStateMap(j);
-//
-//		if( KeyMap[j] != newKeyMap )
-//		{
-//			uint32_t keyChangeMap = KeyMap[j] ^ newKeyMap;
-//			KeyMap[j] = newKeyMap;
-//
-//			for( i = 0 ; i < BITS_PER_KEYMAP; i++ )
-//			{
-//				if( keyChangeMap & (1<<i) )
-//				{
-//					uint8_t keyIndex = Keyboard_GetKeyIndex(j%BYTES_PER_KEYMAP, i);
-//					if( j >= BYTES_PER_KEYMAP )
-//					{
-//						LED_7Segment_WriteNumber(keyIndex);
-//					}
-//					else
-//					{
-//						printNumber(keyIndex);
-//					}
-//
-//				}
-//			}
-//		}
-//	}
-	
-
-	
-
-
 }
 
 void Callback_ADC_Handle(void)

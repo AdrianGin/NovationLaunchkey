@@ -34,6 +34,7 @@ extern "C" {
 #include <stdint.h>
 
 #include "KeyboardEvents.h"
+#include "SwitchEvents.h"
 #include "GlobalEvents.h"
 
 #include "HAL_MIDI.h"
@@ -42,7 +43,7 @@ extern "C" {
 
 uint8_t EM_ProcessKeyboard(void);
 uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value);
-uint8_t EM_ProcessButton(uint8_t inputIndex, uint8_t value);
+uint8_t EM_ProcessButton(void);
 uint8_t EM_ProcessMIDI(void);
 
 

@@ -121,6 +121,7 @@ int main(void)
 	  //DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
 		EM_ProcessKeyboard();
 		EM_ProcessMIDI();
+		EM_ProcessButton();
 		USBMIDI_Poll();
 
 	}
