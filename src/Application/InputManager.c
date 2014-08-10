@@ -7,6 +7,29 @@
 #include "HAL_MIDI.h"
 
 #include "ModeManager.h"
+#include "HAL_Switch.h"
+
+//Each button must remember the Application Mode of when it was pressed (done in EventManager)
+uint32_t ButtonStates;
+
+inline void IM_SetButtonState(uint8_t index)
+{
+	ButtonStates |= (1<<index);
+}
+
+inline void IM_ClearButtonState(uint8_t index)
+{
+	ButtonStates &= ~(1<<index);
+}
+
+inline uint8_t IM_GetButtonState(uint8_t index)
+{
+	if( index >= SW_COUNT )
+	{
+		return SWITCH_INVALID;
+	}
+	return ((ButtonStates & (1<<index)) != 0);
+}
 
 
 void IM_HandleSwitchInput(SwitchEvent_t* input)
@@ -14,6 +37,16 @@ void IM_HandleSwitchInput(SwitchEvent_t* input)
 	MM_Input_t tmp;
 	tmp.class = eSW_INPUT;
 	tmp.input.sw = input;
+
+	if( tmp.input.sw->value )
+	{
+		IM_SetButtonState(tmp.input.sw->index);
+	}
+	else
+	{
+		IM_ClearButtonState(tmp.input.sw->index);
+	}
+
 	MM_ApplyInput(&CurrentMode, &tmp);
 }
 

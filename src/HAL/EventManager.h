@@ -36,7 +36,6 @@ extern "C" {
 #include "KeyboardEvents.h"
 #include "SwitchEvents.h"
 #include "ADCEvents.h"
-#include "GlobalEvents.h"
 
 #include "HAL_MIDI.h"
 #include "USBMIDI.h"

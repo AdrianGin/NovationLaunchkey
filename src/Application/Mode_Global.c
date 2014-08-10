@@ -12,12 +12,59 @@
 #include "App_Keyboard.h"
 #include "DisplayManager.h"
 
+#include "HAL_Switch.h"
+#include "InputManager.h"
+
 
 static uint8_t handle_SWInput(MM_Input_t* input)
 {
 	SwitchEvent_t* swEvent = input->input.sw;
 
-	GlobEvents_ProcessButton(swEvent->index, swEvent->value);
+	//GlobEvents_ProcessButton(, swEvent->value);
+
+	switch (swEvent->index)
+	{
+		case SW_TRACK_LEFT:
+			break;
+
+		case SW_TRACK_RIGHT:
+			break;
+
+		case SW_OCTAVE_DOWN:
+
+			if( IM_GetButtonState(SW_OCTAVE_UP) )
+			{
+				KB_SetTranspose( KB_GetCurrentTranspose() - 1);
+			}
+
+			KB_SetOctave(KB_GetCurrentOctave() - 1);
+			DispMan_Print7Seg(abs(KB_GetCurrentOctave()), 0);
+
+			if (GetButtonState(SW_OCTAVE_UP))
+			{
+
+			}
+			break;
+
+		case SW_OCTAVE_UP:
+
+			if( IM_GetButtonState(SW_OCTAVE_DOWN) )
+			{
+				KB_SetTranspose( KB_GetCurrentTranspose() + 1);
+			}
+
+			KB_SetOctave(KB_GetCurrentOctave() + 1);
+			DispMan_Print7Seg(abs(KB_GetCurrentOctave()), 0);
+			if (GetButtonState(SW_OCTAVE_DOWN))
+			{
+
+			}
+			break;
+
+		default:
+			break;
+	}
+
 	DispMan_Print7Seg(swEvent->index, 0);
 	return MM_INPUT_WAS_PROCESSED;
 }
@@ -55,7 +102,6 @@ uint8_t Global_Mode(MM_Input_t* input)
 			ret = handle_SWInput(input);
 			break;
 		}
-
 
 		case eADC_INPUT:
 		{
