@@ -25,6 +25,7 @@ THE SOFTWARE.
 #include "GlobalEvents.h"
 
 #include "App_Keyboard.h"
+#include <stdlib.h>
 
 
 //Each button must remember the Application Mode of when it was pressed (done in EventManager)

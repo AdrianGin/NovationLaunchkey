@@ -86,6 +86,9 @@ static int8_t gIsOverRequest = 0;
 
 volatile uint8_t g_UsbInReady = 0;
 
+volatile uint8_t*  g_UsbRxBuffer;
+volatile uint32_t g_UsbBytesReceived = 0;
+
 int32_t USBAudio_Open(void)
 {
 	int32_t i32Ret = 0;
@@ -114,10 +117,6 @@ void USBAudio_Close(void)
 
 }
 
-//uint8_t inputBuffer[MAX_PACKET_SIZE_BULK_IN] = {;
-
-const uint8_t testData[4] = {0x0F, 0xFE, 0x00, 0x00};
-
 
 void USBAudio_BulkInAckCallback(void* pVoid)
 {
@@ -126,11 +125,23 @@ void USBAudio_BulkInAckCallback(void* pVoid)
 
 void USBAudio_BulkOutAckCallback(void* pVoid)
 {
+	g_UsbRxBuffer = DrvUSB_GetOutData(BULK_OUT_EP_NUM, (uint32_t*)&g_UsbBytesReceived);
+}
 
-	uint32_t  len;
-	uint8_t*  dataPtr;
-	dataPtr = DrvUSB_GetOutData(BULK_OUT_EP_NUM,&len);
-	USBMIDI_ProcessOutData(dataPtr, len);
+inline uint8_t USBAudio_GetBytesReceived(void)
+{
+	return (uint8_t)g_UsbBytesReceived;
+}
+
+inline void USBAudio_ClearBytesReceived(void)
+{
+	g_UsbBytesReceived = 0;
+}
+
+
+inline uint8_t* USBAudio_GetRxBuffer(void)
+{
+	return (uint8_t*)g_UsbRxBuffer;
 }
 
 

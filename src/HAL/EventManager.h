@@ -38,6 +38,7 @@ extern "C" {
 
 #include "HAL_MIDI.h"
 #include "USBMIDI.h"
+#include "USB_Audio.h"
 
 uint8_t EM_ProcessKeyboard(void);
 uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value);

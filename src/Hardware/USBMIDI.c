@@ -350,6 +350,7 @@ uint8_t USBMIDI_Poll(void)
 
 void USBMIDI_SetReadyToReceive(void)
 {
+	USBAudio_ClearBytesReceived();
 	DrvUSB_DataOutTrigger(BULK_OUT_EP_NUM, MAX_PACKET_SIZE_BULK_OUT);
 }
 

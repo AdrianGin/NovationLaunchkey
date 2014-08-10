@@ -20,6 +20,9 @@ typedef struct
 
 extern volatile uint8_t g_UsbInReady;
 
+
+
+
 #define USB_BULK_IN_IS_READY (0)
 
 void USBAudio_StartCallBack(void * pVoid);
@@ -31,7 +34,9 @@ int32_t USBAudio_Open(void);
 
 void USBAudio_BulkInAckCallback(void* pVoid);
 void USBAudio_BulkOutAckCallback(void* pVoid);
-
+uint8_t USBAudio_GetBytesReceived(void);
+uint8_t* USBAudio_GetRxBuffer(void);
+void USBAudio_ClearBytesReceived(void);
 
 void USBAudio_PrepareDescriptors(const uint8_t *pu8Descriptor, uint32_t u32DescriptorSize, uint32_t u32RequestSize, uint32_t u32MaxPacketSize);
 void USBAudio_CtrlGetDescriptorOut(void * pVoid);
