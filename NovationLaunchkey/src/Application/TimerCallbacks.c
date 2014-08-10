@@ -33,7 +33,7 @@ THE SOFTWARE.
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_ColumnMux},};
 
-volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {200,0, 0, Callback_ADC_Handle},
+volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {100,0, 0, Callback_ADC_Handle},
 													{600,0, 0, Callback_UpdateDisplay}, };
 
 
@@ -54,6 +54,8 @@ void Callback_UpdateDisplay(void)
 			adcSample = ADC_GetSample(i);
 			LED_7Segment_WriteNumber(adcSample);
 			ADC_ClearChangeFlag(i);
+
+
 			printNumber(adcSample);
 		}
 	}
@@ -74,6 +76,7 @@ void Callback_ADC_Handle(void)
 
 void Callback_ColumnMux(void)
 {
+	
 
 	//Run our nexted Timers;
 	
@@ -86,14 +89,12 @@ void Callback_ColumnMux(void)
 void Callback_LED_Strobe(void)
 {
 	static uint8_t column = 0;
-	
 	static uint8_t ledState = LED_STATE_BLANK;
 
 	if( ledState == LED_STATE_BLANK )
 	{
 		MUX_ActivateLineColumn(column);
 		LED_TimerRoutine( MUX_GetCurrentColumn() );
-
 		column++;
 		if( column >= MAX_LINE_COLUMNS )
 		{
