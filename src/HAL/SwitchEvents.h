@@ -33,6 +33,7 @@ extern "C" {
 
 #include <stdint.h>
 #include "voidbuffer.h"
+#include "GenericEvents.h"
 
 typedef struct
 {
@@ -40,7 +41,6 @@ typedef struct
 	uint8_t value;
 } SwitchEvent_t;
 
-#define HAS_EVENT (1)
 #define SWITCH_EVENT_MSG_COUNT (16)
 
 extern volatile VoidBuffer_t SwitchMsgQueue;

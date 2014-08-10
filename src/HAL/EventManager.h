@@ -35,11 +35,14 @@ extern "C" {
 
 #include "KeyboardEvents.h"
 #include "SwitchEvents.h"
+#include "ADCEvents.h"
 #include "GlobalEvents.h"
 
 #include "HAL_MIDI.h"
 #include "USBMIDI.h"
 #include "USB_Audio.h"
+
+#define HAS_EVENT (1)
 
 uint8_t EM_ProcessKeyboard(void);
 uint8_t EM_ProcessADC(uint8_t adcIndex, uint16_t value);

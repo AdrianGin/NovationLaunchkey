@@ -22,36 +22,57 @@ THE SOFTWARE.
 
 */
 
+#include "ADCEvents.h"
 
+ADCEvent_t ADCMsgArray[ADC_EVENT_MSG_COUNT];
 
-#ifndef _KEYBOARD_EVENTS
-#define _KEYBOARD_EVENTS
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stdint.h>
-#include "voidbuffer.h"
-#include "GenericEvents.h"
-
-typedef struct
+volatile VoidBuffer_t ADCMsgQueue =
 {
-	uint8_t status; //so we can use Note On / Off
-	uint8_t note;
-	uint8_t velocity;
-} KeyboardEvent_t;
+		.memPtrArray = (void*)ADCMsgArray,
+		.bufferSize = ADC_EVENT_MSG_COUNT,
+		.elementSize = sizeof(ADCEvent_t),
+};
 
 
-#define KEYBOARD_EVENT_MSG_COUNT (16)
-
-extern volatile VoidBuffer_t KeyboardMsgQueue;
-
-uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event);
-uint8_t KeyboardEvents_GetEvent(KeyboardEvent_t* event);
-
-#ifdef __cplusplus
+uint8_t ADCEvents_AddEvent(ADCEvent_t* event)
+{
+	return VoidBuffer_PushData( (VoidBuffer_t*) &ADCMsgQueue, (void*) event);
 }
-#endif
 
-#endif
+uint8_t ADCEvents_GetEvent(ADCEvent_t* event)
+{
+	void* eventPtr;
+	eventPtr = VoidBuffer_PopData((VoidBuffer_t*)&ADCMsgQueue, event);
+
+	if( eventPtr != VOIDBUFFER_NO_DATA )
+	{
+		return HAS_EVENT;
+	}
+	else
+	{
+		return !HAS_EVENT;
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

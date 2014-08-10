@@ -24,31 +24,15 @@ THE SOFTWARE.
 
 
 
-#ifndef _KEYBOARD_EVENTS
-#define _KEYBOARD_EVENTS
+#ifndef _GENERIC_EVENTS_H
+#define _GENERIC_EVENTS_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdint.h>
-#include "voidbuffer.h"
-#include "GenericEvents.h"
 
-typedef struct
-{
-	uint8_t status; //so we can use Note On / Off
-	uint8_t note;
-	uint8_t velocity;
-} KeyboardEvent_t;
-
-
-#define KEYBOARD_EVENT_MSG_COUNT (16)
-
-extern volatile VoidBuffer_t KeyboardMsgQueue;
-
-uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event);
-uint8_t KeyboardEvents_GetEvent(KeyboardEvent_t* event);
+#define HAS_EVENT (1)
 
 #ifdef __cplusplus
 }

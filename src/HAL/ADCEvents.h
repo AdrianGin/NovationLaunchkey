@@ -24,8 +24,8 @@ THE SOFTWARE.
 
 
 
-#ifndef _KEYBOARD_EVENTS
-#define _KEYBOARD_EVENTS
+#ifndef _ADC_EVENTS
+#define _ADC_EVENTS
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,18 +37,17 @@ extern "C" {
 
 typedef struct
 {
-	uint8_t status; //so we can use Note On / Off
-	uint8_t note;
-	uint8_t velocity;
-} KeyboardEvent_t;
+	uint8_t index;
+	uint8_t value;
+} ADCEvent_t;
 
 
-#define KEYBOARD_EVENT_MSG_COUNT (16)
+#define ADC_EVENT_MSG_COUNT (16)
 
-extern volatile VoidBuffer_t KeyboardMsgQueue;
+extern volatile VoidBuffer_t ADCMsgQueue;
 
-uint8_t KeyboardEvents_AddEvent(KeyboardEvent_t* event);
-uint8_t KeyboardEvents_GetEvent(KeyboardEvent_t* event);
+uint8_t ADCEvents_AddEvent(ADCEvent_t* event);
+uint8_t ADCEvents_GetEvent(ADCEvent_t* event);
 
 #ifdef __cplusplus
 }

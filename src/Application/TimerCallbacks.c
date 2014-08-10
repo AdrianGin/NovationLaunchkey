@@ -36,6 +36,7 @@ THE SOFTWARE.
 #include "EventManager.h"
 #include "DisplayManager.h"
 
+#include "ADCEvents.h"
 #include "SwitchEvents.h"
 
 /* These are the critical timers, 500kHz resolution */
@@ -60,7 +61,13 @@ void Callback_UpdateDisplay(void)
 		if( ADC_GetChangeFlag(i) )
 		{
 			adcSample = ADC_GetSample(i);
-			EM_ProcessADC(i, adcSample);
+
+			ADCEvent_t event;
+			event.index = i;
+			event.value = adcSample;
+
+			ADCEvents_AddEvent(&event);
+
 			ADC_ClearChangeFlag(i);
 
 		}
@@ -81,8 +88,6 @@ void Callback_UpdateDisplay(void)
 		{
 			if( switchChangeMap & (1<<i) )
 			{
-				uint8_t switchState;
-
 				SwitchEvent_t event;
 				event.index = i;
 				event.value = Switch_GetState(i);
