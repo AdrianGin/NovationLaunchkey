@@ -9,6 +9,8 @@
 #include "ModeManager.h"
 #include "HAL_Switch.h"
 
+#include "InputManager.h"
+
 //Each button must remember the Application Mode of when it was pressed (done in EventManager)
 uint32_t ButtonStates;
 
@@ -22,7 +24,7 @@ inline void IM_ClearButtonState(uint8_t index)
 	ButtonStates &= ~(1<<index);
 }
 
-inline uint8_t IM_GetButtonState(uint8_t index)
+uint8_t IM_GetButtonState(uint8_t index)
 {
 	if( index >= SW_COUNT )
 	{

@@ -15,11 +15,21 @@
 #include "HAL_Switch.h"
 #include "InputManager.h"
 
+#include "uint16toa.h"
+
+#include <stdlib.h>
+
+static uint8_t Global_TransposeFlag = 0;
 
 static uint8_t handle_SWInput(MM_Input_t* input)
 {
 	SwitchEvent_t* swEvent = input->input.sw;
 
+	//Only process on key release.
+	if (swEvent->value == 1)
+	{
+		return !MM_INPUT_WAS_PROCESSED;
+	}
 	//GlobEvents_ProcessButton(, swEvent->value);
 
 	switch (swEvent->index)
@@ -31,41 +41,56 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 			break;
 
 		case SW_OCTAVE_DOWN:
-
-			if( IM_GetButtonState(SW_OCTAVE_UP) )
+			if (IM_GetButtonState(SW_OCTAVE_UP))
 			{
-				KB_SetTranspose( KB_GetCurrentTranspose() - 1);
-			}
+				Global_TransposeFlag = 1;
+				KB_SetTranspose(KB_GetCurrentTranspose() - 1);
 
-			KB_SetOctave(KB_GetCurrentOctave() - 1);
-			DispMan_Print7Seg(abs(KB_GetCurrentOctave()), 0);
-
-			if (GetButtonState(SW_OCTAVE_UP))
-			{
+				DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
 
 			}
+			else
+			{
+				if (Global_TransposeFlag == 0)
+				{
+					KB_SetOctave(KB_GetCurrentOctave() - 1);
+					DispMan_Print7SegInt(KB_GetCurrentOctave(), 0);
+
+					//DispMan_Print7Seg(abs(KB_GetCurrentOctave()), 0);
+				}
+			}
+
 			break;
 
 		case SW_OCTAVE_UP:
-
-			if( IM_GetButtonState(SW_OCTAVE_DOWN) )
+			if (IM_GetButtonState(SW_OCTAVE_DOWN))
 			{
-				KB_SetTranspose( KB_GetCurrentTranspose() + 1);
+				Global_TransposeFlag = 1;
+				KB_SetTranspose(KB_GetCurrentTranspose() + 1);
+
+				DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
+				//DispMan_Print7Seg(abs(KB_GetCurrentTranspose()), 0);
+			}
+			else
+			{
+				if (Global_TransposeFlag == 0)
+				{
+					KB_SetOctave(KB_GetCurrentOctave() + 1);
+					DispMan_Print7SegInt(KB_GetCurrentOctave(), 0);
+				}
 			}
 
-			KB_SetOctave(KB_GetCurrentOctave() + 1);
-			DispMan_Print7Seg(abs(KB_GetCurrentOctave()), 0);
-			if (GetButtonState(SW_OCTAVE_DOWN))
-			{
-
-			}
 			break;
 
 		default:
 			break;
 	}
 
-	DispMan_Print7Seg(swEvent->index, 0);
+	if ((IM_GetButtonState(SW_OCTAVE_UP) == 0) && IM_GetButtonState(SW_OCTAVE_DOWN) == 0)
+	{
+		Global_TransposeFlag = 0;
+	}
+
 	return MM_INPUT_WAS_PROCESSED;
 }
 

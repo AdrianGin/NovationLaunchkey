@@ -36,8 +36,13 @@ extern "C" {
 
 #define DISPLAY_MODE_NORMAL		(0)
 #define DISPLAY_MODE_OFF		(1)
+#define DISPLAY_COUNT		    (LED_7SEG_COUNT)
 
 void DispMan_Print7Seg(uint16_t number, uint8_t flashRate);
+void DispMan_Print7SegInt(int8_t number, uint8_t flashRate);
+void DispMan_Print7SegAlpha(uint8_t* buf, uint8_t flashRate);
+
+
 void DispMan_Poll(void);
 
 #ifdef __cplusplus

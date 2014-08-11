@@ -22,6 +22,8 @@ extern "C" {
 #define LED_7SEG_DP (0x80)
 #define LED_7SEG_LED_COUNT (8)
 
+#define LED_7SEG_COUNT (3)
+
 typedef enum
 {
 	LED_STATE_NEW_COLUMN,
@@ -151,6 +153,8 @@ void LED_CountUpRoutine(uint8_t column, uint16_t count);
 void LED_7SegmentWriteCode(uint8_t index, uint16_t* code);
 void LED_7Segment_Write(uint8_t index, uint8_t number);
 void LED_7Segment_WriteNumber(uint16_t number);
+void LED_7Segment_WriteChar(uint8_t index, uint8_t ch);
+
 
 //Setup GPIO
 
