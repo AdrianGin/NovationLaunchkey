@@ -10,6 +10,8 @@
 #include "HAL_MIDI.h"
 
 #include "App_Keyboard.h"
+#include "App_GlobalSettings.h"
+
 #include "DisplayManager.h"
 
 #include "HAL_Switch.h"
@@ -19,7 +21,16 @@
 
 #include <stdlib.h>
 
-static uint8_t Global_TransposeFlag = 0;
+//Used to indicate the direction of increasing / decreasing variables
+//Used to stop unintuitive behaviour when using transpose
+enum {
+	VARIABLE_INACTIVE = 0,
+	VARIABLE_INCREASING,
+	VARIABLE_DECREASING,
+} eVariableDirectionFlag;
+
+static uint8_t Global_TransposeFlag = VARIABLE_INACTIVE;
+static uint8_t Global_MIDIChannelFlag = VARIABLE_INACTIVE;
 
 static uint8_t handle_SWInput(MM_Input_t* input)
 {
@@ -35,18 +46,54 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 	switch (swEvent->index)
 	{
 		case SW_TRACK_LEFT:
+			if (IM_GetButtonState(SW_TRACK_RIGHT))
+			{
+
+				if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+				{
+					Global_MIDIChannelFlag = VARIABLE_DECREASING;
+				}
+
+				if( Global_MIDIChannelFlag == VARIABLE_DECREASING )
+				{
+					AppGlobal_SetMIDIChannel( AppGlobal_GetMIDIChannel() - 1);
+					DispMan_Print7SegInt( AppGlobal_GetMIDIChannel() + 1 , 0);
+				}
+			}
+
+
 			break;
 
 		case SW_TRACK_RIGHT:
+			if (IM_GetButtonState(SW_TRACK_LEFT))
+			{
+
+				if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+				{
+					Global_MIDIChannelFlag = VARIABLE_INCREASING;
+				}
+
+				if( Global_MIDIChannelFlag == VARIABLE_INCREASING )
+				{
+					AppGlobal_SetMIDIChannel( AppGlobal_GetMIDIChannel() + 1);
+					DispMan_Print7SegInt( AppGlobal_GetMIDIChannel() + 1, 0);
+				}
+			}
 			break;
 
 		case SW_OCTAVE_DOWN:
 			if (IM_GetButtonState(SW_OCTAVE_UP))
 			{
-				Global_TransposeFlag = 1;
-				KB_SetTranspose(KB_GetCurrentTranspose() - 1);
+				if( Global_TransposeFlag == VARIABLE_INACTIVE )
+				{
+					Global_TransposeFlag = VARIABLE_DECREASING;
+				}
 
-				DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
+				if( Global_TransposeFlag == VARIABLE_DECREASING )
+				{
+					KB_SetTranspose(KB_GetCurrentTranspose() - 1);
+					DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
+				}
 
 			}
 			else
@@ -65,11 +112,16 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 		case SW_OCTAVE_UP:
 			if (IM_GetButtonState(SW_OCTAVE_DOWN))
 			{
-				Global_TransposeFlag = 1;
-				KB_SetTranspose(KB_GetCurrentTranspose() + 1);
+				if( Global_TransposeFlag == VARIABLE_INACTIVE )
+				{
+					Global_TransposeFlag = VARIABLE_INCREASING;
+				}
 
-				DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
-				//DispMan_Print7Seg(abs(KB_GetCurrentTranspose()), 0);
+				if( Global_TransposeFlag == VARIABLE_INCREASING )
+				{
+					KB_SetTranspose(KB_GetCurrentTranspose() + 1);
+					DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
+				}
 			}
 			else
 			{
@@ -88,7 +140,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 
 	if ((IM_GetButtonState(SW_OCTAVE_UP) == 0) && IM_GetButtonState(SW_OCTAVE_DOWN) == 0)
 	{
-		Global_TransposeFlag = 0;
+		Global_TransposeFlag = VARIABLE_INACTIVE;
 	}
 
 	return MM_INPUT_WAS_PROCESSED;
