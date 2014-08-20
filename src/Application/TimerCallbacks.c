@@ -42,8 +42,8 @@ THE SOFTWARE.
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalTimers},};
 
-volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {250,0, 1, Callback_ADC_Handle},
-													{100,0, 1, Callback_UpdateDisplay}, };
+volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {25,0, 1, Callback_ADC_Handle},
+													{50,0, 1, Callback_UpdateDisplay}, };
 
 
 volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{2, 0, 1, Callback_ColumnMux},

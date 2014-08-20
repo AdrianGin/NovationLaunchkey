@@ -1,17 +1,11 @@
 TODO:
-
-Event Stacks which get processed in the main loop.
-
-
-
 Pitch and Modulation Wheel Conditioning (need 8 bit)
 Presets for Controller Mode
-
 Preset Format for each of the 8 templates.
-
 ReMap Mode
+Fix jitter on ADCs
 
-USB
-
-Global:
+Completed Tasks:
+Event Stacks which get processed in the main loop.
+USB MIDI
 Octave & Transport - use main LCD

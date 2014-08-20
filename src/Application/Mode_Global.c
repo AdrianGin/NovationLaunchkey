@@ -8,9 +8,12 @@
 #include "SwitchEvents.h"
 #include "ADCEvents.h"
 #include "HAL_MIDI.h"
+#include "HAL_ADC.h"
 
 #include "App_Keyboard.h"
 #include "App_GlobalSettings.h"
+
+#include "Global_ADC.h"
 
 #include "DisplayManager.h"
 
@@ -154,8 +157,15 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 static uint8_t handle_ADCInput(MM_Input_t* input)
 {
 	ADCEvent_t* adcEvent = input->input.adc;
+
+	if( (adcEvent->index == ADC_PITCHBEND) || (adcEvent->index == ADC_MODULATION) )
+	{
+		Global_HandleADC(adcEvent);
+		return MM_INPUT_WAS_PROCESSED;
+	}
+
 	DispMan_Print7Seg(adcEvent->value, 0);
-	return MM_INPUT_WAS_PROCESSED;
+	return !MM_INPUT_WAS_PROCESSED;
 }
 
 static uint8_t handle_KeyBoardInput(MM_Input_t* input)

@@ -567,6 +567,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\Application\App_Switch.c</FilePath>
             </File>
+            <File>
+              <FileName>ModeManager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\ModeManager.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -601,6 +606,21 @@
               <FileName>HAL_MIDI.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\HAL\HAL_MIDI.c</FilePath>
+            </File>
+            <File>
+              <FileName>SwitchEvents.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\SwitchEvents.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADCEvents.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\ADCEvents.c</FilePath>
+            </File>
+            <File>
+              <FileName>GenericEvents.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\GenericEvents.c</FilePath>
             </File>
           </Files>
         </Group>
