@@ -143,6 +143,11 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 		Global_TransposeFlag = VARIABLE_INACTIVE;
 	}
 
+	if ((IM_GetButtonState(SW_TRACK_RIGHT) == 0) && IM_GetButtonState(SW_TRACK_LEFT) == 0)
+	{
+		Global_MIDIChannelFlag = VARIABLE_INACTIVE;
+	}
+
 	return MM_INPUT_WAS_PROCESSED;
 }
 

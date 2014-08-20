@@ -27,12 +27,20 @@ THE SOFTWARE.
 
 #include "KeyboardEvents.h"
 
+#include "App_GlobalSettings.h"
+
 #include "HAL_KB.h"
 #include "HAL_MIDI.h"
 
 #include "MIDICodes.h"
 
-uint8_t KeyOnMap[NUMBER_OF_KEYS];
+typedef struct
+{
+	uint8_t channel;
+	uint8_t note;
+} SavedKeyboardEvent_t;
+
+SavedKeyboardEvent_t KeyOnMap[NUMBER_OF_KEYS];
 
 void App_HandleKeyEvent(KeyboardEvent_t* kbEvent)
 {
@@ -40,15 +48,17 @@ void App_HandleKeyEvent(KeyboardEvent_t* kbEvent)
 
 	msg.port = 0x00;
 
-	msg.status = kbEvent->status;
+	msg.status = kbEvent->status | AppGlobal_GetMIDIChannel();
 	msg.data1 = KB_ApplyOctaveTranspose(kbEvent->note, KB_GetCurrentOctave(), KB_GetCurrentTranspose() );
 	msg.data2 = kbEvent->velocity;
 
+	//Make sure that there are no stuck notes when changing octaves or transpose.
 	if( (msg.status & MIDI_MSG_TYPE_MASK) == MIDI_NOTE_ON)
 	{
 		if( kbEvent->phyKey < NUMBER_OF_KEYS)
 		{
-			KeyOnMap[kbEvent->phyKey] = msg.data1;
+			KeyOnMap[kbEvent->phyKey].channel = msg.status & MIDI_CHANNEL_MASK;
+			KeyOnMap[kbEvent->phyKey].note = msg.data1;
 		}
 	}
 
@@ -56,11 +66,16 @@ void App_HandleKeyEvent(KeyboardEvent_t* kbEvent)
 	{
 		if( kbEvent->phyKey < NUMBER_OF_KEYS)
 		{
-			if(KeyOnMap[kbEvent->phyKey] != msg.data1)
+			if(KeyOnMap[kbEvent->phyKey].note != msg.data1)
 			{
-				msg.data1 = KeyOnMap[kbEvent->phyKey];
+				msg.data1 = KeyOnMap[kbEvent->phyKey].note;
 			}
-			KeyOnMap[kbEvent->phyKey] = APP_KB_KEY_IS_OFF;
+
+			if(KeyOnMap[kbEvent->phyKey].channel != (msg.status & MIDI_CHANNEL_MASK))
+			{
+				msg.status &= ~MIDI_CHANNEL_MASK;
+				msg.status |= KeyOnMap[kbEvent->phyKey].channel;
+			}
 		}
 	}
 
