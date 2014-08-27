@@ -55,6 +55,10 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 
 		msg.status = MIDI_PITCH_CHANGE | AppGlobal_GetMIDIChannel();
 		msg.data1 = (value & 0x01) ? 0x40 : 0;
+		if( value == 0xFF )
+		{
+			msg.data1 = MIDI_MAX_DATA;
+		}
 		msg.data2 = value >> 1;
 
 		//Centre values must pass, as the debounce may miss the centre if the debounce
@@ -62,7 +66,6 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 		if( (PitchBendDetent.debounceIsActive == CD_DEBOUNCE_DISABLED) )
 		{
 			uint8_t oldValue = savedEvents[0].data2 << 1;
-
 			//ensure only changed events are sent out.
 			if( memcmp( &msg, &savedEvents[0], sizeof(MIDIMsg_t)) != 0 )
 			{
@@ -70,9 +73,7 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 				{
 					CentreDetent_SetDebounceState(&PitchBendDetent, CD_DEBOUNCE_ENABLED);
 				}
-
 				Global_ADCOutputMIDI(&msg, GL_PITCHBEND_INDEX);
-
 			}
 		}
 		else

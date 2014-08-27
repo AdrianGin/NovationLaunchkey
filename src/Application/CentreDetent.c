@@ -36,7 +36,7 @@ ADC_CentreDetent_t PitchBendDetent = {
 };
 
 const uint16_t CENTRE_DETENT_MULT_FACTOR = 0x100;
-
+const uint16_t MAX_RANGE = 0x100;
 //Returns the conditioned value after applying a centre detent.
 //Resolution / Dynamic range is not lost, but certain values may be skipped.
 uint8_t CentreDetent_ApplyFilter(ADC_CentreDetent_t* filter, uint8_t value)
@@ -61,9 +61,9 @@ uint8_t CentreDetent_ApplyFilter(ADC_CentreDetent_t* filter, uint8_t value)
 		}
 		else
 		{
-			grad = ((0xFF - filter->virtualCentreValue) * CENTRE_DETENT_MULT_FACTOR) / (0xFF - topThreshold);
+			grad = ((MAX_RANGE - filter->virtualCentreValue) * CENTRE_DETENT_MULT_FACTOR) / (MAX_RANGE - topThreshold);
 			offset = (topThreshold * grad) - (filter->virtualCentreValue * CENTRE_DETENT_MULT_FACTOR);
-			newVal = ((grad * value) - offset) / (CENTRE_DETENT_MULT_FACTOR);
+			newVal = ((grad * value) - offset) / (CENTRE_DETENT_MULT_FACTOR) + 1;
 		}
 	}
 	return newVal;
