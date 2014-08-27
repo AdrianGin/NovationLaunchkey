@@ -33,7 +33,5 @@ uint8_t ADCLimits_ApplyRescale(ADC_Limits_t* filter, uint8_t value)
 
 
 
-
-
 }
 
