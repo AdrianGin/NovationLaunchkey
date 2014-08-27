@@ -24,8 +24,8 @@ THE SOFTWARE.
 
 
 
-#ifndef _CENTRE_DETENT_H
-#define _CENTRE_DETENT_H
+#ifndef _RESCALE_H
+#define _RESCALE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,17 +36,17 @@ extern "C" {
 typedef struct
 {
 	//values which represent the max and min limits of the ADC value. (ADC events are 8bit only)
-	uint8_t adcMax;
-	uint8_t adcMin;
+	uint16_t xMax;
+	uint16_t xMin;
 
-	uint8_t scaledMax;
-	uint8_t scaledMin;
+	uint16_t yMax;
+	uint16_t yMin;
 
-} ADC_Limits_t;
+} Rescale_t;
 
 
 
-uint8_t ADCLimits_ApplyRescale(ADC_Limits_t* filter, uint8_t value);
+uint16_t Rescale_Apply(Rescale_t* filter, uint16_t value);
 
 
 

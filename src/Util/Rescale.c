@@ -25,35 +25,35 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "ADC_Limits.h"
+#include "Rescale.h"
 
-#define ADCLIMIT_MULT_FACTOR (0x100)
-uint8_t ADCLimits_ApplyRescale(ADC_Limits_t* filter, uint8_t value)
+#define RESACLE_MULT_FACTOR (0x10000)
+uint16_t Rescale_Apply(Rescale_t* filter, uint16_t value)
 {
-	if( value >= filter->adcMax )
+	if( value >= filter->xMax )
 	{
-		return filter->scaledMax;
+		return filter->yMax;
 	}
 
-	if( value <= filter->adcMin )
+	if( value <= filter->xMin )
 	{
-		return filter->scaledMin;
+		return filter->yMin;
 	}
 
-	uint16_t grad;
-	int16_t offset;
-	int16_t newVal;
+	uint32_t grad;
+	int32_t offset;
+	uint16_t newVal;
 
-	uint8_t dy = filter->scaledMax - filter->scaledMin;
-	uint8_t dx = filter->adcMax - filter->adcMin;
+	uint16_t dy = filter->yMax - filter->yMin;
+	uint16_t dx = filter->xMax - filter->xMin;
 	if( dx == 0 )
 	{
 		return value;
 	}
 
-	grad = (dy * ADCLIMIT_MULT_FACTOR) / dx;
-	offset = (filter->scaledMax * ADCLIMIT_MULT_FACTOR) - (filter->adcMax * grad);
-	newVal = ((grad * value) + offset) / (CENTRE_DETENT_MULT_FACTOR);
+	grad = (dy * RESACLE_MULT_FACTOR) / dx;
+	offset = (filter->yMax * RESACLE_MULT_FACTOR) - (filter->xMax * grad);
+	newVal = ((grad * value) + offset) / (RESACLE_MULT_FACTOR);
 
 
 	return newVal;
