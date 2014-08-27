@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "CentreDetent.h"
+#include "ADC_CentreDetent.h"
 #include "TimerCallbacks.h"
 
 ADC_CentreDetent_t PitchBendDetent = {

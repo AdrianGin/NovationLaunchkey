@@ -24,8 +24,8 @@ THE SOFTWARE.
 
 
 
-#ifndef _CENTRE_DETENT_H
-#define _CENTRE_DETENT_H
+#ifndef _ADC_CENTRE_DETENT_H
+#define _ADC_CENTRE_DETENT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,13 +33,6 @@ extern "C" {
 
 #include <stdint.h>
 
-typedef struct
-{
-	//values which represent the max and min limits of the ADC value. (ADC events are 8bit only)
-	uint16_t max;
-	uint16_t min;
-
-} ADC_Limits_t;
 
 typedef struct
 {

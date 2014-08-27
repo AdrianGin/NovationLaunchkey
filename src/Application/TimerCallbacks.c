@@ -40,7 +40,7 @@ THE SOFTWARE.
 #include "SwitchEvents.h"
 #include "Global_ADC.h"
 
-#include "CentreDetent.h"
+#include "ADC_CentreDetent.h"
 
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalTimers},};

@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 #include "Global_ADC.h"
 #include "TimerCallbacks.h"
-#include "CentreDetent.h"
+#include "ADC_CentreDetent.h"
 
 MIDIMsg_t savedEvents[GLOBAL_ADC_HANDLE_COUNT];
 
