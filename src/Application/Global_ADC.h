@@ -39,8 +39,15 @@ extern "C" {
 #include "App_GlobalSettings.h"
 #include "MIDICodes.h"
 
-void Global_HandleADC(ADCEvent_t* adcEvent);
 
+enum {
+	GL_PITCHBEND_INDEX = 0,
+	GL_MODULATION_INDEX,
+	GLOBAL_ADC_HANDLE_COUNT
+};
+
+void Global_HandleADC(ADCEvent_t* adcEvent);
+void Global_ADCOutputMIDI(MIDIMsg_t* msg, uint8_t index);
 
 #ifdef __cplusplus
 }

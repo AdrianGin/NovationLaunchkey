@@ -56,10 +56,10 @@ typedef struct
 } ADC_CentreDetent_t;
 
 
-typedef enum {
+enum {
 	CD_DEBOUNCE_DISABLED = 0,
-	CD_DEBOUNCE_ENABLED = 0,
-} CD_Debounce_t;
+	CD_DEBOUNCE_ENABLED = 1,
+};
 
 enum {
 	CD_NO_ZERO_CROSS = 0,
@@ -71,7 +71,7 @@ extern ADC_CentreDetent_t PitchBendDetent;
 
 
 uint8_t CentreDetent_ApplyFilter(ADC_CentreDetent_t* filter, uint8_t value);
-void CentreDetent_SetDebounceState(ADC_CentreDetent_t* cd, CD_Debounce_t newState);
+void CentreDetent_SetDebounceState(ADC_CentreDetent_t* cd, uint8_t newState);
 uint8_t CentreDetent_Compare2Values(ADC_CentreDetent_t* cd, uint8_t oldValue, uint8_t newValue);
 
 

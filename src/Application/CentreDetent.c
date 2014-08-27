@@ -30,7 +30,7 @@
 
 ADC_CentreDetent_t PitchBendDetent = {
 		.centre = 128,
-		.threshold = 8,
+		.threshold = 4,
 		.virtualCentreValue = 0x40 << 1,
 		.debounceIsActive = 0,
 };
@@ -72,7 +72,7 @@ uint8_t CentreDetent_ApplyFilter(ADC_CentreDetent_t* filter, uint8_t value)
 uint8_t CentreDetent_Compare2Values(ADC_CentreDetent_t* cd, uint8_t oldValue, uint8_t newValue)
 {
 	uint8_t ret = CD_NO_ZERO_CROSS;
-	if ((oldValue <= cd->virtualCentreValue) && (newValue > cd->virtualCentreValue))
+	if ((oldValue < cd->virtualCentreValue) && (newValue >= cd->virtualCentreValue))
 	{
 		ret = CD_ZEROCROSS_INCREASING;
 	}
@@ -84,7 +84,7 @@ uint8_t CentreDetent_Compare2Values(ADC_CentreDetent_t* cd, uint8_t oldValue, ui
 	return ret;
 }
 
-void CentreDetent_SetDebounceState(ADC_CentreDetent_t* cd, CD_Debounce_t newState)
+void CentreDetent_SetDebounceState(ADC_CentreDetent_t* cd, uint8_t newState)
 {
 	cd->debounceIsActive = newState;
 	if (newState == CD_DEBOUNCE_ENABLED)

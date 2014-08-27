@@ -47,7 +47,7 @@ volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalT
 
 volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {25		,0	, 1, Callback_ADC_Handle},
 													{50		,0	, 1, Callback_UpdateDisplay},
-													{60	,0	, 0, Callback_PitchBendDebounce}  //SC_PITCHBEND_DEBOUNCE}
+													{1200	,0	, 0, Callback_PitchBendDebounce}  //SC_PITCHBEND_DEBOUNCE}
 												};
 
 

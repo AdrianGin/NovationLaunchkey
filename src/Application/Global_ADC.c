@@ -29,8 +29,19 @@ THE SOFTWARE.
 #include "TimerCallbacks.h"
 #include "CentreDetent.h"
 
-//
-MIDIMsg_t savedEvents[2];
+MIDIMsg_t savedEvents[GLOBAL_ADC_HANDLE_COUNT];
+
+
+void Global_ADCOutputMIDI(MIDIMsg_t* msg, uint8_t index)
+{
+	if( memcmp( msg, &savedEvents[index], sizeof(MIDIMsg_t)) != 0 )
+	{
+		HAL_MIDI_TxMsg(msg);
+		savedEvents[index] = *msg;
+	}
+}
+
+
 void Global_HandleADC(ADCEvent_t* adcEvent)
 {
 	MIDIMsg_t msg;
@@ -46,26 +57,36 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 		msg.data1 = (value & 0x01) ? 0x40 : 0;
 		msg.data2 = value >> 1;
 
-		if( PitchBendDetent.debounceIsActive == CD_DEBOUNCE_DISABLED )
+		//Centre values must pass, as the debounce may miss the centre if the debounce
+		//is too long
+		if( (PitchBendDetent.debounceIsActive == CD_DEBOUNCE_DISABLED) )
 		{
 			uint8_t oldValue = savedEvents[0].data2 << 1;
 
-			if( CentreDetent_Compare2Values(&PitchBendDetent, oldValue, value) )
+			//ensure only changed events are sent out.
+			if( memcmp( &msg, &savedEvents[0], sizeof(MIDIMsg_t)) != 0 )
 			{
-				CentreDetent_SetDebounceState(&PitchBendDetent, CD_DEBOUNCE_ENABLED);
-				savedEvents[0] = msg;
-			}
-			else
-			{
-				//ensure only changed events are sent out.
-				if( memcmp( &msg, &savedEvents[0], sizeof(MIDIMsg_t)) != 0 )
+				if( (CentreDetent_Compare2Values(&PitchBendDetent, oldValue, value) != CD_NO_ZERO_CROSS) )
 				{
-
-					HAL_MIDI_TxMsg(&msg);
-					savedEvents[0] = msg;
+					CentreDetent_SetDebounceState(&PitchBendDetent, CD_DEBOUNCE_ENABLED);
 				}
+
+				Global_ADCOutputMIDI(&msg, GL_PITCHBEND_INDEX);
+
 			}
 		}
+		else
+		{
+			if( (value == PitchBendDetent.virtualCentreValue) )
+			{
+				//ensure only changed events are sent out.
+				Global_ADCOutputMIDI(&msg, GL_PITCHBEND_INDEX);
+			}
+
+		}
+
+
+
 	}
 
 	if( adcEvent->index == ADC_MODULATION )
@@ -75,11 +96,7 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 		msg.data2 = adcEvent->value >> 1;
 
 		//ensure only changed events are sent out.
-		if( memcmp( &msg, &savedEvents[1], sizeof(MIDIMsg_t)) != 0 )
-		{
-			HAL_MIDI_TxMsg(&msg);
-			savedEvents[1] = msg;
-		}
+		Global_ADCOutputMIDI(&msg, GL_MODULATION_INDEX);
 	}
 
 
