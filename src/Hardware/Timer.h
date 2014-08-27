@@ -29,7 +29,7 @@ typedef enum
 
 
 
-uint8_t TIM_IsMasterTickTriggered(void);
+uint8_t TIM_GetMasterTick(void);
 void TIM_ResetMasterTick(void);
 
 void Timer_InitNoBSP(uint8_t prescale, uint32_t compare);

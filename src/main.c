@@ -72,15 +72,16 @@ int main(void)
 	USBAudio_Open();
 
 	uint8_t startUp = 1;
+	uint8_t localMasterTick = 0;
 
 	while (1)
 	{
-		if (TIM_IsMasterTickTriggered())
+		if (TIM_GetMasterTick() != localMasterTick)
 		{
 
 			RunAndExecuteTimers((SoftTimer_16*) SoftTimer2, TIMER2_COUNT);
-			//RunAuxTimers();
-			TIM_ResetMasterTick();
+			localMasterTick++;
+			//RunAuxTimers()
 		}
 
 		E_DRVUSB_STATE eUsbState;

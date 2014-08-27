@@ -38,16 +38,27 @@ THE SOFTWARE.
 
 #include "ADCEvents.h"
 #include "SwitchEvents.h"
+#include "Global_ADC.h"
+
+#include "CentreDetent.h"
 
 /* These are the critical timers, 500kHz resolution */
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalTimers},};
 
-volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {25,0, 1, Callback_ADC_Handle},
-													{50,0, 1, Callback_UpdateDisplay}, };
+volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {25		,0	, 1, Callback_ADC_Handle},
+													{50		,0	, 1, Callback_UpdateDisplay},
+													{60	,0	, 0, Callback_PitchBendDebounce}  //SC_PITCHBEND_DEBOUNCE}
+												};
 
 
 volatile SoftTimer_16 SoftTimer3[TIMER3_COUNT] = {{2, 0, 1, Callback_ColumnMux},
 												  {1, 0, 0, Callback_Switch_Read}};
+
+
+void Callback_PitchBendDebounce(void)
+{
+	CentreDetent_SetDebounceState(&PitchBendDetent, CD_DEBOUNCE_DISABLED);
+}
 
 
 void Callback_UpdateDisplay(void)

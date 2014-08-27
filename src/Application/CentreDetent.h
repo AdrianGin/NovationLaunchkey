@@ -24,50 +24,55 @@ THE SOFTWARE.
 
 
 
-#ifndef _TIMER_CALLBACKS_H
-#define _TIMER_CALLBACKS_H
+#ifndef _CENTRE_DETENT_H
+#define _CENTRE_DETENT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "Softtimer.h"
+#include <stdint.h>
 
-/* CCR1B associated timers */
-typedef enum {  
-	SC_COLUMN_MUX = 0,
-	TIMER1_COUNT
-   
-} timer1Ids;
+typedef struct
+{
+	//values which represent the max and min limits of the ADC value. (ADC events are 8bit only)
+	uint16_t max;
+	uint16_t min;
 
-typedef enum {  
-	SC_ADC,
-	SC_UPDATE_DISPLAY,
-	SC_PITCHBEND_DEBOUNCE,
-   TIMER2_COUNT 
-   
-} timer2Ids;
+} ADC_Limits_t;
+
+typedef struct
+{
+	//either side of the "centre" is a threshold which must be exceeded before any change is registered
+	uint8_t centre;
+	uint8_t threshold;
+
+	//the value which is given to inputs within the thresholds.
+	uint8_t virtualCentreValue;
+
+	//whether debounce is active
+	uint8_t debounceIsActive;
+
+} ADC_CentreDetent_t;
 
 
 typedef enum {
-	SC_LED = 0,
-	//SC_KEYBOARD,
-	SC_SWITCH,
-   TIMER3_COUNT
+	CD_DEBOUNCE_DISABLED = 0,
+	CD_DEBOUNCE_ENABLED = 0,
+} CD_Debounce_t;
 
-} timer3Ids;
+enum {
+	CD_NO_ZERO_CROSS = 0,
+	CD_ZEROCROSS_INCREASING,
+	CD_ZEROCROSS_DECREASING,
+};
 
-#define TMR_ADC_SAMPLE_TIME (20)
+extern ADC_CentreDetent_t PitchBendDetent;
 
-extern volatile SoftTimer_16  SoftTimer1[];
-extern volatile SoftTimer_16  SoftTimer2[];
 
-void Callback_CriticalTimers(void);
-void Callback_UpdateDisplay(void);
-void Callback_ADC_Handle(void);
-void Callback_ColumnMux(void);
-void Callback_Switch_Read(void);
-void Callback_PitchBendDebounce(void);
+uint8_t CentreDetent_ApplyFilter(ADC_CentreDetent_t* filter, uint8_t value);
+void CentreDetent_SetDebounceState(ADC_CentreDetent_t* cd, CD_Debounce_t newState);
+uint8_t CentreDetent_Compare2Values(ADC_CentreDetent_t* cd, uint8_t oldValue, uint8_t newValue);
 
 
 #ifdef __cplusplus

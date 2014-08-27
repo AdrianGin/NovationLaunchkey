@@ -14,7 +14,8 @@
 
 volatile uint8_t TIM_MasterTick = 0;
 
-inline uint8_t TIM_IsMasterTickTriggered(void)
+
+inline uint8_t TIM_GetMasterTick(void)
 {
 	return TIM_MasterTick;
 }
@@ -65,7 +66,7 @@ void TMR0_IRQHandler(void)
     if ((TIMER0->TCSR.IE == 1) && (TIMER0->TISR.TIF == 1))
         TIMER0->TISR.TIF = 1;
 
-	TIM_MasterTick = 1;
+	TIM_MasterTick++;
 	uint16_t tempRawState = Keyboard_ReadRawState();
 
 	if( Keyboard_SaveRawState(tempRawState, MUX_GetCurrentColumn()) != NO_KB_STATE_CHANGE )
