@@ -36,16 +36,16 @@ extern "C" {
 typedef struct
 {
 	//values which represent the max and min limits of the ADC value. (ADC events are 8bit only)
-	uint16_t xMax;
 	uint16_t xMin;
+	uint16_t xMax;
 
-	uint16_t yMax;
 	uint16_t yMin;
+	uint16_t yMax;
 
 } Rescale_t;
 
 
-
+#define RESACLE_MULT_FACTOR (0x10000)
 uint16_t Rescale_Apply(Rescale_t* filter, uint16_t value);
 
 

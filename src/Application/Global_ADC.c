@@ -28,9 +28,16 @@ THE SOFTWARE.
 #include "Global_ADC.h"
 #include "TimerCallbacks.h"
 #include "ADC_CentreDetent.h"
+#include "Rescale.h"
 
 MIDIMsg_t savedEvents[GLOBAL_ADC_HANDLE_COUNT];
+Rescale_t Rescale_ModWheel = {
+		.xMax = 250,
+		.xMin = 8,
 
+		.yMin = 0,
+		.yMax = 127,
+};
 
 void Global_ADCOutputMIDI(MIDIMsg_t* msg, uint8_t index)
 {
@@ -94,7 +101,7 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 	{
 		msg.status = MIDI_CONTROL_CHANGE | AppGlobal_GetMIDIChannel();
 		msg.data1 = MODULATION_WHEEL;
-		msg.data2 = adcEvent->value >> 1;
+		msg.data2 = Rescale_Apply(&Rescale_ModWheel, adcEvent->value);
 
 		//ensure only changed events are sent out.
 		Global_ADCOutputMIDI(&msg, GL_MODULATION_INDEX);

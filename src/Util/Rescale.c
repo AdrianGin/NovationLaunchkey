@@ -27,9 +27,15 @@
 
 #include "Rescale.h"
 
-#define RESACLE_MULT_FACTOR (0x10000)
-uint16_t Rescale_Apply(Rescale_t* filter, uint16_t value)
+// Output rounds down.
+// Gradient = (yMax - yMin) / (xMax - xMin)
+// Supports negative gradients, only with inverted yMax , yMin
+uint16_t Rescale_Apply(Rescale_t* rescale, uint16_t value)
 {
+
+	Rescale_t* filter;
+	filter = rescale;
+
 	if( value >= filter->xMax )
 	{
 		return filter->yMax;
