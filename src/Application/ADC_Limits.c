@@ -27,11 +27,46 @@
 
 #include "ADC_Limits.h"
 
-
+#define ADCLIMIT_MULT_FACTOR (0x100)
 uint8_t ADCLimits_ApplyRescale(ADC_Limits_t* filter, uint8_t value)
 {
+	if( value >= filter->adcMax )
+	{
+		return filter->scaledMax;
+	}
+
+	if( value <= filter->adcMin )
+	{
+		return filter->scaledMin;
+	}
+
+	uint16_t grad;
+	int16_t offset;
+	int16_t newVal;
+
+	uint8_t dy = filter->scaledMax - filter->scaledMin;
+	uint8_t dx = filter->adcMax - filter->adcMin;
+	if( dx == 0 )
+	{
+		return value;
+	}
+
+	grad = (dy * ADCLIMIT_MULT_FACTOR) / dx;
+	offset = (filter->scaledMax * ADCLIMIT_MULT_FACTOR) - (filter->adcMax * grad);
+	newVal = ((grad * value) + offset) / (CENTRE_DETENT_MULT_FACTOR);
 
 
-
+	return newVal;
 }
+
+
+
+
+
+
+
+
+
+
+
 
