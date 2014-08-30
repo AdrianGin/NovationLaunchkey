@@ -40,11 +40,12 @@ void IM_HandleSwitchInput(SwitchEvent_t* input)
 	tmp.class = eSW_INPUT;
 	tmp.input.sw = input;
 
-	if( tmp.input.sw->value )
+	if( tmp.input.sw->value == SWITCH_ON )
 	{
 		IM_SetButtonState(tmp.input.sw->index);
 	}
-	else
+
+	if( tmp.input.sw->value == SWITCH_OFF )
 	{
 		IM_ClearButtonState(tmp.input.sw->index);
 	}

@@ -47,7 +47,8 @@ volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalT
 
 volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {25		,0	, 1, Callback_ADC_Handle},
 													{50		,0	, 1, Callback_UpdateDisplay},
-													{1200	,0	, 0, Callback_PitchBendDebounce}  //SC_PITCHBEND_DEBOUNCE}
+													{1200	,0	, 0, Callback_PitchBendDebounce},  //SC_PITCHBEND_DEBOUNCE}
+													{100	,0	, 1, Callback_SwitchRead}, //SC_SWITCH_READ
 												};
 
 
@@ -60,6 +61,50 @@ void Callback_PitchBendDebounce(void)
 	CentreDetent_SetDebounceState(&PitchBendDetent, CD_DEBOUNCE_DISABLED);
 }
 
+
+void Callback_SwitchRead(void)
+{
+	static uint32_t oldswitchState;
+	uint8_t i;
+	
+	if( oldswitchState != Switch_GetSwitchStates() )
+	{
+		uint32_t switchChangeMap;
+		switchChangeMap = oldswitchState ^ Switch_GetSwitchStates();
+		oldswitchState = Switch_GetSwitchStates();
+	}
+
+
+	//Add debounce counters.
+	for( i = 0 ; i < SW_COUNT; i++ )
+	{
+		uint8_t singleSwState = oldswitchState & (1<<i) ? SWITCH_ON : SWITCH_OFF;
+		uint16_t switchCount;
+		if( singleSwState )
+		{
+			switchCount = Switch_AddCount(i, SWITCH_ON);
+			singleSwState = SWITCH_ON;
+		}
+		else
+		{
+			switchCount = Switch_AddCount(i, SWITCH_OFF);
+			singleSwState = SWITCH_OFF;
+		}
+
+		if( switchCount == SWITCH_CHANGE_THRESHOLD )
+		{
+
+			uint8_t oppositeState = (singleSwState == SWITCH_OFF) ? SWITCH_ON : SWITCH_OFF;
+			Switch_ResetCount(i, oppositeState);
+
+			SwitchEvent_t event;
+			event.index = i;
+			event.value = singleSwState;
+			GenericEvents_AddEvent( (VoidBuffer_t*)&SwitchMsgQueue, (void*)&event);
+		}
+	}
+
+}
 
 void Callback_UpdateDisplay(void)
 {
@@ -83,32 +128,6 @@ void Callback_UpdateDisplay(void)
 
 		}
 	}
-
-
-	static uint32_t switchChanges;
-
-	if( switchChanges != Switch_GetSwitchStates() )
-	{
-		uint8_t i;
-		uint32_t switchChangeMap;
-		switchChangeMap = switchChanges ^ Switch_GetSwitchStates();
-
-		switchChanges = Switch_GetSwitchStates();
-
-		for( i = 0 ; i < SW_COUNT; i++ )
-		{
-			if( switchChangeMap & (1<<i) )
-			{
-				SwitchEvent_t event;
-				event.index = i;
-				event.value = Switch_GetState(i);
-
-				GenericEvents_AddEvent( (VoidBuffer_t*)&SwitchMsgQueue, (void*)&event);
-
-			}
-		}
-	}
-
 
 	DispMan_Poll();
 }

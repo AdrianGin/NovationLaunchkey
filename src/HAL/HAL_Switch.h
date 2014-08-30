@@ -43,9 +43,17 @@ typedef enum
 	SW_COUNT
 } E_SWITCH_INDEX;
 
-#define SWITCH_ON  (1)
-#define SWITCH_INVALID (0xFF)
-#define SWITCH_OFF (0)
+
+typedef enum {
+	SWITCH_OFF,
+	SWITCH_ON,
+	SWITCH_HELD,
+	SWITCH_INVALID,
+} SWITCH_EVENTS;
+
+#define SWITCH_CHANGE_THRESHOLD (10)
+#define SWITCH_HELD_THRESHOLD (5000)
+
 
 #ifdef __cplusplus
 }

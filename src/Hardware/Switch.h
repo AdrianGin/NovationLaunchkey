@@ -20,6 +20,10 @@ uint32_t Switch_CheckForChange(void);
 uint8_t Switch_ReadState(void);
 uint32_t Switch_GetSwitchStates(void);
 
+uint16_t Switch_AddCount(uint8_t index, uint8_t switchMode);
+uint16_t Switch_ResetCount(uint8_t index, uint8_t switchMode);
+uint16_t Switch_SubtractCount(uint8_t index);
+
 
 #ifdef __cplusplus
 }

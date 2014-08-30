@@ -53,129 +53,132 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 	SwitchEvent_t* swEvent = input->input.sw;
 
 	//Only process on key release.
-	if (swEvent->value == 1)
+	if (swEvent->value == SWITCH_ON )
 	{
 		return !MM_INPUT_WAS_PROCESSED;
 	}
 	//GlobEvents_ProcessButton(, swEvent->value);
 
-	switch (swEvent->index)
+	if( swEvent->value == SWITCH_OFF )
 	{
-		case SW_TRACK_LEFT:
-			if (IM_GetButtonState(SW_TRACK_RIGHT))
-			{
-
-				if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+		switch (swEvent->index)
+		{
+			case SW_TRACK_LEFT:
+				if (IM_GetButtonState(SW_TRACK_RIGHT))
 				{
-					Global_MIDIChannelFlag = VARIABLE_DECREASING;
+
+					if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+					{
+						Global_MIDIChannelFlag = VARIABLE_DECREASING;
+					}
+
+					if( Global_MIDIChannelFlag == VARIABLE_DECREASING )
+					{
+						AppGlobal_SetMIDIChannel( AppGlobal_GetMIDIChannel() - 1);
+						DispMan_Print7SegInt( AppGlobal_GetMIDIChannel() + 1 , 0);
+					}
+				}
+				else
+				{
+					if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+					{
+						MM_PrevMode(&GlobalStateMachine);
+						DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 0);
+					}
 				}
 
-				if( Global_MIDIChannelFlag == VARIABLE_DECREASING )
+
+				break;
+
+			case SW_TRACK_RIGHT:
+				if (IM_GetButtonState(SW_TRACK_LEFT))
 				{
-					AppGlobal_SetMIDIChannel( AppGlobal_GetMIDIChannel() - 1);
-					DispMan_Print7SegInt( AppGlobal_GetMIDIChannel() + 1 , 0);
+
+					if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+					{
+						Global_MIDIChannelFlag = VARIABLE_INCREASING;
+					}
+
+					if( Global_MIDIChannelFlag == VARIABLE_INCREASING )
+					{
+						AppGlobal_SetMIDIChannel( AppGlobal_GetMIDIChannel() + 1);
+						DispMan_Print7SegInt( AppGlobal_GetMIDIChannel() + 1, 0);
+					}
 				}
-			}
-			else
-			{
-				if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+				else
 				{
-					MM_PrevMode(&GlobalStateMachine);
-					DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 0);
+					if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+					{
+						MM_NextMode(&GlobalStateMachine);
+						DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 0);
+					}
 				}
-			}
+				break;
 
-
-			break;
-
-		case SW_TRACK_RIGHT:
-			if (IM_GetButtonState(SW_TRACK_LEFT))
-			{
-
-				if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+			case SW_OCTAVE_DOWN:
+				if (IM_GetButtonState(SW_OCTAVE_UP))
 				{
-					Global_MIDIChannelFlag = VARIABLE_INCREASING;
+					if( Global_TransposeFlag == VARIABLE_INACTIVE )
+					{
+						Global_TransposeFlag = VARIABLE_DECREASING;
+					}
+
+					if( Global_TransposeFlag == VARIABLE_DECREASING )
+					{
+						KB_SetTranspose(KB_GetCurrentTranspose() - 1);
+						DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
+					}
+
 				}
+				else
+				{
+					if (Global_TransposeFlag == VARIABLE_INACTIVE)
+					{
+						KB_SetOctave(KB_GetCurrentOctave() - 1);
+						DispMan_Print7SegInt(KB_GetCurrentOctave(), 0);
 
-				if( Global_MIDIChannelFlag == VARIABLE_INCREASING )
-				{
-					AppGlobal_SetMIDIChannel( AppGlobal_GetMIDIChannel() + 1);
-					DispMan_Print7SegInt( AppGlobal_GetMIDIChannel() + 1, 0);
-				}
-			}
-			else
-			{
-				if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
-				{
-					MM_NextMode(&GlobalStateMachine);
-					DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 0);
-				}
-			}
-			break;
-
-		case SW_OCTAVE_DOWN:
-			if (IM_GetButtonState(SW_OCTAVE_UP))
-			{
-				if( Global_TransposeFlag == VARIABLE_INACTIVE )
-				{
-					Global_TransposeFlag = VARIABLE_DECREASING;
-				}
-
-				if( Global_TransposeFlag == VARIABLE_DECREASING )
-				{
-					KB_SetTranspose(KB_GetCurrentTranspose() - 1);
-					DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
+						//DispMan_Print7Seg(abs(KB_GetCurrentOctave()), 0);
+					}
 				}
 
-			}
-			else
-			{
-				if (Global_TransposeFlag == VARIABLE_INACTIVE)
+				break;
+
+			case SW_OCTAVE_UP:
+				if (IM_GetButtonState(SW_OCTAVE_DOWN))
 				{
-					KB_SetOctave(KB_GetCurrentOctave() - 1);
-					DispMan_Print7SegInt(KB_GetCurrentOctave(), 0);
+					if( Global_TransposeFlag == VARIABLE_INACTIVE )
+					{
+						Global_TransposeFlag = VARIABLE_INCREASING;
+					}
 
-					//DispMan_Print7Seg(abs(KB_GetCurrentOctave()), 0);
+					if( Global_TransposeFlag == VARIABLE_INCREASING )
+					{
+						KB_SetTranspose(KB_GetCurrentTranspose() + 1);
+						DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
+					}
 				}
-			}
-
-			break;
-
-		case SW_OCTAVE_UP:
-			if (IM_GetButtonState(SW_OCTAVE_DOWN))
-			{
-				if( Global_TransposeFlag == VARIABLE_INACTIVE )
+				else
 				{
-					Global_TransposeFlag = VARIABLE_INCREASING;
+					if (Global_TransposeFlag == VARIABLE_INACTIVE)
+					{
+						KB_SetOctave(KB_GetCurrentOctave() + 1);
+						DispMan_Print7SegInt(KB_GetCurrentOctave(), 0);
+					}
 				}
 
-				if( Global_TransposeFlag == VARIABLE_INCREASING )
-				{
-					KB_SetTranspose(KB_GetCurrentTranspose() + 1);
-					DispMan_Print7SegInt(KB_GetCurrentTranspose(), 0);
-				}
-			}
-			else
-			{
-				if (Global_TransposeFlag == VARIABLE_INACTIVE)
-				{
-					KB_SetOctave(KB_GetCurrentOctave() + 1);
-					DispMan_Print7SegInt(KB_GetCurrentOctave(), 0);
-				}
-			}
+				break;
 
-			break;
-
-		default:
-			break;
+			default:
+				break;
+		}
 	}
 
-	if ((IM_GetButtonState(SW_OCTAVE_UP) == 0) && IM_GetButtonState(SW_OCTAVE_DOWN) == 0)
+	if ((IM_GetButtonState(SW_OCTAVE_UP) == SWITCH_OFF ) && IM_GetButtonState(SW_OCTAVE_DOWN) == SWITCH_OFF)
 	{
 		Global_TransposeFlag = VARIABLE_INACTIVE;
 	}
 
-	if ((IM_GetButtonState(SW_TRACK_RIGHT) == 0) && IM_GetButtonState(SW_TRACK_LEFT) == 0)
+	if ((IM_GetButtonState(SW_TRACK_RIGHT) == SWITCH_OFF) && IM_GetButtonState(SW_TRACK_LEFT) == SWITCH_OFF)
 	{
 		Global_MIDIChannelFlag = VARIABLE_INACTIVE;
 	}

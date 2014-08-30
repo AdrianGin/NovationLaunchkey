@@ -3,8 +3,6 @@
 #include "Switch.h"
 #include "MultiplexControl.h"
 
-
-
 const uint8_t SWITCH_LOOKUP[] = 
 {
 	SW_MUTE_3,
@@ -42,6 +40,13 @@ const uint8_t SWITCH_LOOKUP[] =
 
 volatile uint32_t SwitchRawStates = 0;
 
+
+#define SWITCH_MODES 	(2) //for on/off
+#define SWITCH_DEBOUNCE_MAX (0xFFFF)
+uint16_t SwitchDebounce_Counters[SWITCH_MODES][SW_COUNT];
+
+
+
 void Switch_GPIO_Init(void)
 {
 	DrvGPIO_Open(SWITCH_INPUT_PORT, SWITCH_INPUT0_PIN, E_IO_INPUT);
@@ -62,6 +67,10 @@ uint32_t Switch_GetSwitchStates(void)
 {
 	return SwitchRawStates;
 }
+
+
+
+
 
 uint32_t Switch_CheckForChange(void)
 {
@@ -111,3 +120,33 @@ uint8_t Switch_GetState(uint8_t index)
 	}
 	return ((SwitchRawStates & (1<<index)) != 0);
 }
+
+
+
+//Used for switch debouncing.
+uint16_t Switch_AddCount(uint8_t index, uint8_t switchMode)
+{
+
+	if( (index < SW_COUNT) && (switchMode < SWITCH_MODES) )
+	{
+		if( SwitchDebounce_Counters[switchMode][index] < SWITCH_DEBOUNCE_MAX)
+		{
+			SwitchDebounce_Counters[switchMode][index]++;
+		}
+		return SwitchDebounce_Counters[switchMode][index];
+	}
+	return 0;
+}
+
+
+uint16_t Switch_ResetCount(uint8_t index, uint8_t switchMode)
+{
+
+	if( (index < SW_COUNT) && (switchMode < SWITCH_MODES) )
+	{
+		SwitchDebounce_Counters[switchMode][index] = 0;
+		return SwitchDebounce_Counters[switchMode][index];
+	}
+	return 0;
+}
+

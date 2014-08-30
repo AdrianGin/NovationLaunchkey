@@ -44,6 +44,7 @@ typedef enum {
 	SC_ADC,
 	SC_UPDATE_DISPLAY,
 	SC_PITCHBEND_DEBOUNCE,
+	SC_SWITCH_READ,
    TIMER2_COUNT 
    
 } timer2Ids;
@@ -68,6 +69,7 @@ void Callback_ADC_Handle(void);
 void Callback_ColumnMux(void);
 void Callback_Switch_Read(void);
 void Callback_PitchBendDebounce(void);
+void Callback_SwitchRead(void);
 
 
 #ifdef __cplusplus
