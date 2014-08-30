@@ -29,8 +29,8 @@
 #include "TimerCallbacks.h"
 
 ADC_CentreDetent_t PitchBendDetent = {
-		.centre = 128,
-		.threshold = 4,
+		.centre = 125,
+		.threshold = 1,
 		.virtualCentreValue = 0x40 << 1,
 		.debounceIsActive = 0,
 };
@@ -45,7 +45,7 @@ uint8_t CentreDetent_ApplyFilter(ADC_CentreDetent_t* filter, uint8_t value)
 	uint16_t botThreshold = filter->centre - filter->threshold;
 
 	uint16_t grad;
-	uint16_t offset;
+	int16_t offset;
 	uint16_t newVal;
 
 	if ((value <= topThreshold) && (value >= botThreshold))
@@ -63,7 +63,7 @@ uint8_t CentreDetent_ApplyFilter(ADC_CentreDetent_t* filter, uint8_t value)
 		{
 			grad = ((MAX_RANGE - filter->virtualCentreValue) * CENTRE_DETENT_MULT_FACTOR) / (MAX_RANGE - topThreshold);
 			offset = (topThreshold * grad) - (filter->virtualCentreValue * CENTRE_DETENT_MULT_FACTOR);
-			newVal = ((grad * value) - offset) / (CENTRE_DETENT_MULT_FACTOR) + 1;
+			newVal = (((grad * value) - offset) / (CENTRE_DETENT_MULT_FACTOR)) + 1;
 		}
 	}
 	return newVal;

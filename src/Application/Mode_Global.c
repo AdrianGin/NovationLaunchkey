@@ -161,10 +161,11 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 	if( (adcEvent->index == ADC_PITCHBEND) || (adcEvent->index == ADC_MODULATION) )
 	{
 		Global_HandleADC(adcEvent);
+		DispMan_Print7Seg(adcEvent->value, 0);
 		return MM_INPUT_WAS_PROCESSED;
 	}
 
-	DispMan_Print7Seg(adcEvent->value, 0);
+	//DispMan_Print7Seg(adcEvent->value, 0);
 	return !MM_INPUT_WAS_PROCESSED;
 }
 

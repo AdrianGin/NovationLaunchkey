@@ -78,7 +78,7 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 			{
 				if( (CentreDetent_Compare2Values(&PitchBendDetent, oldValue, value) != CD_NO_ZERO_CROSS) )
 				{
-					CentreDetent_SetDebounceState(&PitchBendDetent, CD_DEBOUNCE_ENABLED);
+					//CentreDetent_SetDebounceState(&PitchBendDetent, CD_DEBOUNCE_ENABLED);
 				}
 				Global_ADCOutputMIDI(&msg, GL_PITCHBEND_INDEX);
 			}
