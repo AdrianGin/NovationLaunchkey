@@ -12,15 +12,6 @@ extern "C" {
 #define MM_EXIT_MODE (0xFF)
 #define MM_INPUT_WAS_PROCESSED (0x01)
 
-typedef enum
-{
-	MM_MAIN = 0,
-	MM_MODIFY_OCTAVE,
-	MM_MODIFY_TRANSPOSE,
-	MM_STATE_COUNT,
-} MM_STATES;
-
-
 
 
 typedef struct
@@ -45,16 +36,19 @@ typedef struct
 {
 	uint8_t currentState;
 	uint8_t nextInput;
+	uint8_t stateCount;
 	MM_States_t** stateMap;
 
 } StateMachine_t;
 
 
-extern StateMachine_t CurrentMode;
+extern StateMachine_t GlobalStateMachine;
 
 uint8_t MM_ApplyInput(StateMachine_t* mode, MM_Input_t* input);
-
-
+void MM_SetMode(StateMachine_t* sm, uint8_t newMode);
+uint8_t MM_GetMode(StateMachine_t* sm);
+uint8_t MM_NextMode(StateMachine_t* sm);
+uint8_t MM_PrevMode(StateMachine_t* sm);
 
 #ifdef __cplusplus
 }

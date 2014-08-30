@@ -32,6 +32,19 @@ enum {
 	VARIABLE_DECREASING,
 } eVariableDirectionFlag;
 
+
+StateMachine_t GlobalStateMachine =
+{
+	.currentState = MM_CONTROLLER,
+	//.stateMap = (MM_States_t**) &AppStates,
+	.stateCount = MM_MODE_COUNT,
+};
+
+const uint8_t ControllerMode_String[] = "Con";
+const uint8_t RemapMode_String[] = "Rem";
+const uint8_t SequencerMode_String[] = "Seq";
+const uint8_t* ModeStrings[] = {ControllerMode_String, RemapMode_String, SequencerMode_String};
+
 static uint8_t Global_TransposeFlag = VARIABLE_INACTIVE;
 static uint8_t Global_MIDIChannelFlag = VARIABLE_INACTIVE;
 
@@ -63,6 +76,14 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 					DispMan_Print7SegInt( AppGlobal_GetMIDIChannel() + 1 , 0);
 				}
 			}
+			else
+			{
+				if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+				{
+					MM_PrevMode(&GlobalStateMachine);
+					DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 0);
+				}
+			}
 
 
 			break;
@@ -80,6 +101,14 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 				{
 					AppGlobal_SetMIDIChannel( AppGlobal_GetMIDIChannel() + 1);
 					DispMan_Print7SegInt( AppGlobal_GetMIDIChannel() + 1, 0);
+				}
+			}
+			else
+			{
+				if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
+				{
+					MM_NextMode(&GlobalStateMachine);
+					DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 0);
 				}
 			}
 			break;
@@ -101,7 +130,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 			}
 			else
 			{
-				if (Global_TransposeFlag == 0)
+				if (Global_TransposeFlag == VARIABLE_INACTIVE)
 				{
 					KB_SetOctave(KB_GetCurrentOctave() - 1);
 					DispMan_Print7SegInt(KB_GetCurrentOctave(), 0);
@@ -128,7 +157,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 			}
 			else
 			{
-				if (Global_TransposeFlag == 0)
+				if (Global_TransposeFlag == VARIABLE_INACTIVE)
 				{
 					KB_SetOctave(KB_GetCurrentOctave() + 1);
 					DispMan_Print7SegInt(KB_GetCurrentOctave(), 0);

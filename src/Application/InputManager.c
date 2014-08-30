@@ -49,7 +49,7 @@ void IM_HandleSwitchInput(SwitchEvent_t* input)
 		IM_ClearButtonState(tmp.input.sw->index);
 	}
 
-	MM_ApplyInput(&CurrentMode, &tmp);
+	MM_ApplyInput(&GlobalStateMachine, &tmp);
 }
 
 void IM_HandleKBInput(KeyboardEvent_t* input)
@@ -57,7 +57,7 @@ void IM_HandleKBInput(KeyboardEvent_t* input)
 	MM_Input_t tmp;
 	tmp.class = eKEYBOARD_INPUT;
 	tmp.input.kb = input;
-	MM_ApplyInput(&CurrentMode, &tmp);
+	MM_ApplyInput(&GlobalStateMachine, &tmp);
 }
 
 
@@ -66,7 +66,7 @@ void IM_HandleADCInput(ADCEvent_t* input)
 	MM_Input_t tmp;
 	tmp.class = eADC_INPUT;
 	tmp.input.adc = input;
-	MM_ApplyInput(&CurrentMode, &tmp);
+	MM_ApplyInput(&GlobalStateMachine, &tmp);
 }
 
 
@@ -75,7 +75,7 @@ void IM_HandleMIDIInput(MIDIMsg_t* input)
 	MM_Input_t tmp;
 	tmp.class = eMIDI_INPUT;
 	tmp.input.midi = input;
-	MM_ApplyInput(&CurrentMode, &tmp);
+	MM_ApplyInput(&GlobalStateMachine, &tmp);
 }
 
 

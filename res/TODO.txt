@@ -1,4 +1,7 @@
 TODO:
+Implement Modes (controller / remap / sequencer)
+
+
 Presets for Controller Mode
 Preset Format for each of the 8 templates.
 ReMap Mode
