@@ -82,6 +82,7 @@ void LED_7Segment_WriteChar(uint8_t index, uint8_t ch)
 
 	if (isdigit(ch))
 	{
+
 		ch = ch - '0';
 		LED_7SegmentWriteCode(index, (uint16_t*) LED_7SEG_DIGITS[ch]);
 	}
@@ -103,7 +104,7 @@ void LED_7Segment_WriteChar(uint8_t index, uint8_t ch)
 				{
 					if (LED_7SEG_CHARS[ch])
 					{
-						LED_7SegmentWriteCode(index, (uint16_t*) LED_7SEG_CHARS[ch]);
+						LED_7SegmentWriteCode(index, (uint16_t*)LED_7SEG_CHARS[ch]);
 					}
 				}
 				else

@@ -42,13 +42,6 @@ typedef enum
 
 typedef struct
 {
-	union {
-		uint8_t SWITCHSTATE;
-		struct {
-			uint32_t	MK	:1;
-			uint32_t	BR	:1;
-		} SS;
-	};
 	uint8_t  keyState;
 	uint16_t timer;
 } Keyboard_KeyInformation_t;

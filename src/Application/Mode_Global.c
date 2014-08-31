@@ -83,7 +83,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 					if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
 					{
 						MM_PrevMode(&GlobalStateMachine);
-						DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 0);
+						DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 200);
 					}
 				}
 
@@ -110,7 +110,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 					if( Global_MIDIChannelFlag == VARIABLE_INACTIVE )
 					{
 						MM_NextMode(&GlobalStateMachine);
-						DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 0);
+						DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 200);
 					}
 				}
 				break;

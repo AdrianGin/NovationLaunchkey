@@ -24,7 +24,7 @@ S_DRVUSB_EP_CTRL sEpDescription[] =
 };
 
 /* bus event call back */
-S_DRVUSB_EVENT_PROCESS g_sBusOps[6] =
+const S_DRVUSB_EVENT_PROCESS g_sBusOps[6] =
 {
 	{NULL, NULL},                               /* attach event callback */
 	{NULL, NULL},                               /* detach event callback */
@@ -35,7 +35,7 @@ S_DRVUSB_EVENT_PROCESS g_sBusOps[6] =
 };
 
 /* USB event call back */
-S_DRVUSB_EVENT_PROCESS g_sUsbOps[12] =
+const S_DRVUSB_EVENT_PROCESS g_sUsbOps[12] =
 {
 	{DrvUSB_CtrlDataInAck   , &USBAudio_Device},/* ctrl pipe0 (EP address 0) In ACK callback */
 	{DrvUSB_CtrlDataOutAck  , &USBAudio_Device},/* ctrl pipe0 (EP address 0) Out ACK callback */
@@ -54,17 +54,17 @@ S_DRVUSB_EVENT_PROCESS g_sUsbOps[12] =
 /*ctrl pipe call back.                                                                  */
 /*it will be call by DrvUSB_CtrlSetupAck, DrvUSB_CtrlDataInAck and DrvUSB_CtrlDataOutAck*/
 /*if in ack handler and out ack handler is 0, default handler will be called            */
-S_DRVUSB_CTRL_CALLBACK_ENTRY g_asCtrlCallbackEntry[] =
+const S_DRVUSB_CTRL_CALLBACK_ENTRY g_asCtrlCallbackEntry[] =
 {   //request type,command     ,setup ack handler         , in ack handler      ,out ack handler,  parameter
-	{REQ_STANDARD, SET_ADDRESS, DrvUSB_CtrlSetupSetAddress, DrvUSB_CtrlDataInSetAddress, 0, &USBAudio_Device},
-	{REQ_STANDARD, CLEAR_FEATURE, DrvUSB_CtrlSetupClearSetFeature, 0, 0, &USBAudio_Device},
-	{REQ_STANDARD, SET_FEATURE, DrvUSB_CtrlSetupClearSetFeature, 0, 0, &USBAudio_Device},
-	{REQ_STANDARD, GET_CONFIGURATION, DrvUSB_CtrlSetupGetConfiguration, 0, 0, &USBAudio_Device},
-	{REQ_STANDARD, GET_STATUS, DrvUSB_CtrlSetupGetStatus, 0, 0, &USBAudio_Device},
-	{REQ_STANDARD, GET_INTERFACE, DrvUSB_CtrlSetupGetInterface, 0, 0, &USBAudio_Device},
-	{REQ_STANDARD, SET_INTERFACE, DrvUSB_CtrlSetupSetInterface, 0, 0, &USBAudio_Device},
-	{REQ_STANDARD, GET_DESCRIPTOR, USBAudio_CtrlSetupGetDescriptor, USBAudio_CtrlGetDescriptorIn, 0/*HID_CtrlGetDescriptorOut*/, &USBAudio_Device},
-	{REQ_STANDARD, SET_CONFIGURATION, USBAudio_CtrlSetupSetConfiguration, 0, 0, &USBAudio_Device},
+	{REQ_STANDARD, SET_ADDRESS, DrvUSB_CtrlSetupSetAddress, DrvUSB_CtrlDataInSetAddress, DrvUSB_CtrlDataOutDefault, &USBAudio_Device},
+	{REQ_STANDARD, CLEAR_FEATURE, DrvUSB_CtrlSetupClearSetFeature, DrvUSB_CtrlDataInDefault, DrvUSB_CtrlDataOutDefault, &USBAudio_Device},
+	{REQ_STANDARD, SET_FEATURE, DrvUSB_CtrlSetupClearSetFeature, DrvUSB_CtrlDataInDefault, DrvUSB_CtrlDataOutDefault, &USBAudio_Device},
+	{REQ_STANDARD, GET_CONFIGURATION, DrvUSB_CtrlSetupGetConfiguration, DrvUSB_CtrlDataInDefault, DrvUSB_CtrlDataOutDefault, &USBAudio_Device},
+	{REQ_STANDARD, GET_STATUS, DrvUSB_CtrlSetupGetStatus, DrvUSB_CtrlDataInDefault, DrvUSB_CtrlDataOutDefault, &USBAudio_Device},
+	{REQ_STANDARD, GET_INTERFACE, DrvUSB_CtrlSetupGetInterface, DrvUSB_CtrlDataInDefault, DrvUSB_CtrlDataOutDefault, &USBAudio_Device},
+	{REQ_STANDARD, SET_INTERFACE, DrvUSB_CtrlSetupSetInterface, DrvUSB_CtrlDataInDefault, DrvUSB_CtrlDataOutDefault, &USBAudio_Device},
+	{REQ_STANDARD, GET_DESCRIPTOR, USBAudio_CtrlSetupGetDescriptor, USBAudio_CtrlGetDescriptorIn, DrvUSB_CtrlDataOutDefault/*HID_CtrlGetDescriptorOut*/, &USBAudio_Device},
+	{REQ_STANDARD, SET_CONFIGURATION, USBAudio_CtrlSetupSetConfiguration, DrvUSB_CtrlDataInDefault, DrvUSB_CtrlDataOutDefault, &USBAudio_Device},
 };
 
 
@@ -101,7 +101,7 @@ int32_t USBAudio_Open(void)
 
 	USBAudio_Device.device = (void *)DrvUSB_InstallClassDevice(&USBClass);
 
-	i32Ret = DrvUSB_InstallCtrlHandler(USBAudio_Device.device, g_asCtrlCallbackEntry,
+	i32Ret = DrvUSB_InstallCtrlHandler(USBAudio_Device.device, (S_DRVUSB_CTRL_CALLBACK_ENTRY*) g_asCtrlCallbackEntry,
 					sizeof(g_asCtrlCallbackEntry) / sizeof(g_asCtrlCallbackEntry[0]));
 
 	/* Enable USB-related interrupts. */

@@ -457,9 +457,9 @@ typedef struct
 /* EP ctrl structure;descript EP */
 extern S_DRVUSB_EP_CTRL sEpDescription[];
 /* BUS event call back function; USB class must implement */
-extern S_DRVUSB_EVENT_PROCESS g_sBusOps[];
+extern const S_DRVUSB_EVENT_PROCESS g_sBusOps[];
 /* USB event call back function; USB class must implement */
-extern S_DRVUSB_EVENT_PROCESS g_sUsbOps[];
+extern const S_DRVUSB_EVENT_PROCESS g_sUsbOps[];
 extern uint32_t CFG_EP_SETTING[6];  /* CFGx register setting value */
 extern PFN_DRVUSB_INTCALLBACK g_FnIntCallBack;  /* Interrupt call back  */
 extern S_DRVUSB_DEVICE gsUsbDevice;
