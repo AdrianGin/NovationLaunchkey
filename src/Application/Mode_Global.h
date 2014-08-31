@@ -26,7 +26,8 @@ typedef enum
 
 
 
-uint8_t Global_Mode(MM_Input_t* input);
+uint8_t ModeGlobal_HandleInput(MM_Input_t* input);
+
 
 
 #ifdef __cplusplus

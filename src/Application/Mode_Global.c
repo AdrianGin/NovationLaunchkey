@@ -43,7 +43,7 @@ StateMachine_t GlobalStateMachine =
 const uint8_t ControllerMode_String[] = "Con";
 const uint8_t RemapMode_String[] = "Rem";
 const uint8_t SequencerMode_String[] = "Seq";
-const uint8_t* ModeStrings[] = {ControllerMode_String, RemapMode_String, SequencerMode_String};
+const uint8_t* const ModeStrings[] = {ControllerMode_String, RemapMode_String, SequencerMode_String};
 
 static uint8_t Global_TransposeFlag = VARIABLE_INACTIVE;
 static uint8_t Global_MIDIChannelFlag = VARIABLE_INACTIVE;
@@ -51,7 +51,7 @@ static uint8_t Global_MIDIChannelFlag = VARIABLE_INACTIVE;
 static uint8_t handle_SWInput(MM_Input_t* input)
 {
 	SwitchEvent_t* swEvent = input->input.sw;
-
+	uint8_t inputWasProcessed = !MM_INPUT_WAS_PROCESSED;
 	//Only process on key release.
 	if (swEvent->value == SWITCH_ON )
 	{
@@ -86,7 +86,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 						DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 200);
 					}
 				}
-
+				inputWasProcessed = MM_INPUT_WAS_PROCESSED;
 
 				break;
 
@@ -113,6 +113,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 						DispMan_Print7SegAlpha( (uint8_t*)ModeStrings[MM_GetMode(&GlobalStateMachine)] , 200);
 					}
 				}
+				inputWasProcessed = MM_INPUT_WAS_PROCESSED;
 				break;
 
 			case SW_OCTAVE_DOWN:
@@ -140,7 +141,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 						//DispMan_Print7Seg(abs(KB_GetCurrentOctave()), 0);
 					}
 				}
-
+				inputWasProcessed = MM_INPUT_WAS_PROCESSED;
 				break;
 
 			case SW_OCTAVE_UP:
@@ -165,7 +166,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 						DispMan_Print7SegInt(KB_GetCurrentOctave(), 0);
 					}
 				}
-
+				inputWasProcessed = MM_INPUT_WAS_PROCESSED;
 				break;
 
 			default:
@@ -183,7 +184,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 		Global_MIDIChannelFlag = VARIABLE_INACTIVE;
 	}
 
-	return MM_INPUT_WAS_PROCESSED;
+	return inputWasProcessed;
 }
 
 static uint8_t handle_ADCInput(MM_Input_t* input)
@@ -216,7 +217,7 @@ static uint8_t handle_MIDIInput(MM_Input_t* input)
 	return MM_INPUT_WAS_PROCESSED;
 }
 
-uint8_t Global_Mode(MM_Input_t* input)
+uint8_t ModeGlobal_HandleInput(MM_Input_t* input)
 {
 	uint8_t ret = 0;
 

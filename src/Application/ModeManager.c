@@ -7,7 +7,7 @@
 #include "Mode_OctaveTranspose.h"
 #include "Mode_Global.h"
 
-
+#include "Mode_Remap.h"
 
 void MM_SetMode(StateMachine_t* sm, uint8_t newMode)
 {
@@ -49,13 +49,37 @@ uint8_t MM_GetMode(StateMachine_t* sm)
 uint8_t MM_ApplyInput(StateMachine_t* sm, MM_Input_t* input)
 {
 	//Process Global events first
-	if (Global_Mode(input) == MM_INPUT_WAS_PROCESSED)
+	if (ModeGlobal_HandleInput(input) == MM_INPUT_WAS_PROCESSED)
 	{
 
 	}
 	else
 	{
+		switch( sm->currentState )
+		{
 
+			case MM_CONTROLLER:
+			{
+				break;
+			}
+
+			case MM_REMAP:
+			{
+				ModeRemap_HandleInput(input);
+				break;
+			}
+
+			case MM_SEQUENCER:
+			{
+				break;
+			}
+
+
+			default:
+			{
+				break;
+			}
+		}
 	}
 
 	return 0;
