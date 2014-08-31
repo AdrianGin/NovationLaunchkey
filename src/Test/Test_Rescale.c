@@ -57,6 +57,8 @@ static const Rescale_t TEST_ARRAY15 = {127, 255, 127, 64};
 //Zero Output
 static const Rescale_t TEST_ARRAY16 = {0, 255, 0, 0};
 
+//Compression
+static const Rescale_t TEST_ARRAY17 = {0, 255, 64, 127};
 
 // y = Ax + B
 // Formula on Calculator goes: (Val-xMin)/(xRange) * (yRange)
@@ -211,6 +213,11 @@ static RescaleTestElement_t TestCases[] =
 		{179, 1, 	&TEST_ARRAY16, 0},
 		{180, 1, 	&TEST_ARRAY16, 0},
 		{191, 1, 	&TEST_ARRAY16, 0},
+
+		{0,   1, 	&TEST_ARRAY17, 64},
+		{1,   1, 	&TEST_ARRAY17, 64},
+		{255, 1, 	&TEST_ARRAY17, 127},
+		{127, 1, 	&TEST_ARRAY17, 95},
 
 };
 

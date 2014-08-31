@@ -13,7 +13,9 @@ ADC_CentreDetent_t PitchBendDetent =
 };
 
 
-const ControlSurfaceMap_t ADCMap[POT_COUNT+FADER_COUNT+MUTE_SOLO_COUNT] =
+ControlSurfaceMap_t LoadedADCMap[POT_COUNT+FADER_COUNT];
+
+const ControlSurfaceMap_t DefaultADCMap[POT_COUNT+FADER_COUNT] =
 {
 	{
 		.statusBytes 	= MIDI_CONTROL_CHANGE,
@@ -21,13 +23,10 @@ const ControlSurfaceMap_t ADCMap[POT_COUNT+FADER_COUNT+MUTE_SOLO_COUNT] =
 		.min			= 0,
 		.max			= MIDI_MAX_DATA,
 	},
-
-
-
-
-
 };
 
+
+ControlSurfaceMap_t** CurrentADCMap = (ControlSurfaceMap_t**)&DefaultADCMap[0];
 
 const Rescale_t Rescale_ModWheel =
 {
@@ -36,6 +35,15 @@ const Rescale_t Rescale_ModWheel =
 
 	.yMin = 0,
 	.yMax = 127, };
+
+
+
+
+
+
+
+
+
 
 
 

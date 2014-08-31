@@ -5,7 +5,9 @@
 extern "C" {
 #endif
 
-
+#define POT_COUNT 		(8)
+#define FADER_COUNT 	(9)
+#define MUTE_SOLO_COUNT (9)
 
 #include "ControlSurfaceMap.h"
 #include "ADC_CentreDetent.h"
@@ -14,10 +16,10 @@ extern "C" {
 
 
 extern ADC_CentreDetent_t PitchBendDetent;
-extern const ControlSurfaceMap_t ADCMap[];
+extern const ControlSurfaceMap_t DefaultADCMap[];
 extern const Rescale_t Rescale_ModWheel;
-
-
+extern ControlSurfaceMap_t** CurrentADCMap;
+extern ControlSurfaceMap_t LoadedADCMap[];
 
 #ifdef __cplusplus
 }

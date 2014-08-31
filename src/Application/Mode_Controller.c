@@ -11,9 +11,17 @@
 #include "App_MIDI.h"
 #include "DisplayManager.h"
 
+#include "HAL_Switch.h"
+
 static uint8_t handle_SWInput(MM_Input_t* input)
 {
-
+	uint8_t index = input->input.sw->index;
+	//Select which profile to use.
+	if( (index >= SW_MUTE_0)  && (index <= SW_MUTE_8) )
+	{
+		CurrentADCMap = (ControlSurfaceMap_t**)&LoadedADCMap[0];
+		DispMan_Print7Seg( (index-SW_MUTE_0) + 1, 0);
+	}
 	return 0;
 }
 
@@ -21,7 +29,7 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 {
 	MIDIMsg_t msg;
 
-	if( ControlMap_TransformADCInput( (const ControlSurfaceMap_t** const)&ADCMap[0], input->input.adc, &msg) )
+	if( ControlMap_TransformADCInput( CurrentADCMap, input->input.adc, &msg) )
 	{
 		AppMIDI_ADCOutputMIDI(&msg, input->input.adc->index);
 		DispMan_Print7Seg(msg.data2, 0);

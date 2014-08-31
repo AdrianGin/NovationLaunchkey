@@ -12,9 +12,15 @@ extern "C" {
 #include "ADCEvents.h"
 
 
-#define POT_COUNT 		(8)
-#define FADER_COUNT 	(9)
-#define MUTE_SOLO_COUNT (9)
+
+typedef enum
+{
+	CM_STATUSBYTE = 0,
+	CM_CONTROLVAL,
+	CM_MIN,
+	CM_MAX,
+	CM_VARIABLE_COUNT,
+} eCM_Parameters;
 
 typedef struct
 {
@@ -25,7 +31,7 @@ typedef struct
 } ControlSurfaceMap_t;
 
 uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCEvent_t* event, MIDIMsg_t* msg);
-
+uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, ADCEvent_t* event);
 
 
 #ifdef __cplusplus
