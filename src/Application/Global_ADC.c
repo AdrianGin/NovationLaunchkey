@@ -27,26 +27,11 @@
 
 #include "Global_ADC.h"
 #include "TimerCallbacks.h"
-#include "ADC_CentreDetent.h"
+#include "App_Data.h"
 #include "Rescale.h"
 
-MIDIMsg_t savedEvents[GLOBAL_ADC_HANDLE_COUNT];
-Rescale_t Rescale_ModWheel =
-{
-	.xMax = 250,
-	.xMin = 8,
+#include "App_MIDI.h"
 
-	.yMin = 0,
-	.yMax = 127, };
-
-void Global_ADCOutputMIDI(MIDIMsg_t* msg, uint8_t index)
-{
-	if (memcmp(msg, &savedEvents[index], sizeof(MIDIMsg_t)) != 0)
-	{
-		HAL_MIDI_TxMsg(msg);
-		savedEvents[index] = *msg;
-	}
-}
 
 void Global_HandleADC(ADCEvent_t* adcEvent)
 {
@@ -71,15 +56,18 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 		//is too long
 		if ((PitchBendDetent.debounceIsActive == CD_DEBOUNCE_DISABLED))
 		{
-			uint8_t oldValue = savedEvents[0].data2 << 1;
+
+			MIDIMsg_t* savedEvent = AppMIDI_GetSavedEvent(ADC_PITCHBEND);
+
+			uint8_t oldValue = savedEvent->data2 << 1;
 			//ensure only changed events are sent out.
-			if (memcmp(&msg, &savedEvents[0], sizeof(MIDIMsg_t)) != 0)
+			if (memcmp(&msg, savedEvent, sizeof(MIDIMsg_t)) != 0)
 			{
 				if ((CentreDetent_Compare2Values(&PitchBendDetent, oldValue, value) != CD_NO_ZERO_CROSS))
 				{
 					//CentreDetent_SetDebounceState(&PitchBendDetent, CD_DEBOUNCE_ENABLED);
 				}
-				Global_ADCOutputMIDI(&msg, GL_PITCHBEND_INDEX);
+				AppMIDI_ADCOutputMIDI(&msg, ADC_PITCHBEND);
 			}
 		}
 		else
@@ -87,7 +75,7 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 			if ((value == PitchBendDetent.virtualCentreValue))
 			{
 				//ensure only changed events are sent out.
-				Global_ADCOutputMIDI(&msg, GL_PITCHBEND_INDEX);
+				AppMIDI_ADCOutputMIDI(&msg, ADC_PITCHBEND);
 			}
 
 		}
@@ -98,10 +86,10 @@ void Global_HandleADC(ADCEvent_t* adcEvent)
 	{
 		msg.status = MIDI_CONTROL_CHANGE | AppGlobal_GetMIDIChannel();
 		msg.data1 = MODULATION_WHEEL;
-		msg.data2 = Rescale_Apply(&Rescale_ModWheel, adcEvent->value);
+		msg.data2 = Rescale_Apply( (Rescale_t*)&Rescale_ModWheel, adcEvent->value);
 
 		//ensure only changed events are sent out.
-		Global_ADCOutputMIDI(&msg, GL_MODULATION_INDEX);
+		AppMIDI_ADCOutputMIDI(&msg, ADC_MODULATION);
 	}
 
 }

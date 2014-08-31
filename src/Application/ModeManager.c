@@ -8,6 +8,7 @@
 #include "Mode_Global.h"
 
 #include "Mode_Remap.h"
+#include "Mode_Controller.h"
 
 void MM_SetMode(StateMachine_t* sm, uint8_t newMode)
 {
@@ -60,6 +61,7 @@ uint8_t MM_ApplyInput(StateMachine_t* sm, MM_Input_t* input)
 
 			case MM_CONTROLLER:
 			{
+				ModeController_HandleInput(input);
 				break;
 			}
 

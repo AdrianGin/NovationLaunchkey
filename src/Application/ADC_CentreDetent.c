@@ -28,13 +28,7 @@
 #include "ADC_CentreDetent.h"
 #include "TimerCallbacks.h"
 
-ADC_CentreDetent_t PitchBendDetent =
-{
-	.centre = 125,
-	.threshold = 1,
-	.virtualCentreValue = 0x40 << 1,
-	.debounceIsActive = 0,
-};
+
 
 const uint16_t CENTRE_DETENT_MULT_FACTOR = 0x100;
 const uint16_t MAX_RANGE = 0x100;

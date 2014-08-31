@@ -26,9 +26,9 @@ THE SOFTWARE.
 #include <stdint.h>
 
 #include "App_MIDI.h"
+#include "HAL_ADC.h"
 
-
-
+static MIDIMsg_t savedEvents[ADC_MODULATION+1];
 
 
 void App_MIDIEvent(MIDIMsg_t* msg)
@@ -38,4 +38,17 @@ void App_MIDIEvent(MIDIMsg_t* msg)
 	USBMIDI_PutByte(msg->data2, 0);
 }
 
+MIDIMsg_t* AppMIDI_GetSavedEvent(uint8_t index)
+{
+	return &savedEvents[index];
+}
 
+
+void AppMIDI_ADCOutputMIDI(MIDIMsg_t* msg, uint8_t index)
+{
+	if (memcmp(msg, &savedEvents[index], sizeof(MIDIMsg_t)) != 0)
+	{
+		HAL_MIDI_TxMsg(msg);
+		savedEvents[index] = *msg;
+	}
+}

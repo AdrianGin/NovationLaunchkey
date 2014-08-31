@@ -60,8 +60,6 @@ enum {
 	CD_ZEROCROSS_DECREASING,
 };
 
-extern ADC_CentreDetent_t PitchBendDetent;
-
 
 uint8_t CentreDetent_ApplyFilter(ADC_CentreDetent_t* filter, uint8_t value);
 void CentreDetent_SetDebounceState(ADC_CentreDetent_t* cd, uint8_t newState);

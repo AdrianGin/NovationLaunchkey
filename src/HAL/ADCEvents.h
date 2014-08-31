@@ -41,6 +41,7 @@ typedef struct
 	uint8_t value;
 } ADCEvent_t;
 
+#define ADC_MAX_VALUE (255)
 
 #define ADC_EVENT_MSG_COUNT (16)
 

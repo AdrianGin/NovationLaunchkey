@@ -36,6 +36,9 @@ extern "C" {
 
 
 void App_MIDIEvent(MIDIMsg_t* msg);
+MIDIMsg_t* AppMIDI_GetSavedEvent(uint8_t index);
+void AppMIDI_ADCOutputMIDI(MIDIMsg_t* msg, uint8_t index);
+
 
 #ifdef __cplusplus
 }

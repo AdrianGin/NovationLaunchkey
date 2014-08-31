@@ -54,7 +54,8 @@ static const Rescale_t TEST_ARRAY14 = {127, 255, 255, 0};
 //Negative Expanded Gradient + Offset (input offset)
 static const Rescale_t TEST_ARRAY15 = {127, 255, 127, 64};
 
-
+//Zero Output
+static const Rescale_t TEST_ARRAY16 = {0, 255, 0, 0};
 
 
 // y = Ax + B
@@ -198,6 +199,18 @@ static RescaleTestElement_t TestCases[] =
 		{179, 1, 	&TEST_ARRAY15, 101},
 		{180, 1, 	&TEST_ARRAY15, 100},
 		{191, 1, 	&TEST_ARRAY15, 95},
+
+		{0,   1, 	&TEST_ARRAY16, 0},
+		{1,   1, 	&TEST_ARRAY16, 0},
+		{2,   1, 	&TEST_ARRAY16, 0},
+		{3,   1, 	&TEST_ARRAY16, 0},
+		{64,   1, 	&TEST_ARRAY16, 0},
+		{255, 1, 	&TEST_ARRAY16, 0},
+		{127, 1, 	&TEST_ARRAY16, 0},
+		{128, 1, 	&TEST_ARRAY16, 0},
+		{179, 1, 	&TEST_ARRAY16, 0},
+		{180, 1, 	&TEST_ARRAY16, 0},
+		{191, 1, 	&TEST_ARRAY16, 0},
 
 };
 
