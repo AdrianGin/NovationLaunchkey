@@ -46,6 +46,7 @@ THE SOFTWARE.
 volatile SoftTimer_16  SoftTimer1[TIMER1_COUNT] = { {1, 0, 0, Callback_CriticalTimers},};
 
 volatile SoftTimer_16  SoftTimer2[TIMER2_COUNT] = { {25		,0	, 1, Callback_ADC_Handle},
+													{50		,0	, 1, Callback_UpdateADC},
 													{50		,0	, 1, Callback_UpdateDisplay},
 													{1200	,0	, 0, Callback_PitchBendDebounce},  //SC_PITCHBEND_DEBOUNCE}
 													{100	,0	, 1, Callback_SwitchRead}, //SC_SWITCH_READ
@@ -106,29 +107,27 @@ void Callback_SwitchRead(void)
 
 }
 
-void Callback_UpdateDisplay(void)
+void Callback_UpdateADC(void)
 {
 	uint16_t adcSample;
-
 	uint8_t i;
-
 	for(i = 0; i <= ADC_MODULATION; i++)
 	{
 		if( ADC_GetChangeFlag(i) )
 		{
 			adcSample = ADC_GetSample(i);
-
 			ADCEvent_t event;
 			event.index = i;
 			event.value = adcSample;
-
 			GenericEvents_AddEvent( (VoidBuffer_t*)&ADCMsgQueue, (void*)&event);
-
 			ADC_ClearChangeFlag(i);
-
 		}
 	}
+}
 
+
+void Callback_UpdateDisplay(void)
+{
 	DispMan_Poll();
 }
 

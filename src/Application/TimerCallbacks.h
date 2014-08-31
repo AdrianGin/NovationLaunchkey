@@ -42,6 +42,7 @@ typedef enum {
 
 typedef enum {  
 	SC_ADC,
+	SC_UPDATE_ADC,
 	SC_UPDATE_DISPLAY,
 	SC_PITCHBEND_DEBOUNCE,
 	SC_SWITCH_READ,
@@ -64,6 +65,7 @@ extern volatile SoftTimer_16  SoftTimer1[];
 extern volatile SoftTimer_16  SoftTimer2[];
 
 void Callback_CriticalTimers(void);
+void Callback_UpdateADC(void);
 void Callback_UpdateDisplay(void);
 void Callback_ADC_Handle(void);
 void Callback_ColumnMux(void);
