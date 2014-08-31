@@ -12,6 +12,8 @@ extern "C" {
 #include "ADCEvents.h"
 
 
+//Corresponds to moving the MIDI STATUS byte down.
+#define CM_MIDISTATUS_BITSHIFT (4)
 
 typedef enum
 {
@@ -19,12 +21,21 @@ typedef enum
 	CM_CONTROLVAL,
 	CM_MIN,
 	CM_MAX,
+	CM_CHANNEL,
 	CM_VARIABLE_COUNT,
 } eCM_Parameters;
 
 typedef struct
 {
-	uint8_t statusBytes; //includes type and channel
+	//statusBytes is packed such that
+	struct
+	{
+		uint8_t globalMIDIchanFlag : 1;
+		uint8_t midiStatus : 3;
+		uint8_t midiChannel : 4;
+	} statusBytes;
+
+	//uint8_t statusBytes; //includes type and channel
 	uint8_t controlVal;
 	uint8_t min;
 	uint8_t max;

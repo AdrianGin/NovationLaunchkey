@@ -102,6 +102,7 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 
 		case MR_SETCHAN:
 		{
+			param = CM_CHANNEL;
 			break;
 		}
 

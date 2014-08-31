@@ -3,12 +3,8 @@
 #include "MIDICodes.h"
 
 
-
+#include "App_GlobalSettings.h"
 #include "Rescale.h"
-
-
-
-static ControlSurfaceMap_t CurrentMap;
 
 
 
@@ -16,7 +12,6 @@ static ControlSurfaceMap_t CurrentMap;
 
 uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, ADCEvent_t* event)
 {
-	ControlSurfaceMap_t* mapElement;
 	uint8_t index = event->index;
 	//Turns ADC_MAX_VALUE into MIDI_MAX_DATA
 	uint8_t newVal = event->value >> 1;
@@ -40,7 +35,7 @@ uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters pa
 				//Make it channel independent.
 				newVal = Rescale_Apply(&rs, newVal) & MIDI_MSG_TYPE_MASK;
 
-				mapElement->statusBytes = newVal;
+				mapElement->statusBytes.midiStatus = (newVal - MIDI_NOTE_OFF) >> CM_MIDISTATUS_BITSHIFT;
 				break;
 			}
 
@@ -55,6 +50,30 @@ uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters pa
 
 			case CM_MAX:
 				mapElement->max = newVal;
+				break;
+
+			case CM_CHANNEL:
+				rs.xMin = 0;
+				rs.xMax = MIDI_MAX_DATA;
+				rs.yMin = 0;
+				rs.yMax = MIDI_MAX_CHANNELS;
+
+				//Make it channel independent.
+				newVal = Rescale_Apply(&rs, newVal);
+
+				if( newVal == 0)
+				{
+					mapElement->statusBytes.globalMIDIchanFlag = 1;
+					mapElement->statusBytes.midiChannel = newVal;
+				}
+				else
+				{
+					mapElement->statusBytes.globalMIDIchanFlag = 0;
+					mapElement->statusBytes.midiChannel = newVal - 1;
+				}
+
+
+
 				break;
 
 			default:
@@ -83,7 +102,20 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 		uint8_t mapOffset = event->index - ADC_KNOB_0;
 		ControlSurfaceMap_t* mapElement = (ControlSurfaceMap_t*)&map[mapOffset];
 
-		msg->status = mapElement->statusBytes;
+		msg->status = (mapElement->statusBytes.midiStatus << CM_MIDISTATUS_BITSHIFT) + MIDI_NOTE_OFF;
+		if( msg->status == 0 )
+		{
+			msg->status = MIDI_CONTROL_CHANGE;
+		}
+
+		if( mapElement->statusBytes.globalMIDIchanFlag )
+		{
+			msg->status |= AppGlobal_GetMIDIChannel();
+		}
+		else
+		{
+			msg->status |= mapElement->statusBytes.midiChannel;
+		}
 
 		//For uninitialised output map
 		if( mapElement->min == mapElement->max )
@@ -99,15 +131,17 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 
 		scaledVal = Rescale_Apply(&rs, event->value);
 
-		if( msg->status == 0 )
-		{
-			msg->status = MIDI_CONTROL_CHANGE;
-		}
+
 
 		//Note on's are swapped around compared to CCs
 		//As the 'Value' will be used for Velocity.
-		if( ((msg->status & MIDI_MSG_TYPE_MASK) == MIDI_NOTE_OFF) ||
-			((msg->status & MIDI_MSG_TYPE_MASK) == MIDI_NOTE_ON))
+		//Some MIDI messages are single value types too.
+		uint8_t statusByte = msg->status & MIDI_MSG_TYPE_MASK;
+
+		if( ((statusByte) == MIDI_NOTE_OFF) ||
+			((statusByte) == MIDI_NOTE_ON) ||
+			((statusByte) == MIDI_PROGRAM_CHANGE) ||
+			((statusByte == MIDI_CHANNEL_PRESSURE)))
 		{
 			msg->data1 = scaledVal;
 			msg->data2 = mapElement->controlVal;

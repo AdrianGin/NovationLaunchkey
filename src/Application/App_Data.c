@@ -18,7 +18,9 @@ ControlSurfaceMap_t LoadedADCMap[POT_COUNT+FADER_COUNT];
 const ControlSurfaceMap_t DefaultADCMap[POT_COUNT+FADER_COUNT] =
 {
 	{
-		.statusBytes 	= MIDI_CONTROL_CHANGE,
+		.statusBytes.globalMIDIchanFlag = 0,
+		.statusBytes.midiStatus 				= MIDI_CONTROL_CHANGE - MIDI_NOTE_OFF,
+		.statusBytes.midiChannel 			= 0,
 		.controlVal 	= GENERAL_PURPOSE_CONTROLLER_1,
 		.min			= 0,
 		.max			= MIDI_MAX_DATA,

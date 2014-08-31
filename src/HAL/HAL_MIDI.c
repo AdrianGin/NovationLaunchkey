@@ -26,17 +26,34 @@
 
 void HAL_MIDI_TxMsg(MIDIMsg_t* msg)
 {
-	UART_TxByte(msg->status);
-	UART_TxByte(msg->data1);
-	UART_TxByte(msg->data2);
+	uint8_t bytesToSend;
+	uint8_t messageIndex;
 
-	HAL_USB_MIDI_TxMsg(0, msg);
+	uint8_t cableNo = 0;
+
+	messageIndex = LookupMIDIMessage(msg->status);
+	bytesToSend = GetNumberOfBytesToRead(messageIndex);
+
+	UART_TxByte(msg->status);
+	USBMIDI_PutByte(msg->status, cableNo);
+
+	if( bytesToSend > 1)
+	{
+
+		UART_TxByte(msg->data1);
+		USBMIDI_PutByte(msg->data1, cableNo);
+	}
+
+	if( bytesToSend > 2)
+	{
+		UART_TxByte(msg->data2);
+		USBMIDI_PutByte(msg->data2, cableNo);
+	}
+
 }
 
 void HAL_USB_MIDI_TxMsg(uint8_t cableNo, MIDIMsg_t* msg)
 {
-	USBMIDI_PutByte(msg->status, cableNo);
-	USBMIDI_PutByte(msg->data1, cableNo);
-	USBMIDI_PutByte(msg->data2, cableNo);
+
 }
 
