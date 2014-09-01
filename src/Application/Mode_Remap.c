@@ -159,7 +159,15 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 		}
 		else
 		{
-			DispMan_Print7Seg(newVal, 0);
+			if( newVal > MIDI_MAX_DATA )
+			{
+				newVal = newVal - (MIDI_MAX_DATA+1);
+				DispMan_Print7Seg(newVal, 50);
+			}
+			else
+			{
+				DispMan_Print7Seg(newVal, 0);
+			}
 		}
 	}
 

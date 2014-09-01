@@ -42,6 +42,17 @@ uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters pa
 
 			case CM_CONTROLVAL:
 
+				//Have a special Control value to signify that if the Control Value for NRPNs and RPNs are less
+				//than 128, it will affect the Data LSB byte, Control Values between 128-255 will affact the MSB Data Byte
+				if( (mapElement->statusBytes.midiStatus == RT_NRPN) || (mapElement->statusBytes.midiStatus == RT_RPN))
+				{
+					rs.xMin = 0;
+					rs.xMax = ADC_MAX_VALUE;
+					rs.yMin = 0;
+					rs.yMax = ADC_MAX_VALUE;
+					newVal = Rescale_Apply(&rs, event->value);
+				}
+
 				mapElement->controlVal = newVal;
 				break;
 
@@ -109,14 +120,23 @@ void ControlMap_PreparePNMsg(MIDIMsg_t* msg, eCM_PNMsg type, uint8_t channel)
 
 	msg[0].data1 = type+1;
 	msg[1].data1 = type;
-	msg[2].data1 = DATA_ENTRY_MSB;
 }
 
 void ControlMap_PopulatePNMsg(MIDIMsg_t* msg, uint8_t msb, uint8_t lsb, uint8_t data)
 {
-	msg[0].data2 = msb;
 	msg[1].data2 = lsb;
+	if( msb > MIDI_MAX_DATA )
+	{
+		msg[0].data2 = msb - (MIDI_MAX_DATA+1);
+		msg[2].data1 = DATA_ENTRY_MSB;
+	}
+	else
+	{
+		msg[0].data2 = msb;
+		msg[2].data1 = DATA_ENTRY_LSB;
+	}
 	msg[2].data2 = data;
+
 }
 
 
