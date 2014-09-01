@@ -88,6 +88,9 @@ uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters pa
 
 
 //Takes an ADC event, Surface map and populates the passed in MIDI Msg.
+//returns which byte (Data1 or Data2) is largely affected,
+//eg. Note Ons are Note Numbers, PC's are PC, as the value affected
+//is not always Data2.
 uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCEvent_t* event, MIDIMsg_t* msg)
 {
 	uint8_t ret = 0;
@@ -150,6 +153,8 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 		{
 			msg->data1 = scaledVal;
 			msg->data2 = mapElement->controlVal;
+
+			ret = 1;
 		}
 		else
 		{
@@ -159,9 +164,11 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 				msg->data1 = GENERAL_PURPOSE_CONTROLLER_1 + mapOffset;
 			}
 			msg->data2 = (uint8_t)scaledVal;
+
+			ret = 2;
 		}
 
-		ret = 1;
+
 	}
 
 

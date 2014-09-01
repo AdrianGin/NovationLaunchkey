@@ -28,11 +28,22 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 static uint8_t handle_ADCInput(MM_Input_t* input)
 {
 	MIDIMsg_t msg;
+	uint8_t valueToShow;
 
-	if( ControlMap_TransformADCInput( CurrentADCMap, input->input.adc, &msg) )
+	valueToShow = ControlMap_TransformADCInput( CurrentADCMap, input->input.adc, &msg);
+
+	if( valueToShow )
 	{
 		AppMIDI_ADCOutputMIDI(&msg, input->input.adc->index);
-		DispMan_Print7Seg(msg.data2, 0);
+
+		if( valueToShow == 2 )
+		{
+			DispMan_Print7Seg(msg.data2, 0);
+		}
+		else
+		{
+			DispMan_Print7Seg(msg.data1, 0);
+		}
 	}
 
 	return 0;

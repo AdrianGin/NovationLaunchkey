@@ -35,6 +35,25 @@ const uint8_t* const RemapModeStrings[] = {
 	SetVal_String,
 	SetChan_String};
 
+
+const uint8_t TypeNoteOff_String[] = "Off";
+const uint8_t TypeNoteOn_String[] = "On";
+const uint8_t TypeAfterTouch_String[] = "Aft";
+const uint8_t TypeCC_String[] = "CC ";
+const uint8_t TypePC_String[] = "PCh";
+const uint8_t TypeCP_String[] = "ChP";
+
+const uint8_t* const StatusTypeStrings[] = {
+	TypeNoteOff_String,
+	TypeNoteOn_String,
+	TypeAfterTouch_String,
+	TypeCC_String,
+	TypePC_String,
+	TypeCP_String};
+
+
+
+
 static uint8_t RemapMode_State = MR_INVALID;
 
 static uint8_t handle_SWInput(MM_Input_t* input)
@@ -52,7 +71,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 	{
 
 		uint8_t swIndex = swEvent->index;
-		if( (swIndex >= SW_REWIND) && (swIndex <= SW_REC) )
+		if( (swIndex >= SW_REWIND) && (swIndex <= SW_LOOP) )
 		{
 			MM_REMAP_STATES newMode = swIndex - SW_REWIND;
 
@@ -116,7 +135,17 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 	{
 		uint8_t newVal;
 		newVal = ControlMap_EditADCParameter( (ControlSurfaceMap_t**)&LoadedADCMap[0], param, adcEvent);
-		DispMan_Print7Seg(newVal, 0);
+
+		if( RemapMode_State == MR_SETTYPE )
+		{
+			//Get 'StatusTypeStrings' offset
+			uint8_t statusIndex = (newVal - MIDI_NOTE_OFF) >> CM_MIDISTATUS_BITSHIFT;
+			DispMan_Print7SegAlpha( (uint8_t*)StatusTypeStrings[statusIndex], 0);
+		}
+		else
+		{
+			DispMan_Print7Seg(newVal, 0);
+		}
 	}
 
 
