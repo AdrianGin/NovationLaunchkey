@@ -14,6 +14,7 @@ extern "C" {
 
 //Corresponds to moving the MIDI STATUS byte down.
 #define CM_MIDISTATUS_BITSHIFT (4)
+#define CM_MIDISTATUS_OFFSET	(0x10) //Such that 0 represents undef, 1 is Note Off, 2 is Note On etc..
 
 typedef enum
 {

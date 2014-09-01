@@ -35,7 +35,7 @@ uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters pa
 				//Make it channel independent.
 				newVal = Rescale_Apply(&rs, newVal) & MIDI_MSG_TYPE_MASK;
 
-				mapElement->statusBytes.midiStatus = (newVal - MIDI_NOTE_OFF) >> CM_MIDISTATUS_BITSHIFT;
+				mapElement->statusBytes.midiStatus = (newVal - MIDI_NOTE_OFF + CM_MIDISTATUS_OFFSET) >> CM_MIDISTATUS_BITSHIFT;
 				break;
 			}
 
@@ -102,11 +102,16 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 		uint8_t mapOffset = event->index - ADC_KNOB_0;
 		ControlSurfaceMap_t* mapElement = (ControlSurfaceMap_t*)&map[mapOffset];
 
-		msg->status = (mapElement->statusBytes.midiStatus << CM_MIDISTATUS_BITSHIFT) + MIDI_NOTE_OFF;
+		msg->status = (mapElement->statusBytes.midiStatus);
 		if( msg->status == 0 )
 		{
 			msg->status = MIDI_CONTROL_CHANGE;
 		}
+		else
+		{
+			msg->status = (msg->status << CM_MIDISTATUS_BITSHIFT) - CM_MIDISTATUS_OFFSET + MIDI_NOTE_OFF;
+		}
+
 
 		if( mapElement->statusBytes.globalMIDIchanFlag )
 		{
