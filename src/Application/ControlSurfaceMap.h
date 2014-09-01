@@ -54,8 +54,14 @@ typedef struct
 
 
 
-uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCEvent_t* event, MIDIMsg_t* msg, uint8_t* msgCount);
-uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, ADCEvent_t* event);
+uint8_t ControlMap_TransformPotFaderInput(const ControlSurfaceMap_t** const map, MIDIMsg_t* msg, uint8_t* msgCount, ADCEvent_t* event);
+uint8_t ControlMap_EditPotFaderParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, ADCEvent_t* event);
+
+uint8_t ControlMap_TransformInput(const ControlSurfaceMap_t** const map, MIDIMsg_t* msg, uint8_t* msgCount, uint8_t index, uint8_t value);
+uint8_t ControlMap_EditParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, uint8_t index, uint8_t value);
+
+
+
 
 
 #ifdef __cplusplus

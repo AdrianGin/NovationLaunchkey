@@ -8,6 +8,9 @@ extern "C" {
 #define POT_COUNT 		(8)
 #define FADER_COUNT 	(9)
 #define MUTE_SOLO_COUNT (9)
+#define DRUM_COUNT	    (16)
+
+#define CONTROL_COUNT	(DRUM_COUNT + POT_COUNT + FADER_COUNT + MUTE_SOLO_COUNT)
 
 #include "ControlSurfaceMap.h"
 #include "ADC_CentreDetent.h"

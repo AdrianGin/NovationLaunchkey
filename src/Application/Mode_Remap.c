@@ -151,7 +151,7 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 	if( (index >= ADC_KNOB_0)  && (index <= ADC_SLIDER_7) )
 	{
 		uint8_t newVal;
-		newVal = ControlMap_EditADCParameter( (ControlSurfaceMap_t**)&LoadedADCMap[0], param, adcEvent);
+		newVal = ControlMap_EditPotFaderParameter( (ControlSurfaceMap_t**)&LoadedADCMap[0], param, adcEvent);
 
 		if( RemapMode_State == MR_SETTYPE )
 		{

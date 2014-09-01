@@ -35,7 +35,7 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 	uint8_t msgCount;
 	uint8_t valueToShow = 0;
 
-	valueToShow = ControlMap_TransformADCInput( CurrentADCMap, input->input.adc, &msgArray[0], &msgCount);
+	valueToShow = ControlMap_TransformPotFaderInput(CurrentADCMap, &msgArray[0], &msgCount, input->input.adc);
 	
 	if( valueToShow )
 	{

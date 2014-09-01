@@ -10,18 +10,28 @@
 
 
 
-uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, ADCEvent_t* event)
+uint8_t ControlMap_EditPotFaderParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, ADCEvent_t* event)
 {
-	uint8_t index = event->index;
+	if( (event->index >= ADC_KNOB_0)  && (event->index <= ADC_SLIDER_7) )
+	{
+		return ControlMap_EditParameter(map, parameter, event->index, event->value);
+	}
+
+	return 0;
+}
+
+
+
+uint8_t ControlMap_EditParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, uint8_t index, uint8_t value)
+{
 	//Turns ADC_MAX_VALUE into MIDI_MAX_DATA
-	uint8_t newVal = event->value >> 1;
+	uint8_t newVal = value >> 1;
 	Rescale_t rs;
 
 
-	if( (index >= ADC_KNOB_0)  && (index <= ADC_SLIDER_7) )
+	if( index < CONTROL_COUNT )
 	{
-		uint8_t mapOffset = index - ADC_KNOB_0;
-		ControlSurfaceMap_t* mapElement = (ControlSurfaceMap_t*)&map[mapOffset];
+		ControlSurfaceMap_t* mapElement = (ControlSurfaceMap_t*)&map[index];
 
 		switch(parameter)
 		{
@@ -50,7 +60,7 @@ uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters pa
 					rs.xMax = ADC_MAX_VALUE;
 					rs.yMin = 0;
 					rs.yMax = ADC_MAX_VALUE;
-					newVal = Rescale_Apply(&rs, event->value);
+					newVal = Rescale_Apply(&rs, value);
 				}
 
 				mapElement->controlVal = newVal;
@@ -140,11 +150,17 @@ void ControlMap_PopulatePNMsg(MIDIMsg_t* msg, uint8_t msb, uint8_t lsb, uint8_t 
 }
 
 
+
+uint8_t ControlMap_TransformPotFaderInput(const ControlSurfaceMap_t** const map, MIDIMsg_t* msg, uint8_t* msgCount, ADCEvent_t* event)
+{
+	return ControlMap_TransformInput(map, msg, msgCount, event->index, event->value);
+}
+
 //Takes an ADC event, Surface map and populates the passed in MIDI Msg.
 //returns which byte (Data1 or Data2) is largely affected,
 //eg. Note Ons are Note Numbers, PC's are PC, as the value affected
 //is not always Data2.
-uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCEvent_t* event, MIDIMsg_t* msg, uint8_t* msgCount)
+uint8_t ControlMap_TransformInput(const ControlSurfaceMap_t** const map, MIDIMsg_t* msg, uint8_t* msgCount, uint8_t index, uint8_t value)
 {
 	uint8_t ret = INFO_INVALID;
 
@@ -153,13 +169,12 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 	rs.xMin = 0;
 	rs.xMax = ADC_MAX_VALUE;
 
-	if( (event->index >= ADC_KNOB_0)  && (event->index <= ADC_SLIDER_7) )
+	if( index < CONTROL_COUNT )
 	{
 		uint16_t scaledVal;
-		uint8_t mapOffset = event->index - ADC_KNOB_0;
 		RT_REMAP_TYPES mapType;
 		uint8_t channel;
-		ControlSurfaceMap_t* mapElement = (ControlSurfaceMap_t*)&map[mapOffset];
+		ControlSurfaceMap_t* mapElement = (ControlSurfaceMap_t*)&map[index];
 
 		mapType = mapElement->statusBytes.midiStatus;
 
@@ -188,7 +203,7 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 			rs.yMin = mapElement->min;
 			rs.yMax = mapElement->max;
 		}
-		scaledVal = Rescale_Apply(&rs, event->value);
+		scaledVal = Rescale_Apply(&rs, value);
 
 		switch( mapType )
 		{
@@ -230,7 +245,7 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 					msg->data1 = mapElement->controlVal;
 					if( CurrentADCMap == (ControlSurfaceMap_t**)&DefaultADCMap[0] )
 					{
-						msg->data1 = GENERAL_PURPOSE_CONTROLLER_1 + mapOffset;
+						msg->data1 = GENERAL_PURPOSE_CONTROLLER_1 + index;
 					}
 					msg->data2 = (uint8_t)scaledVal;
 					ret = SINGLE_MSG_DB2;

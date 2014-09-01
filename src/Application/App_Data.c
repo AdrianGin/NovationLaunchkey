@@ -13,9 +13,9 @@ ADC_CentreDetent_t PitchBendDetent =
 };
 
 
-ControlSurfaceMap_t LoadedADCMap[POT_COUNT+FADER_COUNT];
+ControlSurfaceMap_t LoadedADCMap[CONTROL_COUNT];
 
-const ControlSurfaceMap_t DefaultADCMap[POT_COUNT+FADER_COUNT] =
+const ControlSurfaceMap_t DefaultADCMap[CONTROL_COUNT] =
 {
 	{
 		.statusBytes.globalMIDIchanFlag = 0,
