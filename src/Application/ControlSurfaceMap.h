@@ -23,8 +23,17 @@ typedef enum
 	CM_MIN,
 	CM_MAX,
 	CM_CHANNEL,
+	CM_LSB,
 	CM_VARIABLE_COUNT,
 } eCM_Parameters;
+
+enum
+{
+	INFO_INVALID = 0,
+	SINGLE_MSG_DB1,
+	SINGLE_MSG_DB2,
+	TRIPLE_MSG,
+};
 
 typedef struct
 {
@@ -38,11 +47,14 @@ typedef struct
 
 	//uint8_t statusBytes; //includes type and channel
 	uint8_t controlVal;
+	uint8_t LSB;
 	uint8_t min;
 	uint8_t max;
 } ControlSurfaceMap_t;
 
-uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCEvent_t* event, MIDIMsg_t* msg);
+
+
+uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCEvent_t* event, MIDIMsg_t* msg, uint8_t* msgCount);
 uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, ADCEvent_t* event);
 
 

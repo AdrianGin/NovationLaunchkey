@@ -10,48 +10,59 @@
 #include <stdlib.h>
 
 
-typedef enum
-{
 
-	MR_SETMIN = 0,
-	MR_SETMAX,
-	MR_SETTYPE,
-	MR_SETVALUE,
-	MR_SETCHAN,
-	MR_INVALID,
 
-} MM_REMAP_STATES;
 
 const uint8_t SetMin_String[] = "Lo";
 const uint8_t SetMax_String[] = "Hi";
 const uint8_t SetType_String[] = "Typ";
 const uint8_t SetVal_String[] = "val";
 const uint8_t SetChan_String[] = "Ch";
+const uint8_t SetLSB_String[] = "LSB";
 
 const uint8_t* const RemapModeStrings[] = {
 	SetMin_String,
 	SetMax_String,
 	SetType_String,
 	SetVal_String,
-	SetChan_String};
+	SetChan_String,
+	SetLSB_String};
+
+
 
 
 const uint8_t TypeNoteOff_String[] = "Off";
 const uint8_t TypeNoteOn_String[] = "On";
 const uint8_t TypeAfterTouch_String[] = "Aft";
 const uint8_t TypeCC_String[] = "CC ";
-const uint8_t TypePC_String[] = "PCh";
-const uint8_t TypeCP_String[] = "ChP";
+const uint8_t TypePC_String[] = "PrC";
+const uint8_t TypeCP_String[] = "Prs";
+const uint8_t TypeNRPN_String[] = "NRP";
+const uint8_t TypeRPN_String[] = "RPN";
 
 const uint8_t* const StatusTypeStrings[] = {
+	TypeCC_String,
+	TypeAfterTouch_String,
+	TypePC_String,
+	TypeCP_String,
+	TypeNRPN_String,
+	TypeRPN_String,
 	TypeNoteOff_String,
 	TypeNoteOn_String,
-	TypeAfterTouch_String,
-	TypeCC_String,
-	TypePC_String,
-	TypeCP_String};
+};
 
 
+
+const uint8_t StatusTypeLookup[] = {
+	MIDI_CONTROL_CHANGE,
+	MIDI_AFTERTOUCH,
+	MIDI_PROGRAM_CHANGE,
+	MIDI_CHANNEL_PRESSURE,
+	MIDI_CONTROL_CHANGE,
+	MIDI_CONTROL_CHANGE,
+	MIDI_NOTE_OFF,
+	MIDI_NOTE_ON,
+};
 
 
 static uint8_t RemapMode_State = MR_INVALID;
@@ -71,7 +82,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 	{
 
 		uint8_t swIndex = swEvent->index;
-		if( (swIndex >= SW_REWIND) && (swIndex <= SW_LOOP) )
+		if( (swIndex >= SW_REWIND) && (swIndex <= SW_REC) )
 		{
 			MM_REMAP_STATES newMode = swIndex - SW_REWIND;
 
@@ -125,6 +136,12 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 			break;
 		}
 
+		case MR_SETLSB:
+		{
+			param = CM_LSB;
+			break;
+		}
+
 		default:
 		{
 			break;
@@ -138,9 +155,7 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 
 		if( RemapMode_State == MR_SETTYPE )
 		{
-			//Get 'StatusTypeStrings' offset
-			uint8_t statusIndex = (newVal - MIDI_NOTE_OFF) >> CM_MIDISTATUS_BITSHIFT;
-			DispMan_Print7SegAlpha( (uint8_t*)StatusTypeStrings[statusIndex], 0);
+			DispMan_Print7SegAlpha( (uint8_t*)StatusTypeStrings[newVal], 0);
 		}
 		else
 		{

@@ -5,8 +5,8 @@
 
 #include "App_GlobalSettings.h"
 #include "Rescale.h"
-
-
+#include "App_Data.h"
+#include "Mode_Remap.h"
 
 
 
@@ -29,19 +29,24 @@ uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters pa
 			{
 				rs.xMin = 0;
 				rs.xMax = MIDI_MAX_DATA;
-				rs.yMin = MIDI_NOTE_OFF;
-				rs.yMax = MIDI_CHANNEL_PRESSURE;
+				rs.yMin = RT_CC;
+				rs.yMax = RT_NOTEON;
 
 				//Make it channel independent.
-				newVal = Rescale_Apply(&rs, newVal) & MIDI_MSG_TYPE_MASK;
+				newVal = Rescale_Apply(&rs, newVal);
+				mapElement->statusBytes.midiStatus = (newVal);
 
-				mapElement->statusBytes.midiStatus = (newVal - MIDI_NOTE_OFF + CM_MIDISTATUS_OFFSET) >> CM_MIDISTATUS_BITSHIFT;
+				//newVal = StatusTypeLookup[newVal];
 				break;
 			}
 
 			case CM_CONTROLVAL:
 
 				mapElement->controlVal = newVal;
+				break;
+
+			case CM_LSB:
+				mapElement->LSB = newVal;
 				break;
 
 			case CM_MIN:
@@ -86,15 +91,44 @@ uint8_t ControlMap_EditADCParameter(ControlSurfaceMap_t** map, eCM_Parameters pa
 }
 
 
+typedef enum {
+	CM_NPRN_TYPE = NON_REGISTERED_PARAMETER_LSB,
+	CM_PRN_TYPE = REGISTERED_PARAMETER_LSB,
+} eCM_PNMsg;
+
+
+//This function expects the channel to be pre/post populated.
+void ControlMap_PreparePNMsg(MIDIMsg_t* msg, eCM_PNMsg type, uint8_t channel)
+{
+	uint8_t statusByte;
+	statusByte = MIDI_CONTROL_CHANGE;
+
+	msg[0].status = statusByte | channel;
+	msg[1].status = statusByte | channel;
+	msg[2].status = statusByte | channel;
+
+	msg[0].data1 = type+1;
+	msg[1].data1 = type;
+	msg[2].data1 = DATA_ENTRY_MSB;
+}
+
+void ControlMap_PopulatePNMsg(MIDIMsg_t* msg, uint8_t msb, uint8_t lsb, uint8_t data)
+{
+	msg[0].data2 = msb;
+	msg[1].data2 = lsb;
+	msg[2].data2 = data;
+}
+
 
 //Takes an ADC event, Surface map and populates the passed in MIDI Msg.
 //returns which byte (Data1 or Data2) is largely affected,
 //eg. Note Ons are Note Numbers, PC's are PC, as the value affected
 //is not always Data2.
-uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCEvent_t* event, MIDIMsg_t* msg)
+uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCEvent_t* event, MIDIMsg_t* msg, uint8_t* msgCount)
 {
-	uint8_t ret = 0;
+	uint8_t ret = INFO_INVALID;
 
+	*msgCount = 0;
 	Rescale_t rs;
 	rs.xMin = 0;
 	rs.xMax = ADC_MAX_VALUE;
@@ -103,28 +137,26 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 	{
 		uint16_t scaledVal;
 		uint8_t mapOffset = event->index - ADC_KNOB_0;
+		RT_REMAP_TYPES mapType;
+		uint8_t channel;
 		ControlSurfaceMap_t* mapElement = (ControlSurfaceMap_t*)&map[mapOffset];
 
-		msg->status = (mapElement->statusBytes.midiStatus);
-		if( msg->status == 0 )
-		{
-			msg->status = MIDI_CONTROL_CHANGE;
-		}
-		else
-		{
-			msg->status = (msg->status << CM_MIDISTATUS_BITSHIFT) - CM_MIDISTATUS_OFFSET + MIDI_NOTE_OFF;
-		}
+		mapType = mapElement->statusBytes.midiStatus;
 
 
+		msg->status = StatusTypeLookup[mapType];
+
+		//Apply MIDI channel
 		if( mapElement->statusBytes.globalMIDIchanFlag )
 		{
-			msg->status |= AppGlobal_GetMIDIChannel();
+			channel = AppGlobal_GetMIDIChannel();
 		}
 		else
 		{
-			msg->status |= mapElement->statusBytes.midiChannel;
+			channel = mapElement->statusBytes.midiChannel;
 		}
 
+		//DATA BYTE 1
 		//For uninitialised output map
 		if( mapElement->min == mapElement->max )
 		{
@@ -136,36 +168,55 @@ uint8_t ControlMap_TransformADCInput(const ControlSurfaceMap_t** const map, ADCE
 			rs.yMin = mapElement->min;
 			rs.yMax = mapElement->max;
 		}
-
 		scaledVal = Rescale_Apply(&rs, event->value);
 
-
-
-		//Note on's are swapped around compared to CCs
-		//As the 'Value' will be used for Velocity.
-		//Some MIDI messages are single value types too.
-		uint8_t statusByte = msg->status & MIDI_MSG_TYPE_MASK;
-
-		if( ((statusByte) == MIDI_NOTE_OFF) ||
-			((statusByte) == MIDI_NOTE_ON) ||
-			((statusByte) == MIDI_PROGRAM_CHANGE) ||
-			((statusByte == MIDI_CHANNEL_PRESSURE)))
+		switch( mapType )
 		{
-			msg->data1 = scaledVal;
-			msg->data2 = mapElement->controlVal;
+			case RT_NRPN:
+				ControlMap_PreparePNMsg(msg, CM_NPRN_TYPE, channel);
+				ControlMap_PopulatePNMsg(msg, mapElement->controlVal, mapElement->LSB, scaledVal);
+				*msgCount = 3;
+				ret = TRIPLE_MSG;
+				break;
 
-			ret = 1;
-		}
-		else
-		{
-			msg->data1 = mapElement->controlVal;
-			if( msg->data1 == 0 )
+			case RT_RPN:
+				ControlMap_PreparePNMsg(msg, CM_PRN_TYPE, channel);
+				ControlMap_PopulatePNMsg(msg, mapElement->controlVal, mapElement->LSB, scaledVal);
+				*msgCount = 3;
+				ret = TRIPLE_MSG;
+				break;
+
+			default:
 			{
-				msg->data1 = GENERAL_PURPOSE_CONTROLLER_1 + mapOffset;
-			}
-			msg->data2 = (uint8_t)scaledVal;
+				*msgCount = 1;
+				uint8_t statusByte = msg->status & MIDI_MSG_TYPE_MASK;
 
-			ret = 2;
+				msg->status |= channel;
+
+				//Note on's are swapped around compared to CCs
+				//As the 'Value' will be used for Velocity.
+				//Some MIDI messages are single value types too.
+				if( ((statusByte) == MIDI_NOTE_OFF) ||
+					((statusByte) == MIDI_NOTE_ON) ||
+					((statusByte) == MIDI_PROGRAM_CHANGE) ||
+					((statusByte == MIDI_CHANNEL_PRESSURE)))
+				{
+					msg->data1 = scaledVal;
+					msg->data2 = mapElement->controlVal;
+					ret = SINGLE_MSG_DB1;
+				}
+				else
+				{
+					msg->data1 = mapElement->controlVal;
+					if( CurrentADCMap == (ControlSurfaceMap_t**)&DefaultADCMap[0] )
+					{
+						msg->data1 = GENERAL_PURPOSE_CONTROLLER_1 + mapOffset;
+					}
+					msg->data2 = (uint8_t)scaledVal;
+					ret = SINGLE_MSG_DB2;
+				}
+				break;
+			}
 		}
 
 

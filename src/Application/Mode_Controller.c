@@ -27,43 +27,70 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 
 static uint8_t handle_ADCInput(MM_Input_t* input)
 {
-	MIDIMsg_t msg;
-	uint8_t valueToShow;
 
-	valueToShow = ControlMap_TransformADCInput( CurrentADCMap, input->input.adc, &msg);
+	//Sending NRPNs, RPNs need 3 MIDI messages.
+	MIDIMsg_t msgArray[3];
 
+	MIDIMsg_t* msg = &msgArray[0];
+	uint8_t msgCount;
+	uint8_t valueToShow = 0;
+
+	valueToShow = ControlMap_TransformADCInput( CurrentADCMap, input->input.adc, &msgArray[0], &msgCount);
+	
 	if( valueToShow )
 	{
 		uint8_t index = input->input.adc->index;
-
-
-		if( AppMIDI_IsSavedEventDifferent(&msg, index) == APP_MIDI_MSG_DIFFERENT)
+		switch( valueToShow )
 		{
-			MIDIMsg_t* lastMsg = AppMIDI_GetSavedEvent(index);
-			//Make sure we send a MIDI Note off when we send the next MIDI On,
-			//otherwise we will have stuck notes.
-			if( (lastMsg->status & MIDI_MSG_TYPE_MASK) == MIDI_NOTE_ON )
+			case SINGLE_MSG_DB2:
+			case SINGLE_MSG_DB1:
 			{
-				lastMsg->status &= ~MIDI_MSG_TYPE_MASK;
-				lastMsg->status |= MIDI_NOTE_OFF;
-				HAL_MIDI_TxMsg(lastMsg);
+				if( AppMIDI_IsSavedEventDifferent(msg, index) == APP_MIDI_MSG_DIFFERENT)
+				{
+					MIDIMsg_t* lastMsg = AppMIDI_GetSavedEvent(index);
+					//Make sure we send a MIDI Note off when we send the next MIDI On,
+					//otherwise we will have stuck notes.
+					if( (lastMsg->status & MIDI_MSG_TYPE_MASK) == MIDI_NOTE_ON )
+					{
+						lastMsg->status &= ~MIDI_MSG_TYPE_MASK;
+						lastMsg->status |= MIDI_NOTE_OFF;
+						HAL_MIDI_TxMsg(lastMsg);
 
-				lastMsg->status &= ~MIDI_MSG_TYPE_MASK;
-				lastMsg->status |= MIDI_NOTE_ON;
+						//Restore the state of the last message
+						lastMsg->status &= ~MIDI_MSG_TYPE_MASK;
+						lastMsg->status |= MIDI_NOTE_ON;
+					}
+
+					AppMIDI_ADCOutputMIDI(msg, index);
+
+					if( valueToShow == SINGLE_MSG_DB2 )
+					{
+						DispMan_Print7Seg(msg->data2, 0);
+					}
+					else
+					{
+						DispMan_Print7Seg(msg->data1, 0);
+					}
+				}
+				break;
 			}
 
-			AppMIDI_ADCOutputMIDI(&msg, index);
+			case TRIPLE_MSG:
+				if( AppMIDI_IsSavedEventDifferent(&msgArray[2], index) == APP_MIDI_MSG_DIFFERENT)
+				{
+					AppMIDI_ADCOutputMIDI(&msgArray[0], index);
+					AppMIDI_ADCOutputMIDI(&msgArray[1], index);
+					AppMIDI_ADCOutputMIDI(&msgArray[2], index);
+					DispMan_Print7Seg(msgArray[2].data2, 0);
+				}
 
-			if( valueToShow == 2 )
-			{
-				DispMan_Print7Seg(msg.data2, 0);
-			}
-			else
-			{
-				DispMan_Print7Seg(msg.data1, 0);
-			}
+				break;
 
+			default:
+				break;
 		}
+
+
 	}
 
 	return MM_INPUT_WAS_PROCESSED;
