@@ -61,7 +61,7 @@ uint8_t AppMIDI_ADCOutputMIDI(MIDIMsg_t* msg, uint8_t index)
 	if ( AppMIDI_IsSavedEventDifferent(msg, index) == APP_MIDI_MSG_DIFFERENT)
 	{
 		HAL_MIDI_TxMsg(msg);
-		savedEvents[index] = *msg;
+		memcpy(&savedEvents[index], msg, sizeof(MIDIMsg_t));
 		return APP_MIDI_MSG_DIFFERENT;
 	}
 	return !APP_MIDI_MSG_DIFFERENT;

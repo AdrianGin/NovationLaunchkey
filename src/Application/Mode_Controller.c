@@ -39,7 +39,7 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 
 		if( AppMIDI_IsSavedEventDifferent(&msg, index) == APP_MIDI_MSG_DIFFERENT)
 		{
-			MIDIMsg_t* lastMsg = AppMIDI_GetSavedEvent(input->input.adc->index);
+			MIDIMsg_t* lastMsg = AppMIDI_GetSavedEvent(index);
 			//Make sure we send a MIDI Note off when we send the next MIDI On,
 			//otherwise we will have stuck notes.
 			if( (lastMsg->status & MIDI_MSG_TYPE_MASK) == MIDI_NOTE_ON )
@@ -47,9 +47,12 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 				lastMsg->status &= ~MIDI_MSG_TYPE_MASK;
 				lastMsg->status |= MIDI_NOTE_OFF;
 				HAL_MIDI_TxMsg(lastMsg);
+
+				lastMsg->status &= ~MIDI_MSG_TYPE_MASK;
+				lastMsg->status |= MIDI_NOTE_ON;
 			}
 
-			AppMIDI_ADCOutputMIDI(&msg, input->input.adc->index);
+			AppMIDI_ADCOutputMIDI(&msg, index);
 
 			if( valueToShow == 2 )
 			{

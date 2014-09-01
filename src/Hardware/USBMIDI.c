@@ -332,7 +332,7 @@ uint8_t USBMIDI_Poll(void)
 	{
 		while( (usbMIDI_bufferLen() != 0) && (bytesToSend < MAX_PACKET_SIZE_BULK_IN) )
 		{
-			memcpy(tempBuffer, &MIDImsgComplete[rMIDImsgCount], sizeof(usbMIDIMessage_t));
+			memcpy(tempBuffer + bytesToSend, &MIDImsgComplete[rMIDImsgCount], sizeof(usbMIDIMessage_t));
 			rMIDImsgCount = (rMIDImsgCount + 1) & MIDI_OUT_MASK;
 			bytesToSend = bytesToSend + sizeof(usbMIDIMessage_t);
 		}
