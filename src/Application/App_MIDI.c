@@ -28,6 +28,9 @@ THE SOFTWARE.
 #include "App_MIDI.h"
 #include "HAL_ADC.h"
 
+
+
+
 static MIDIMsg_t savedEvents[ADC_MODULATION+1];
 
 
@@ -43,12 +46,23 @@ MIDIMsg_t* AppMIDI_GetSavedEvent(uint8_t index)
 	return &savedEvents[index];
 }
 
-
-void AppMIDI_ADCOutputMIDI(MIDIMsg_t* msg, uint8_t index)
+//compares the saved event with the passed in event and returns whether they are the same or different.
+uint8_t AppMIDI_IsSavedEventDifferent(MIDIMsg_t* msg, uint8_t index)
 {
 	if (memcmp(msg, &savedEvents[index], sizeof(MIDIMsg_t)) != 0)
 	{
+		return APP_MIDI_MSG_DIFFERENT;
+	}
+	return !APP_MIDI_MSG_DIFFERENT;
+}
+
+uint8_t AppMIDI_ADCOutputMIDI(MIDIMsg_t* msg, uint8_t index)
+{
+	if ( AppMIDI_IsSavedEventDifferent(msg, index) == APP_MIDI_MSG_DIFFERENT)
+	{
 		HAL_MIDI_TxMsg(msg);
 		savedEvents[index] = *msg;
+		return APP_MIDI_MSG_DIFFERENT;
 	}
+	return !APP_MIDI_MSG_DIFFERENT;
 }

@@ -34,19 +34,36 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 
 	if( valueToShow )
 	{
-		AppMIDI_ADCOutputMIDI(&msg, input->input.adc->index);
+		uint8_t index = input->input.adc->index;
 
-		if( valueToShow == 2 )
+
+		if( AppMIDI_IsSavedEventDifferent(&msg, index) == APP_MIDI_MSG_DIFFERENT)
 		{
-			DispMan_Print7Seg(msg.data2, 0);
-		}
-		else
-		{
-			DispMan_Print7Seg(msg.data1, 0);
+			MIDIMsg_t* lastMsg = AppMIDI_GetSavedEvent(input->input.adc->index);
+			//Make sure we send a MIDI Note off when we send the next MIDI On,
+			//otherwise we will have stuck notes.
+			if( (lastMsg->status & MIDI_MSG_TYPE_MASK) == MIDI_NOTE_ON )
+			{
+				lastMsg->status &= ~MIDI_MSG_TYPE_MASK;
+				lastMsg->status |= MIDI_NOTE_OFF;
+				HAL_MIDI_TxMsg(lastMsg);
+			}
+
+			AppMIDI_ADCOutputMIDI(&msg, input->input.adc->index);
+
+			if( valueToShow == 2 )
+			{
+				DispMan_Print7Seg(msg.data2, 0);
+			}
+			else
+			{
+				DispMan_Print7Seg(msg.data1, 0);
+			}
+
 		}
 	}
 
-	return 0;
+	return MM_INPUT_WAS_PROCESSED;
 }
 
 static uint8_t handle_KeyBoardInput(MM_Input_t* input)
