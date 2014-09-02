@@ -52,7 +52,10 @@ typedef struct
 	uint8_t max;
 } ControlSurfaceMap_t;
 
-
+typedef struct
+{
+	uint8_t type;
+} ButtonMap_t;
 
 uint8_t ControlMap_TransformPotFaderInput(const ControlSurfaceMap_t** const map, MIDIMsg_t* msg, uint8_t* msgCount, ADCEvent_t* event);
 uint8_t ControlMap_EditPotFaderParameter(ControlSurfaceMap_t** map, eCM_Parameters parameter, ADCEvent_t* event);

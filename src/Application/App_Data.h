@@ -10,6 +10,8 @@ extern "C" {
 #define MUTE_SOLO_COUNT (9)
 #define DRUM_COUNT	    (16)
 
+#define MUTE_SOLO_OFFSET (POT_COUNT+FADER_COUNT)
+
 #define CONTROL_COUNT	(DRUM_COUNT + POT_COUNT + FADER_COUNT + MUTE_SOLO_COUNT)
 
 #include "ControlSurfaceMap.h"

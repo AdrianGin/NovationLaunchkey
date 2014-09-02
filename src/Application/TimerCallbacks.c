@@ -111,7 +111,7 @@ void Callback_UpdateADC(void)
 {
 	uint16_t adcSample;
 	uint8_t i;
-	for(i = 0; i <= ADC_MODULATION; i++)
+	for(i = ADC_PAD_0; i <= ADC_MODULATION; i++)
 	{
 		if( ADC_GetChangeFlag(i) )
 		{

@@ -9,6 +9,8 @@ extern "C" {
 #include "ModeManager.h"
 
 
+void ModeControl_OutputMessage(uint8_t index, uint8_t value);
+
 uint8_t ModeController_HandleInput(MM_Input_t* input);
 
 

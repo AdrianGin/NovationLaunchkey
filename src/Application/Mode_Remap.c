@@ -66,6 +66,7 @@ const uint8_t StatusTypeLookup[] = {
 
 
 static uint8_t RemapMode_State = MR_INVALID;
+static uint8_t LastTouchedButton = 0xFF;
 
 static uint8_t handle_SWInput(MM_Input_t* input)
 {
@@ -90,6 +91,15 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 			RemapMode_State = newMode;
 			inputProcessed = MM_INPUT_WAS_PROCESSED;
 		}
+
+
+		if( (swIndex >= SW_MUTE_0) && (swIndex <= SW_MUTE_7) )
+		{
+			LastTouchedButton = swIndex - SW_MUTE_0;
+
+		}
+
+
 	}
 
 
@@ -148,29 +158,34 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 		}
 	}
 
+	uint8_t newVal;
 	if( (index >= ADC_KNOB_0)  && (index <= ADC_SLIDER_7) )
 	{
-		uint8_t newVal;
-		newVal = ControlMap_EditPotFaderParameter( (ControlSurfaceMap_t**)&LoadedADCMap[0], param, adcEvent);
 
-		if( RemapMode_State == MR_SETTYPE )
+		newVal = ControlMap_EditPotFaderParameter( (ControlSurfaceMap_t**)&LoadedADCMap[0], param, adcEvent);
+	}
+
+	if( (index == ADC_VOLUME) )
+	{
+		newVal = ControlMap_EditParameter( (ControlSurfaceMap_t**)&LoadedADCMap[0], param, LastTouchedButton + MUTE_SOLO_OFFSET, adcEvent->value);
+	}
+
+	if( RemapMode_State == MR_SETTYPE )
+	{
+		DispMan_Print7SegAlpha( (uint8_t*)StatusTypeStrings[newVal], 0);
+	}
+	else
+	{
+		if( newVal > MIDI_MAX_DATA )
 		{
-			DispMan_Print7SegAlpha( (uint8_t*)StatusTypeStrings[newVal], 0);
+			newVal = newVal - (MIDI_MAX_DATA+1);
+			DispMan_Print7Seg(newVal, 50);
 		}
 		else
 		{
-			if( newVal > MIDI_MAX_DATA )
-			{
-				newVal = newVal - (MIDI_MAX_DATA+1);
-				DispMan_Print7Seg(newVal, 50);
-			}
-			else
-			{
-				DispMan_Print7Seg(newVal, 0);
-			}
+			DispMan_Print7Seg(newVal, 0);
 		}
 	}
-
 
 	//DispMan_Print7Seg(adcEvent->value, 0);
 	return !MM_INPUT_WAS_PROCESSED;

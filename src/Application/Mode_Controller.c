@@ -13,21 +13,9 @@
 
 #include "HAL_Switch.h"
 
-static uint8_t handle_SWInput(MM_Input_t* input)
-{
-	uint8_t index = input->input.sw->index;
-	//Select which profile to use.
-	if( (index >= SW_MUTE_0)  && (index <= SW_MUTE_8) )
-	{
-		CurrentADCMap = (ControlSurfaceMap_t**)&LoadedADCMap[0];
-		DispMan_Print7Seg( (index-SW_MUTE_0) + 1, 0);
-	}
-	return 0;
-}
 
-static uint8_t handle_ADCInput(MM_Input_t* input)
+void ModeControl_OutputMessage(uint8_t index, uint8_t value)
 {
-
 	//Sending NRPNs, RPNs need 3 MIDI messages.
 	MIDIMsg_t msgArray[3];
 
@@ -35,11 +23,10 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 	uint8_t msgCount;
 	uint8_t valueToShow = 0;
 
-	valueToShow = ControlMap_TransformPotFaderInput(CurrentADCMap, &msgArray[0], &msgCount, input->input.adc);
-	
+	valueToShow = ControlMap_TransformInput(CurrentADCMap, &msgArray[0], &msgCount, index, value);
+
 	if( valueToShow )
 	{
-		uint8_t index = input->input.adc->index;
 		switch( valueToShow )
 		{
 			case SINGLE_MSG_DB2:
@@ -92,7 +79,25 @@ static uint8_t handle_ADCInput(MM_Input_t* input)
 
 
 	}
+}
 
+static uint8_t handle_SWInput(MM_Input_t* input)
+{
+	uint8_t index = input->input.sw->index;
+	//Select which profile to use.
+	if( (index >= SW_MUTE_0)  && (index <= SW_MUTE_8) )
+	{
+		CurrentADCMap = (ControlSurfaceMap_t**)&LoadedADCMap[0];
+		DispMan_Print7Seg( (index-SW_MUTE_0) + 1, 0);
+	}
+	return 0;
+}
+
+static uint8_t handle_ADCInput(MM_Input_t* input)
+{
+	uint8_t index = input->input.adc->index;
+	uint8_t value = input->input.adc->value;
+	ModeControl_OutputMessage(input->input.adc->index, input->input.adc->value);
 	return MM_INPUT_WAS_PROCESSED;
 }
 

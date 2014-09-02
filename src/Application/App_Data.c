@@ -30,6 +30,10 @@ const ControlSurfaceMap_t DefaultADCMap[CONTROL_COUNT] =
 
 ControlSurfaceMap_t** CurrentADCMap = (ControlSurfaceMap_t**)&DefaultADCMap[0];
 
+
+ButtonMap_t ButtonActionType[MUTE_SOLO_COUNT];
+
+
 const Rescale_t Rescale_ModWheel =
 {
 	.xMax = 250,
