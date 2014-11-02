@@ -95,8 +95,6 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 
 static uint8_t handle_ADCInput(MM_Input_t* input)
 {
-	uint8_t index = input->input.adc->index;
-	uint8_t value = input->input.adc->value;
 	ModeControl_OutputMessage(input->input.adc->index, input->input.adc->value);
 	return MM_INPUT_WAS_PROCESSED;
 }

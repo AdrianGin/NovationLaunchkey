@@ -135,13 +135,14 @@ void Callback_ADC_Handle(void)
 {
 	if( ADC_IsFinishedSampling() )
 	{
+		SoftTimerStop(SoftTimer2[SC_ADC]);
 		ADC_StartConversion();
 	}
 }
 
 #define LED_TIME_NEW_COL	(1)
-#define LED_TIME_SHIFT		(4)
-#define LED_TIME_BLANK		(1)
+#define LED_TIME_SHIFT		(7)
+#define LED_TIME_BLANK		(2)
 
 inline void Callback_CriticalTimers(void)
 {

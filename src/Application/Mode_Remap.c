@@ -52,7 +52,6 @@ const uint8_t* const StatusTypeStrings[] = {
 };
 
 
-
 const uint8_t StatusTypeLookup[] = {
 	MIDI_CONTROL_CHANGE,
 	MIDI_AFTERTOUCH,
@@ -65,16 +64,48 @@ const uint8_t StatusTypeLookup[] = {
 };
 
 
+const uint8_t SwitchBinary_String[] = "Bin";
+const uint8_t SwitchLatch_String[] = "Lat";
+const uint8_t SwitchCyclic_String[] = "Cyc";
+
+
+const uint8_t* const SwitchTypeStrings[] = {
+	SwitchBinary_String,
+	SwitchLatch_String,
+	SwitchCyclic_String,
+};
+
+
+enum
+{
+	SWITCHTYPE_BINARY = 0,
+	SWITCHTYPE_LATCH,
+	SWITCHTYPE_CYCLIC,
+	SWITCHTYPE_COUNT,
+};
+
+
 static uint8_t RemapMode_State = MR_INVALID;
 static uint8_t LastTouchedButton = 0xFF;
 
 static uint8_t handle_SWInput(MM_Input_t* input)
 {
+
+	static uint8_t currentSwitchTypeMode = SWITCHTYPE_CYCLIC;
+
 	SwitchEvent_t* swEvent = input->input.sw;
 	uint8_t inputProcessed = !MM_INPUT_WAS_PROCESSED;
+	uint8_t swIndex = swEvent->index;
+
 	//Only process on key release.
 	if (swEvent->value == SWITCH_ON )
 	{
+
+		if( (swIndex >= SW_MUTE_0) && (swIndex <= SW_MUTE_7) )
+		{
+			DispMan_Print7Seg(swIndex - SW_MUTE_0 + 1, 0);
+		}
+
 		return !MM_INPUT_WAS_PROCESSED;
 	}
 	//GlobEvents_ProcessButton(, swEvent->value);
@@ -82,7 +113,7 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 	if( swEvent->value == SWITCH_OFF )
 	{
 
-		uint8_t swIndex = swEvent->index;
+
 		if( (swIndex >= SW_REWIND) && (swIndex <= SW_REC) )
 		{
 			MM_REMAP_STATES newMode = swIndex - SW_REWIND;
@@ -95,8 +126,16 @@ static uint8_t handle_SWInput(MM_Input_t* input)
 
 		if( (swIndex >= SW_MUTE_0) && (swIndex <= SW_MUTE_7) )
 		{
+			if( LastTouchedButton == (swIndex - SW_MUTE_0))
+			{
+				currentSwitchTypeMode++;
+			}
+			if( currentSwitchTypeMode >= SWITCHTYPE_COUNT )
+			{
+				currentSwitchTypeMode = SWITCHTYPE_BINARY;
+			}
+			DispMan_Print7SegAlpha( (uint8_t*)SwitchTypeStrings[currentSwitchTypeMode] , 0);
 			LastTouchedButton = swIndex - SW_MUTE_0;
-
 		}
 
 

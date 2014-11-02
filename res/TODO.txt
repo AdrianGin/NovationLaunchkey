@@ -1,15 +1,18 @@
 TODO:
-Implement Modes (controller / remap / sequencer)
+ReMap Mode
+Switches + Drum Pads to have assignable controls.
 
-
+ 
 Presets for Controller Mode
 Preset Format for each of the 8 templates.
-ReMap Mode
+
 Sequencer
 Fix jitter on ADCs
 
 
 Completed Tasks:
+Implement Modes (controller / remap / sequencer)
+NRPN and RPN
 Event Stacks which get processed in the main loop.
 USB MIDI
 Octave & Transport - use main LCD

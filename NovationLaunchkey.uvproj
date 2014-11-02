@@ -572,6 +572,56 @@
               <FileType>1</FileType>
               <FilePath>.\src\Application\ModeManager.c</FilePath>
             </File>
+            <File>
+              <FileName>Mode_OctaveTranspose.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\Mode_OctaveTranspose.c</FilePath>
+            </File>
+            <File>
+              <FileName>Mode_Global.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\Mode_Global.c</FilePath>
+            </File>
+            <File>
+              <FileName>InputManager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\InputManager.c</FilePath>
+            </File>
+            <File>
+              <FileName>App_GlobalSettings.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\App_GlobalSettings.c</FilePath>
+            </File>
+            <File>
+              <FileName>Global_ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\Global_ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_CentreDetent.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\ADC_CentreDetent.c</FilePath>
+            </File>
+            <File>
+              <FileName>Mode_Remap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\Mode_Remap.c</FilePath>
+            </File>
+            <File>
+              <FileName>ControlSurfaceMap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\ControlSurfaceMap.c</FilePath>
+            </File>
+            <File>
+              <FileName>App_Data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\App_Data.c</FilePath>
+            </File>
+            <File>
+              <FileName>Mode_Controller.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Application\Mode_Controller.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -581,11 +631,6 @@
               <FileName>HAL_KB.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\HAL\HAL_KB.c</FilePath>
-            </File>
-            <File>
-              <FileName>GlobalEvents.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\HAL\GlobalEvents.c</FilePath>
             </File>
             <File>
               <FileName>EventManager.c</FileName>
@@ -636,6 +681,16 @@
               <FileName>voidbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\Util\voidbuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>uint16toa.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Util\uint16toa.c</FilePath>
+            </File>
+            <File>
+              <FileName>Rescale.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Util\Rescale.c</FilePath>
             </File>
           </Files>
         </Group>

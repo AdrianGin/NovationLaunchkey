@@ -94,6 +94,13 @@ uint8_t ADC_IsFinishedSampling(void)
 	return ADCStatus;
 }
 
+void ADC_StartConversion(void)
+{
+	ADCStatus = 0;
+	DrvADC_StartConvert();
+}
+
+
 /* ADC interrupt callback function */
 void ADC_IntCallback(uint32_t u32UserData)
 {
@@ -108,8 +115,10 @@ void ADC_IntCallback(uint32_t u32UserData)
 	}
 
 	ADC_SetNextColumn();
-	SoftTimerReset(SoftTimer2[SC_ADC]);
 	ADCStatus = ADC_READY;
+	SoftTimerReset(SoftTimer2[SC_ADC]);
+	SoftTimerStart(SoftTimer2[SC_ADC]);
+
 }
 
 
@@ -131,7 +140,7 @@ void ADC_Init(void)
 
 
 	/* The maximum ADC clock rate is 16MHz */
-	DrvADC_Open(ADC_SINGLE_END, ADC_SINGLE_CYCLE_OP, ADC_INPUT_PIN_MASK , EXTERNAL_12MHZ, 3);
+	DrvADC_Open(ADC_SINGLE_END, ADC_SINGLE_CYCLE_OP, ADC_INPUT_PIN_MASK , INTERNAL_PLL, 3);
 
 	DrvADC_EnableSelfCalibration();
 	while( !DrvADC_IsCalibrationDone() )
@@ -145,11 +154,6 @@ void ADC_Init(void)
 
 }
 
-void ADC_StartConversion(void)
-{
-	ADCStatus = 0;
-	DrvADC_StartConvert();
-}
 
 
 
